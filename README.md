@@ -8,6 +8,16 @@ the day, and get a special alert when a sparring session is scheduled.
 The UI is in Brazilian Portuguese and fully internationalized (see
 [Adding a language](#adding-a-language)).
 
+The platform is **multi-gym**: an **account admin** creates gyms, each with one
+or more coaches; coaches create their students. Every drill, session and
+account belongs to one gym and gyms never see each other's data.
+
+| Role | Can do |
+|---|---|
+| Account admin (`ACCOUNT_ADMIN`) | Create/deactivate gyms, add coaches, reset coach passwords |
+| Coach (`COACH`) | Everything in the coach module of their gym, create students |
+| Student (`STUDENT`) | See their own routine and alerts |
+
 ## Features
 
 **Coach module (admins and coaches)**
@@ -22,8 +32,8 @@ The UI is in Brazilian Portuguese and fully internationalized (see
   sessions on any day and use the red **Criar sparring** button for sparring days.
 - **Drill library**: name, description, emoji, card color, category, default
   rounds/minutes, YouTube link (embedded preview) and an optional image link.
-- **Students / coaches**: accounts get a server-generated password that is shown
-  once; coaches can reset it at any time. Only admins manage coaches.
+- **Students**: accounts get a server-generated password that is shown once;
+  coaches can reset it at any time. Coaches are managed by the account admin.
 - **Settings**: training weekdays (default Monday, Wednesday, Saturday), default
   start time and drill categories.
 
@@ -49,9 +59,11 @@ docker compose up -d --build
 - App: http://localhost:5180
 - API: http://localhost:8010/api/
 
-On first boot an **admin** account is created from `ADMIN_USERNAME` /
-`ADMIN_PASSWORD` in `.env`. To load demo drills, a coach and three students
-(their generated passwords are printed once):
+On first boot an **account admin** is created from `ADMIN_USERNAME` /
+`ADMIN_PASSWORD` in `.env`. Log in with it, open **Academias**, create a gym
+and its coaches, then log in as a coach to plan training. To load a demo gym
+(Chacão Boxing Team) with drills, a coach and three students (their generated
+passwords are printed once):
 
 ```bash
 docker compose exec backend python manage.py seed_demo
@@ -80,10 +92,11 @@ docker compose exec frontend npm run typecheck
 
 ```
 backend/
-  accounts/        users, roles (ADMIN / COACH / STUDENT), generated passwords
+  accounts/        gyms (tenants), users, roles (ACCOUNT_ADMIN / COACH / STUDENT), generated passwords
   training/        drills, categories, weekly schedule, sessions, assignments, student routine API
   notifications/   in-app notifications (session published, sparring)
 frontend/src/
+  pages/admin/     account admin: gyms and their coaches
   pages/coach/     board, calendar, drills, accounts, settings
   pages/student/   today, upcoming
   i18n/locales/    UI translations (pt-BR)

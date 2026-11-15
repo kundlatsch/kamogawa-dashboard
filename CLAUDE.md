@@ -40,6 +40,9 @@ See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
   highlights. Keep colors as Tailwind theme tokens, not ad-hoc hex values.
   `glove` is the module accent: red for students, blue in the coach module
   (`data-theme="coach"`). Use `blood` for sparring, which stays red everywhere.
+- Multi-gym: every tenant-owned query must be filtered by `request.user.gym`
+  (use `GymScopedViewSet` / `GymScopedSerializer` in `training`), and every new
+  endpoint needs a cross-gym isolation test (see `training/test_gym_isolation.py`).
 - Nothing about the schedule is hardcoded: training weekdays, times, and
   categories come from coach-editable configuration.
 
