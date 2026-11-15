@@ -79,8 +79,19 @@
     "groupSelected_one": "{{count}} aluno selecionado.",
     "groupSelected_other": "{{count}} alunos selecionados: o próximo treino solto em um deles vai para o grupo todo.",
     "clearSelection": "Limpar seleção",
+    "publish": "Publicar para os alunos",
+    "publishSparring": "Publicar e avisar todos",
+    "unpublish": "Voltar para rascunho",
     "noSessions": "Nenhuma sessão nas próximas semanas. Confira os dias de treino ou crie uma sessão no",
     "noStudents": "Nenhum aluno ainda. Cadastre em"
+  },
+  "student": {
+    "hello": "Fala, {{name}}! 👊",
+    "restDay": "Sem treino hoje. Descansa e volta mais forte!",
+    "noDrills": "O treinador ainda não definiu seus exercícios para esta sessão.",
+    "everyone": "Todos",
+    "upcomingHint": "Os exercícios aparecem no dia do treino.",
+    "noUpcoming": "Nenhuma sessão marcada por enquanto."
   },
   "settings": {
     "title": "Configurações",

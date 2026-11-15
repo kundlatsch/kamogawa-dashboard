@@ -75,5 +75,30 @@ export interface Assignment {
   duration_minutes: number | null;
 }
 
+export interface SessionSummary {
+  id: number;
+  date: string;
+  start_time: string | null;
+  title: string;
+  notes: string;
+  kind: SessionKind;
+}
+
+export interface RoutineItem {
+  id: number;
+  drill: Drill;
+  is_broadcast: boolean;
+  order: number;
+  notes: string;
+  rounds: number | null;
+  duration_minutes: number | null;
+  partners: PublicUser[];
+}
+
+export interface MyRoutine {
+  date: string;
+  sessions: (SessionSummary & { routine: RoutineItem[] })[];
+}
+
 export const isStaff = (user: User | null | undefined) =>
   user?.role === "ADMIN" || user?.role === "COACH";

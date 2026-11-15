@@ -6,7 +6,8 @@ import { isStaff } from "./api/types";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import AppShell, { type NavItem } from "./components/AppShell";
 import LoginPage from "./pages/LoginPage";
-import Placeholder from "./pages/Placeholder";
+import TodayPage from "./pages/student/TodayPage";
+import UpcomingPage from "./pages/student/UpcomingPage";
 import AccountsPage from "./pages/coach/AccountsPage";
 import CalendarPage from "./pages/coach/CalendarPage";
 import BoardPage from "./pages/coach/board/BoardPage";
@@ -59,8 +60,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route element={<AppShell nav={nav} />}>
-        <Route index element={<Placeholder titleKey="nav.today" />} />
-        <Route path="upcoming" element={<Placeholder titleKey="nav.upcoming" />} />
+        <Route index element={<TodayPage />} />
+        <Route path="upcoming" element={<UpcomingPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

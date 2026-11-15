@@ -20,7 +20,7 @@ import { useDrills, useSessions, useStudents } from "../../../api/hooks";
 import type { Assignment, User } from "../../../api/types";
 import DrillCard from "../../../components/DrillCard";
 import { KindBadge, StatusBadge } from "../../../components/SessionBadge";
-import { PageHeader } from "../../../components/ui";
+import { Button, PageHeader } from "../../../components/ui";
 import { columnAssignments, columnStudentId, dropTargets, moveBefore, studentColumn } from "../../../lib/board";
 import { addDays, formatDate, toISODate, todayISO } from "../../../lib/dates";
 import AssignmentModal, { type AssignmentChanges } from "./AssignmentModal";
@@ -66,6 +66,11 @@ export default function BoardPage() {
     onSettled: refresh,
   });
   const run = (fn: () => Promise<unknown>) => mutation.mutate(fn);
+
+  const publish = useMutation({
+    mutationFn: async (action: "publish" | "unpublish") => api.post(`/sessions/${session!.id}/${action}/`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["sessions"] }),
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -194,6 +199,17 @@ export default function BoardPage() {
             <KindBadge kind={session.kind} />
             <StatusBadge status={session.status} />
             {session.title && <span className="text-smoke">{session.title}</span>}
+            <div className="ml-auto">
+              {session.status === "DRAFT" ? (
+                <Button onClick={() => publish.mutate("publish")} disabled={publish.isPending}>
+                  {session.kind === "SPARRING" ? `🥊 ${t("board.publishSparring")}` : t("board.publish")}
+                </Button>
+              ) : (
+                <Button variant="ghost" onClick={() => publish.mutate("unpublish")} disabled={publish.isPending}>
+                  {t("board.unpublish")}
+                </Button>
+              )}
+            </div>
             {mutation.isPending && <span className="text-xs text-smoke">{t("board.saving")}</span>}
             {mutation.isError && <span className="text-xs text-glove">{t("board.error")}</span>}
           </div>
