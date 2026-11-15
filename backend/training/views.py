@@ -78,6 +78,14 @@ class TrainingSessionViewSet(viewsets.ModelViewSet):
         serializer.save(created_by=self.request.user)
 
     @action(detail=False, methods=["post"])
+    def sparring(self, request):
+        """Dedicated entry point for sparring sessions (students get a special alert on publish)."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(created_by=request.user, kind=TrainingSession.Kind.SPARRING)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=["post"])
     def generate(self, request):
         """Materialize regular sessions from the weekly schedule for a date range."""
         start = parse_date(request.data.get("from"), "from")

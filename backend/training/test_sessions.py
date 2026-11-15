@@ -53,6 +53,12 @@ def test_extra_session_on_any_day(coach, api_as):
     assert response.json()["status"] == "DRAFT"
 
 
+def test_sparring_endpoint_forces_sparring_kind(coach, api_as):
+    response = api_as(coach).post("/api/sessions/sparring/", {"date": "2026-11-21", "kind": "REGULAR"})
+    assert response.status_code == 201
+    assert response.json()["kind"] == "SPARRING"
+
+
 def test_session_range_filter(coach, api_as):
     TrainingSession.objects.create(date=date(2026, 11, 16))
     TrainingSession.objects.create(date=date(2026, 12, 1))
