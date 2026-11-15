@@ -6,11 +6,11 @@ from training.models import Assignment, Drill, TrainingSession
 
 
 @pytest.fixture
-def board(make_user):
+def board(make_user, gym):
     return {
-        "session": TrainingSession.objects.create(date=date(2026, 11, 16)),
-        "bag": Drill.objects.create(name="Heavy bag"),
-        "tap": Drill.objects.create(name="Shoulder tap"),
+        "session": TrainingSession.objects.create(gym=gym, date=date(2026, 11, 16)),
+        "bag": Drill.objects.create(gym=gym, name="Heavy bag"),
+        "tap": Drill.objects.create(gym=gym, name="Shoulder tap"),
         "a": make_user("a"),
         "b": make_user("b"),
         "c": make_user("c"),

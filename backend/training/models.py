@@ -8,13 +8,15 @@ hex_color = RegexValidator(r"^#[0-9a-fA-F]{6}$", "Use a hex color like #d62828."
 class DrillCategory(models.Model):
     """Coach-defined grouping for drills (warm-up, technique, conditioning, ...)."""
 
-    name = models.CharField(max_length=60, unique=True)
+    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="drill_categories")
+    name = models.CharField(max_length=60)
     color = models.CharField(max_length=7, default="#d62828", validators=[hex_color])
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ["order", "name"]
         verbose_name_plural = "drill categories"
+        constraints = [models.UniqueConstraint(fields=["gym", "name"], name="unique_category_name_per_gym")]
 
     def __str__(self) -> str:
         return self.name
@@ -23,6 +25,7 @@ class DrillCategory(models.Model):
 class Drill(models.Model):
     """A reusable training exercise from the coach's library."""
 
+    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="drills")
     name = models.CharField(max_length=120)
     description = models.TextField(blank=True)
     emoji = models.CharField(max_length=16, default="🥊")
@@ -54,20 +57,17 @@ def default_weekdays() -> list[int]:
 
 
 class WeeklySchedule(models.Model):
-    """Singleton holding the gym's regular training days, editable by coaches."""
+    """A gym's regular training days, editable by its coaches."""
 
+    gym = models.OneToOneField("accounts.Gym", on_delete=models.CASCADE, related_name="weekly_schedule")
     training_weekdays = models.JSONField(default=default_weekdays)
     default_start_time = models.TimeField(default="19:00")
     updated_at = models.DateTimeField(auto_now=True)
 
     @classmethod
-    def load(cls) -> "WeeklySchedule":
-        schedule, _ = cls.objects.get_or_create(pk=1)
+    def for_gym(cls, gym) -> "WeeklySchedule":
+        schedule, _ = cls.objects.get_or_create(gym=gym)
         return schedule
-
-    def save(self, *args, **kwargs):
-        self.pk = 1
-        super().save(*args, **kwargs)
 
 
 class TrainingSession(models.Model):
@@ -80,6 +80,7 @@ class TrainingSession(models.Model):
         DRAFT = "DRAFT", "Draft"
         PUBLISHED = "PUBLISHED", "Published"
 
+    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="training_sessions")
     date = models.DateField(db_index=True)
     start_time = models.TimeField(null=True, blank=True)
     title = models.CharField(max_length=120, blank=True)

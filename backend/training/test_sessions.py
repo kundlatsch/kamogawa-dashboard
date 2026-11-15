@@ -16,7 +16,7 @@ def test_schedule_is_configurable(coach, api_as):
         "/api/schedule/", {"training_weekdays": [1, 3], "default_start_time": "18:30"}, format="json"
     )
     assert response.status_code == 200
-    assert WeeklySchedule.load().training_weekdays == [1, 3]
+    assert WeeklySchedule.for_gym(coach.gym).training_weekdays == [1, 3]
 
 
 def test_schedule_rejects_invalid_weekdays(coach, api_as):
@@ -36,7 +36,7 @@ def test_generate_creates_sessions_on_training_days_only(coach, api_as):
 
 
 def test_generate_is_idempotent_and_respects_existing_days(coach, api_as):
-    TrainingSession.objects.create(date=MONDAY, kind=TrainingSession.Kind.SPARRING)
+    TrainingSession.objects.create(gym=coach.gym, date=MONDAY, kind=TrainingSession.Kind.SPARRING)
     client = api_as(coach)
     payload = {"from": "2026-11-16", "to": "2026-11-22"}
     client.post("/api/sessions/generate/", payload, format="json")
@@ -60,7 +60,7 @@ def test_sparring_endpoint_forces_sparring_kind(coach, api_as):
 
 
 def test_sparring_replaces_empty_regular_draft_on_same_day(coach, api_as):
-    TrainingSession.objects.create(date=date(2026, 11, 21))
+    TrainingSession.objects.create(gym=coach.gym, date=date(2026, 11, 21))
     api_as(coach).post("/api/sessions/sparring/", {"date": "2026-11-21"})
     assert list(TrainingSession.objects.values_list("kind", flat=True)) == ["SPARRING"]
 
@@ -68,14 +68,14 @@ def test_sparring_replaces_empty_regular_draft_on_same_day(coach, api_as):
 def test_sparring_keeps_regular_session_with_drills(coach, api_as):
     from training.models import Assignment, Drill
 
-    regular = TrainingSession.objects.create(date=date(2026, 11, 21))
-    Assignment.objects.create(session=regular, drill=Drill.objects.create(name="Bag"), is_broadcast=True)
+    regular = TrainingSession.objects.create(gym=coach.gym, date=date(2026, 11, 21))
+    Assignment.objects.create(session=regular, drill=Drill.objects.create(gym=coach.gym, name="Bag"), is_broadcast=True)
     api_as(coach).post("/api/sessions/sparring/", {"date": "2026-11-21"})
     assert TrainingSession.objects.count() == 2
 
 
 def test_session_range_filter(coach, api_as):
-    TrainingSession.objects.create(date=date(2026, 11, 16))
-    TrainingSession.objects.create(date=date(2026, 12, 1))
+    TrainingSession.objects.create(gym=coach.gym, date=date(2026, 11, 16))
+    TrainingSession.objects.create(gym=coach.gym, date=date(2026, 12, 1))
     data = api_as(coach).get("/api/sessions/?from=2026-11-01&to=2026-11-30").json()
     assert len(data) == 1

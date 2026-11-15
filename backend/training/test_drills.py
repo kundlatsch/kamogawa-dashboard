@@ -1,7 +1,7 @@
 from training.models import Drill
 
 
-def test_coach_creates_drill_with_card_look(coach, api_as):
+def test_coach_creates_drill_with_card_look(coach, api_as, gym):
     response = api_as(coach).post(
         "/api/drills/",
         {
@@ -14,6 +14,7 @@ def test_coach_creates_drill_with_card_look(coach, api_as):
     assert response.status_code == 201
     drill = Drill.objects.get()
     assert drill.created_by == coach
+    assert drill.gym == gym
     assert drill.color == "#e9b949"
 
 
@@ -22,8 +23,8 @@ def test_invalid_color_is_rejected(coach, api_as):
     assert response.status_code == 400
 
 
-def test_delete_archives_and_hides_drill(coach, api_as):
-    drill = Drill.objects.create(name="Bag work")
+def test_delete_archives_and_hides_drill(coach, api_as, gym):
+    drill = Drill.objects.create(gym=gym, name="Bag work")
     client = api_as(coach)
     client.delete(f"/api/drills/{drill.id}/")
     drill.refresh_from_db()

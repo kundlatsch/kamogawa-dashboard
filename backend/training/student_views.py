@@ -9,10 +9,11 @@ from datetime import timedelta
 from django.db.models import Prefetch, Q
 from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
 from accounts.models import User
+from accounts.permissions import IsGymMember
 from accounts.serializers import PublicUserSerializer
 
 from .models import Assignment, TrainingSession
@@ -42,11 +43,12 @@ class SessionSummarySerializer(serializers.ModelSerializer):
         fields = ["id", "date", "start_time", "title", "notes", "kind"]
 
 
-def published_sessions():
-    return TrainingSession.objects.filter(status=TrainingSession.Status.PUBLISHED)
+def published_sessions(user):
+    return TrainingSession.objects.filter(gym=user.gym, status=TrainingSession.Status.PUBLISHED)
 
 
 @api_view(["GET"])
+@permission_classes([IsGymMember])
 def my_routine(request):
     """Today's published sessions with the drills that apply to the current student."""
     today = timezone.localdate()
@@ -59,7 +61,7 @@ def my_routine(request):
         .prefetch_related(Prefetch("participants", queryset=User.objects.filter(is_active=True)))
         .order_by("order", "id")
     )
-    sessions = published_sessions().filter(date=today).prefetch_related(
+    sessions = published_sessions(user).filter(date=today).prefetch_related(
         Prefetch("assignments", queryset=assignments, to_attr="my_assignments")
     )
     data = []
@@ -73,9 +75,10 @@ def my_routine(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsGymMember])
 def my_upcoming(request):
     today = timezone.localdate()
-    sessions = published_sessions().filter(
+    sessions = published_sessions(request.user).filter(
         date__gt=today, date__lte=today + timedelta(days=UPCOMING_DAYS)
     )
     return Response(SessionSummarySerializer(sessions, many=True).data)

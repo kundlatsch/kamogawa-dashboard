@@ -12,7 +12,7 @@ def notify_session_published(session) -> int:
     """
     from training.models import TrainingSession
 
-    students = User.objects.filter(role=User.Role.STUDENT, is_active=True)
+    students = User.objects.filter(gym=session.gym, role=User.Role.STUDENT, is_active=True)
     if session.kind == TrainingSession.Kind.SPARRING:
         kind = Notification.Kind.SPARRING
     else:

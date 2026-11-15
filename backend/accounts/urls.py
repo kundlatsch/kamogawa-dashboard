@@ -6,7 +6,8 @@ from . import views
 
 router = DefaultRouter()
 router.register("students", views.StudentViewSet, basename="student")
-router.register("coaches", views.CoachViewSet, basename="coach")
+router.register("gyms", views.GymViewSet, basename="gym")
+router.register(r"gyms/(?P<gym_pk>\d+)/coaches", views.GymCoachViewSet, basename="gym-coach")
 
 urlpatterns = [
     path("auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),

@@ -6,7 +6,7 @@ from accounts.models import User
 
 
 class Command(BaseCommand):
-    help = "Create the initial admin account from ADMIN_USERNAME / ADMIN_PASSWORD if it does not exist."
+    help = "Create the platform account admin from ADMIN_USERNAME / ADMIN_PASSWORD if it does not exist."
 
     def handle(self, *args, **options):
         username = os.environ.get("ADMIN_USERNAME")
@@ -15,9 +15,9 @@ class Command(BaseCommand):
             self.stdout.write("ADMIN_USERNAME/ADMIN_PASSWORD not set; skipping admin bootstrap.")
             return
         if User.objects.filter(username=username).exists():
-            self.stdout.write(f"Admin '{username}' already exists.")
+            self.stdout.write(f"Account admin '{username}' already exists.")
             return
         User.objects.create_superuser(
-            username=username, password=password, role=User.Role.ADMIN, display_name="Admin"
+            username=username, password=password, role=User.Role.ACCOUNT_ADMIN, display_name="Admin"
         )
-        self.stdout.write(self.style.SUCCESS(f"Created admin '{username}'."))
+        self.stdout.write(self.style.SUCCESS(f"Created account admin '{username}'."))

@@ -8,7 +8,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from accounts.models import User
-from accounts.permissions import IsStaffRole, IsStaffRoleOrReadOnly
+from accounts.permissions import IsCoach, IsCoachOrReadOnly
 from notifications.services import notify_session_published
 
 from .models import Assignment, Drill, DrillCategory, TrainingSession, WeeklySchedule
@@ -29,48 +29,66 @@ def parse_date(value, field):
         raise ValidationError({field: "Use the YYYY-MM-DD format."})
 
 
-class DrillCategoryViewSet(viewsets.ModelViewSet):
-    queryset = DrillCategory.objects.all()
+class GymScopedViewSet(viewsets.ModelViewSet):
+    """Every query is limited to the requesting user's gym; new rows are created in it."""
+
+    permission_classes = [IsCoach]
+
+    @property
+    def gym(self):
+        return self.request.user.gym
+
+    def perform_create(self, serializer):
+        serializer.save(gym=self.gym)
+
+
+class DrillCategoryViewSet(GymScopedViewSet):
     serializer_class = DrillCategorySerializer
-    permission_classes = [IsStaffRoleOrReadOnly]
+    permission_classes = [IsCoachOrReadOnly]
+
+    def get_queryset(self):
+        return DrillCategory.objects.filter(gym=self.gym)
 
 
-class DrillViewSet(viewsets.ModelViewSet):
+class DrillViewSet(GymScopedViewSet):
     """Drill library. Deleting archives the drill so past sessions keep their history."""
 
     serializer_class = DrillSerializer
-    permission_classes = [IsStaffRole]
 
     def get_queryset(self):
-        queryset = Drill.objects.select_related("category")
+        queryset = Drill.objects.filter(gym=self.gym).select_related("category")
         if self.request.query_params.get("include_archived") != "true":
             queryset = queryset.filter(archived=False)
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(gym=self.gym, created_by=self.request.user)
 
     def perform_destroy(self, instance):
         instance.archived = True
         instance.save(update_fields=["archived", "updated_at"])
 
 
-class AssignmentViewSet(viewsets.ModelViewSet):
+class AssignmentViewSet(GymScopedViewSet):
     serializer_class = AssignmentSerializer
-    permission_classes = [IsStaffRole]
 
     def get_queryset(self):
-        queryset = Assignment.objects.select_related("drill", "drill__category").prefetch_related(
-            "participants"
+        queryset = (
+            Assignment.objects.filter(session__gym=self.gym)
+            .select_related("drill", "drill__category")
+            .prefetch_related("participants")
         )
         if "session" in self.request.query_params:
             queryset = queryset.filter(session_id=self.request.query_params["session"])
         return queryset
 
+    def perform_create(self, serializer):
+        serializer.save()  # the gym comes from the (gym-scoped) session
+
     def _student(self, request):
         try:
             return User.objects.get(
-                pk=request.data.get("student"), role=User.Role.STUDENT, is_active=True
+                pk=request.data.get("student"), gym=self.gym, role=User.Role.STUDENT, is_active=True
             )
         except (User.DoesNotExist, ValueError, TypeError):
             raise ValidationError({"student": "Unknown student."})
@@ -102,8 +120,8 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         ids = request.data.get("ids")
         if not isinstance(ids, list):
             raise ValidationError({"ids": "Send the ordered list of assignment ids."})
-        assignments = {a.id: a for a in Assignment.objects.filter(session_id=session_id)}
-        if set(ids) != set(assignments):
+        assignments = {a.id: a for a in self.get_queryset().filter(session_id=session_id)}
+        if not assignments or set(ids) != set(assignments):
             raise ValidationError({"ids": "The list must contain every assignment of the session."})
         for position, assignment_id in enumerate(ids):
             assignments[assignment_id].order = position
@@ -112,9 +130,9 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
 
 @api_view(["GET", "PUT"])
-@permission_classes([IsStaffRole])
+@permission_classes([IsCoach])
 def weekly_schedule(request):
-    schedule = WeeklySchedule.load()
+    schedule = WeeklySchedule.for_gym(request.user.gym)
     if request.method == "PUT":
         serializer = WeeklyScheduleSerializer(schedule, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -122,12 +140,11 @@ def weekly_schedule(request):
     return Response(WeeklyScheduleSerializer(schedule).data)
 
 
-class TrainingSessionViewSet(viewsets.ModelViewSet):
+class TrainingSessionViewSet(GymScopedViewSet):
     serializer_class = TrainingSessionSerializer
-    permission_classes = [IsStaffRole]
 
     def get_queryset(self):
-        queryset = TrainingSession.objects.all()
+        queryset = TrainingSession.objects.filter(gym=self.gym)
         params = self.request.query_params
         if "from" in params:
             queryset = queryset.filter(date__gte=parse_date(params["from"], "from"))
@@ -136,7 +153,7 @@ class TrainingSessionViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(gym=self.gym, created_by=self.request.user)
 
     @action(detail=True, methods=["post"])
     def publish(self, request, pk=None):
@@ -162,13 +179,13 @@ class TrainingSessionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         # Sparring takes over the day: an untouched regular draft on that date is replaced.
-        TrainingSession.objects.filter(
+        self.get_queryset().filter(
             date=serializer.validated_data["date"],
             kind=TrainingSession.Kind.REGULAR,
             status=TrainingSession.Status.DRAFT,
             assignments__isnull=True,
         ).delete()
-        serializer.save(created_by=request.user, kind=TrainingSession.Kind.SPARRING)
+        serializer.save(gym=self.gym, created_by=request.user, kind=TrainingSession.Kind.SPARRING)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=["post"])
@@ -176,7 +193,7 @@ class TrainingSessionViewSet(viewsets.ModelViewSet):
         """Materialize regular sessions from the weekly schedule for a date range."""
         start = parse_date(request.data.get("from"), "from")
         end = parse_date(request.data.get("to"), "to")
-        created = generate_regular_sessions(start, end, created_by=request.user)
+        created = generate_regular_sessions(self.gym, start, end, created_by=request.user)
         return Response(
             TrainingSessionSerializer(created, many=True).data, status=status.HTTP_201_CREATED
         )

@@ -1,4 +1,5 @@
 {
+  "gym": { "name": "Chacão Boxing Team", "slug": "chacao-boxing-team" },
   "categories": [
     { "name": "Aquecimento", "color": "#e9b949" },
     { "name": "Técnica", "color": "#d62828" },
