@@ -5,9 +5,9 @@
   --color-ring: #0a0a0a;        /* page background: the ring at night */
   --color-canvas: #151515;      /* raised surfaces */
   --color-rope: #262626;        /* borders, dividers */
-  --color-glove: #d62828;       /* primary accent (red; blue in the coach module) */
+  --color-glove: #d62828;       /* primary accent: fixed red; the gym's color in the student area */
   --color-glove-dark: #9b1b1b;  /* hover / pressed accent */
-  --color-blood: #d62828;       /* always red: sparring alerts, in every module */
+  --color-blood: #d62828;       /* always red: sparring alerts, in every area */
   --color-blood-dark: #9b1b1b;
   --color-belt: #e9b949;        /* gold highlight */
   --color-chalk: #f5f5f5;       /* primary text */
@@ -16,10 +16,9 @@
   --font-display: "Bebas Neue", "Impact", "Arial Narrow", sans-serif;
 }
 
-/* Coach module (admins and coaches): blue corner. Students keep the red corner. */
-[data-theme="coach"] {
-  --color-glove: #2563eb;
-  --color-glove-dark: #1d4ed8;
+/* Student area: AppShell sets --color-glove to the gym's color; derive the darker shade from it. */
+[data-theme="student"] {
+  --color-glove-dark: color-mix(in srgb, var(--color-glove) 70%, black);
 }
 
 html,
@@ -32,4 +31,54 @@ body {
   background-color: var(--color-ring);
   color: var(--color-chalk);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Tailwind v4 resets buttons to the default cursor; anything clickable should show the hand. */
+@layer base {
+  a[href],
+  button:not(:disabled),
+  [role="button"],
+  select,
+  summary,
+  label:has(> input[type="checkbox"]),
+  input[type="checkbox"],
+  input[type="color"] {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Scrollbars matching the dark ring theme (both directions). */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-ring);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-rope);
+  border: 2px solid var(--color-ring);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-glove);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--color-ring);
+}
+
+/* Firefox only understands the standard properties. */
+@supports (-moz-appearance: none) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-rope) var(--color-ring);
+  }
 }
