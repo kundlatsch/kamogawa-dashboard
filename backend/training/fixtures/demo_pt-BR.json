@@ -1,0 +1,26 @@
+{
+  "categories": [
+    { "name": "Aquecimento", "color": "#e9b949" },
+    { "name": "Técnica", "color": "#d62828" },
+    { "name": "Saco e manopla", "color": "#f77f00" },
+    { "name": "Condicionamento", "color": "#2a9d8f" },
+    { "name": "Desaquecimento", "color": "#3a86ff" }
+  ],
+  "drills": [
+    { "name": "Pular corda", "category": "Aquecimento", "emoji": "🔥", "color": "#e9b949", "default_duration_minutes": 10, "description": "Ritmo constante, alternando base e pés juntos." },
+    { "name": "Sombra", "category": "Aquecimento", "emoji": "🌀", "color": "#e9b949", "default_rounds": 3, "description": "Movimentação livre trabalhando guarda e saídas." },
+    { "name": "Bater saco", "category": "Saco e manopla", "emoji": "🥊", "color": "#d62828", "default_rounds": 3, "description": "Rounds de 3 minutos com 1 minuto de descanso." },
+    { "name": "Manopla", "category": "Saco e manopla", "emoji": "🎯", "color": "#f77f00", "default_rounds": 4, "description": "Combinações chamadas pelo parceiro." },
+    { "name": "Toque no ombro", "category": "Técnica", "emoji": "👊", "color": "#9d4edd", "default_rounds": 3, "description": "Em dupla: toque no ombro do parceiro mantendo a guarda alta." },
+    { "name": "Esquiva e contra-ataque", "category": "Técnica", "emoji": "🛡️", "color": "#d62828", "default_rounds": 3, "description": "Esquiva lateral seguida de cruzado." },
+    { "name": "Abdominais", "category": "Condicionamento", "emoji": "💪", "color": "#2a9d8f", "default_duration_minutes": 5 },
+    { "name": "Burpees", "category": "Condicionamento", "emoji": "🥵", "color": "#2a9d8f", "default_rounds": 3 },
+    { "name": "Alongamento", "category": "Desaquecimento", "emoji": "🧘", "color": "#3a86ff", "default_duration_minutes": 10 }
+  ],
+  "students": [
+    { "username": "aluno.a", "display_name": "Aluno A", "avatar_emoji": "🐯", "color": "#f77f00" },
+    { "username": "aluno.b", "display_name": "Aluno B", "avatar_emoji": "🦅", "color": "#3a86ff" },
+    { "username": "aluno.c", "display_name": "Aluno C", "avatar_emoji": "🐺", "color": "#9d4edd" }
+  ],
+  "coach": { "username": "treinador", "display_name": "Treinador", "avatar_emoji": "🏆", "color": "#e9b949" }
+}
