@@ -176,6 +176,22 @@ drills so the board can be tried immediately.
 
 Each phase ends with tests passing and the stack booting with `docker compose up`.
 
+**Status (2026-11-15):** phases 1–9 are implemented. Additional decisions made
+while building:
+
+- Ports: dev frontend `5180`, dev API `8010`, production profile `8088` (avoids
+  other CodeVault stacks on 5173/8000/8080).
+- Regular sessions are materialized from the schedule on demand (only for today
+  onward) when the coach opens the calendar or board.
+- Creating a sparring session on a day that only has an untouched regular draft
+  replaces that draft.
+- Notifications store a kind + session and the UI renders the text, so they are
+  translatable. Publishing alerts students who have drills in the session
+  (everyone when there is a broadcast drill or for sparring); re-publishing
+  never duplicates alerts.
+- Demo content lives in `backend/training/fixtures/demo_pt-BR.json` (locale
+  content, like the UI translations).
+
 ## 8. Out of scope for now
 
 - File uploads (thumbnails are emoji + color, optional external image URL;
