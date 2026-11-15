@@ -5,7 +5,8 @@ import { useTranslation } from "react-i18next";
 
 import { api } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
-import { Button, PageHeader, PasswordInput } from "../components/ui";
+import { ColorPicker, EmojiPicker, AVATAR_EMOJIS } from "../components/pickers";
+import { Button, Input, PageHeader, PasswordInput } from "../components/ui";
 
 const MIN_LENGTH = 8;
 
@@ -48,22 +49,7 @@ export default function ProfilePage() {
     <section className="mx-auto flex max-w-xl flex-col gap-6">
       <PageHeader title={t("profile.title")} />
 
-      <div className="flex items-center gap-4 rounded-xl border border-rope bg-canvas p-5">
-        <span
-          className="flex h-16 w-16 items-center justify-center rounded-full text-3xl"
-          style={{ backgroundColor: `${user.color}33`, border: `2px solid ${user.color}` }}
-        >
-          {user.avatar_emoji}
-        </span>
-        <div className="min-w-0">
-          <p className="text-xl font-semibold">{user.display_name}</p>
-          <p className="text-sm text-smoke">@{user.username}</p>
-          <p className="text-sm text-smoke">
-            {t(`roles.${user.role}`)}
-            {user.gym && ` · ${user.gym.name}`}
-          </p>
-        </div>
-      </div>
+      <ProfileDetails />
 
       <form onSubmit={submit} className="flex flex-col gap-4 rounded-xl border border-rope bg-canvas p-5">
         <h2 className="font-display text-2xl tracking-wide uppercase">{t("profile.changePassword")}</h2>
@@ -98,5 +84,66 @@ export default function ProfilePage() {
         </div>
       </form>
     </section>
+  );
+}
+
+/** Shows who the user is and lets them change their display name, emoji and color (never the login). */
+function ProfileDetails() {
+  const { t } = useTranslation();
+  const { user, refreshUser } = useAuth();
+  const [displayName, setDisplayName] = useState(user?.display_name ?? "");
+  const [emoji, setEmoji] = useState(user?.avatar_emoji ?? "🥊");
+  const [color, setColor] = useState(user?.color ?? "#d62828");
+
+  const save = useMutation({
+    mutationFn: async () =>
+      api.patch("/auth/me/", { display_name: displayName.trim(), avatar_emoji: emoji, color }),
+    onSuccess: () => refreshUser(),
+  });
+
+  if (!user) return null;
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (displayName.trim()) save.mutate();
+      }}
+      className="flex flex-col gap-4 rounded-xl border border-rope bg-canvas p-5"
+    >
+      <div className="flex items-center gap-4">
+        <span
+          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-3xl"
+          style={{ backgroundColor: `${color}33`, border: `2px solid ${color}` }}
+        >
+          {emoji}
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-xl font-semibold">{displayName || user.display_name}</p>
+          <p className="text-sm text-smoke">
+            @{user.username} · {t("profile.loginFixed")}
+          </p>
+          <p className="text-sm text-smoke">
+            {t(`roles.${user.role}`)}
+            {user.gym && ` · ${user.gym.name}`}
+          </p>
+        </div>
+      </div>
+      <Input
+        label={t("profile.displayName")}
+        value={displayName}
+        maxLength={80}
+        onChange={(event) => setDisplayName(event.target.value)}
+        required
+      />
+      <EmojiPicker value={emoji} onChange={setEmoji} options={AVATAR_EMOJIS} label={t("profile.emoji")} />
+      <ColorPicker value={color} onChange={setColor} label={t("profile.color")} />
+      <div className="flex items-center gap-3">
+        <Button type="submit" disabled={save.isPending}>
+          {t("profile.saveDetails")}
+        </Button>
+        {save.isSuccess && <span className="text-sm text-belt">{t("profile.detailsSaved")}</span>}
+        {save.isError && <span className="text-sm text-glove">{t("profile.detailsError")}</span>}
+      </div>
+    </form>
   );
 }

@@ -9,13 +9,34 @@ export const CARD_COLORS = [
   "#d62828", "#9b1b1b", "#f77f00", "#e9b949", "#2a9d8f", "#3a86ff", "#9d4edd", "#ef476f", "#6b7280", "#f5f5f5",
 ];
 
-export function EmojiPicker({ value, onChange }: { value: string; onChange: (emoji: string) => void }) {
+export const AVATAR_EMOJIS = ["🥊", "🔥", "⚡", "🐯", "🦁", "🐺", "🦅", "🐉", "🦈", "💪", "👊", "🏆", "⭐", "😎", "🤠", "🥷"];
+
+/** Last user-perceived character, so multi-code-point emoji (e.g. ❤️‍🔥) stay intact. */
+export function lastGrapheme(text: string): string {
+  if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
+    const segments = [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text)];
+    return segments.at(-1)?.segment ?? "";
+  }
+  return [...text].slice(-1).join("");
+}
+
+export function EmojiPicker({
+  value,
+  onChange,
+  options = DRILL_EMOJIS,
+  label,
+}: {
+  value: string;
+  onChange: (emoji: string) => void;
+  options?: string[];
+  label?: string;
+}) {
   const { t } = useTranslation();
   return (
     <fieldset>
-      <legend className="mb-1 text-sm text-smoke">{t("drills.emoji")}</legend>
+      <legend className="mb-1 text-sm text-smoke">{label ?? t("drills.emoji")}</legend>
       <div className="flex flex-wrap items-center gap-1">
-        {DRILL_EMOJIS.map((emoji) => (
+        {options.map((emoji) => (
           <button
             type="button"
             key={emoji}
@@ -28,8 +49,8 @@ export function EmojiPicker({ value, onChange }: { value: string; onChange: (emo
         <input
           aria-label={t("drills.customEmoji")}
           placeholder={t("drills.customEmoji")}
-          value={DRILL_EMOJIS.includes(value) ? "" : value}
-          onChange={(event) => event.target.value && onChange([...event.target.value].slice(-1).join(""))}
+          value={options.includes(value) ? "" : value}
+          onChange={(event) => event.target.value && onChange(lastGrapheme(event.target.value))}
           className="w-24 rounded-md border border-rope bg-ring px-2 py-1 text-center"
         />
       </div>

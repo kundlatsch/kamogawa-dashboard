@@ -212,6 +212,13 @@
     "wrongCurrent": "A senha atual está incorreta.",
     "weakPassword": "Essa senha é fraca demais. Tente uma mais longa ou menos comum.",
     "changed": "Senha alterada!",
-    "save": "Salvar nova senha"
+    "save": "Salvar nova senha",
+    "displayName": "Nome exibido",
+    "emoji": "Seu emoji",
+    "color": "Sua cor",
+    "loginFixed": "o usuário de login não muda",
+    "saveDetails": "Salvar perfil",
+    "detailsSaved": "Perfil atualizado!",
+    "detailsError": "Não foi possível salvar. Confira o nome e a cor."
   }
 }

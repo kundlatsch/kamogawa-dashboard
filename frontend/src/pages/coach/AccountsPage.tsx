@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
 import type { GeneratedPassword, User } from "../../api/types";
+import { AVATAR_EMOJIS } from "../../components/pickers";
 import { Button, Input, Modal, PageHeader } from "../../components/ui";
 
 /** Manages accounts of one role (students or coaches); passwords are always server-generated. */
@@ -138,7 +139,7 @@ export default function AccountsPage({
   );
 }
 
-const AVATARS = ["🥊", "🔥", "⚡", "🐯", "🦁", "🐺", "🦅", "💪", "👊", "🏆"];
+const AVATARS = AVATAR_EMOJIS;
 const COLORS = ["#d62828", "#e9b949", "#f77f00", "#3a86ff", "#2a9d8f", "#9d4edd", "#ef476f", "#f5f5f5"];
 
 function CreateAccountModal({
