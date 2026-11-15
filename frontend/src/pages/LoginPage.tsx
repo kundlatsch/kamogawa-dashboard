@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext";
-import { Button, Input } from "../components/ui";
+import { Button, Input, PasswordInput } from "../components/ui";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -50,9 +50,8 @@ export default function LoginPage() {
           onChange={(event) => setUsername(event.target.value)}
           required
         />
-        <Input
+        <PasswordInput
           label={t("auth.password")}
-          type="password"
           autoComplete="current-password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}

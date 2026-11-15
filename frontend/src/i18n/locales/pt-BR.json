@@ -20,7 +20,9 @@
     "password": "Senha",
     "login": "Entrar",
     "logout": "Sair",
-    "invalid": "Usuário ou senha incorretos."
+    "invalid": "Usuário ou senha incorretos.",
+    "showPassword": "Mostrar senha",
+    "hidePassword": "Ocultar senha"
   },
   "nav": {
     "board": "Quadro",

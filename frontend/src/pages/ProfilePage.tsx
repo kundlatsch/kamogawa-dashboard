@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { api } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
-import { Button, Input, PageHeader } from "../components/ui";
+import { Button, PageHeader, PasswordInput } from "../components/ui";
 
 const MIN_LENGTH = 8;
 
@@ -67,25 +67,22 @@ export default function ProfilePage() {
 
       <form onSubmit={submit} className="flex flex-col gap-4 rounded-xl border border-rope bg-canvas p-5">
         <h2 className="font-display text-2xl tracking-wide uppercase">{t("profile.changePassword")}</h2>
-        <Input
+        <PasswordInput
           label={t("profile.currentPassword")}
-          type="password"
           autoComplete="current-password"
           value={current}
           onChange={(e) => setCurrent(e.target.value)}
           required
         />
-        <Input
+        <PasswordInput
           label={t("profile.newPassword")}
-          type="password"
           autoComplete="new-password"
           value={next}
           onChange={(e) => setNext(e.target.value)}
           required
         />
-        <Input
+        <PasswordInput
           label={t("profile.confirmPassword")}
-          type="password"
           autoComplete="new-password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}

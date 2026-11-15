@@ -1,4 +1,5 @@
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import { useId, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 type Variant = "primary" | "ghost" | "danger";
 
@@ -30,6 +31,41 @@ export function Input({ label, ...props }: InputHTMLAttributes<HTMLInputElement>
         {...props}
       />
     </label>
+  );
+}
+
+/** Password field with a show/hide toggle. */
+export function PasswordInput({
+  label,
+  ...props
+}: Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & { label: string }) {
+  const { t } = useTranslation();
+  const id = useId();
+  const [visible, setVisible] = useState(false);
+  return (
+    <div className="flex flex-col gap-1 text-sm">
+      <label htmlFor={id} className="text-smoke">
+        {label}
+      </label>
+      <div className="flex rounded-md border border-rope bg-ring focus-within:border-glove">
+        <input
+          id={id}
+          type={visible ? "text" : "password"}
+          className="min-w-0 flex-1 bg-transparent px-3 py-2 text-chalk outline-none"
+          {...props}
+        />
+        <button
+          type="button"
+          onClick={() => setVisible((v) => !v)}
+          aria-label={visible ? t("auth.hidePassword") : t("auth.showPassword")}
+          aria-pressed={visible}
+          title={visible ? t("auth.hidePassword") : t("auth.showPassword")}
+          className="px-3 text-smoke hover:text-chalk"
+        >
+          {visible ? "🙈" : "👁️"}
+        </button>
+      </div>
+    </div>
   );
 }
 
