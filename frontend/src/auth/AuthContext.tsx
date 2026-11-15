@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { isAxiosError } from "axios";
+
 import { api, tokens } from "../api/client";
 import type { User } from "../api/types";
 
@@ -23,11 +25,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!tokens.access) return;
-    api
-      .get<User>("/auth/me/")
-      .then(({ data }) => setUser(data))
-      .catch(() => tokens.clear())
-      .finally(() => setLoading(false));
+    let cancelled = false;
+    // Retry transient failures (e.g. backend restarting) instead of logging the user out;
+    // only a rejected token ends the session.
+    const restore = async (attempt: number): Promise<void> => {
+      try {
+        const { data } = await api.get<User>("/auth/me/");
+        if (!cancelled) setUser(data);
+      } catch (error) {
+        const status = isAxiosError(error) ? error.response?.status : undefined;
+        if (status === 401 || status === 403 || attempt >= 5) {
+          tokens.clear();
+          return;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
+        if (!cancelled) return restore(attempt + 1);
+      }
+    };
+    restore(0).finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {

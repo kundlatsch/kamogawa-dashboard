@@ -8,7 +8,9 @@ import AppShell, { type NavItem } from "./components/AppShell";
 import LoginPage from "./pages/LoginPage";
 import Placeholder from "./pages/Placeholder";
 import AccountsPage from "./pages/coach/AccountsPage";
+import CalendarPage from "./pages/coach/CalendarPage";
 import DrillsPage from "./pages/coach/DrillsPage";
+import SettingsPage from "./pages/coach/SettingsPage";
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 15_000, retry: 1 } } });
 
@@ -38,11 +40,11 @@ function AppRoutes() {
       <Routes>
         <Route element={<AppShell nav={nav} />}>
           <Route index element={<Placeholder titleKey="nav.board" />} />
-          <Route path="calendar" element={<Placeholder titleKey="nav.calendar" />} />
+          <Route path="calendar" element={<CalendarPage />} />
           <Route path="drills" element={<DrillsPage />} />
           <Route path="students" element={<AccountsPage kind="students" />} />
           {user.role === "ADMIN" && <Route path="coaches" element={<AccountsPage kind="coaches" />} />}
-          <Route path="settings" element={<Placeholder titleKey="nav.settings" />} />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

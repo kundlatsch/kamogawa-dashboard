@@ -43,5 +43,24 @@ export interface Drill {
   archived: boolean;
 }
 
+export interface WeeklySchedule {
+  training_weekdays: number[];
+  default_start_time: string;
+}
+
+export type SessionKind = "REGULAR" | "EXTRA" | "SPARRING";
+export type SessionStatus = "DRAFT" | "PUBLISHED";
+
+export interface TrainingSession {
+  id: number;
+  date: string;
+  start_time: string | null;
+  title: string;
+  notes: string;
+  kind: SessionKind;
+  status: SessionStatus;
+  published_at: string | null;
+}
+
 export const isStaff = (user: User | null | undefined) =>
   user?.role === "ADMIN" || user?.role === "COACH";
