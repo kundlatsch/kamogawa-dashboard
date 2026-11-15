@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import ValidationError
@@ -135,6 +136,23 @@ class TrainingSessionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+
+    @action(detail=True, methods=["post"])
+    def publish(self, request, pk=None):
+        """Make the session visible to students."""
+        session = self.get_object()
+        if session.status != TrainingSession.Status.PUBLISHED:
+            session.status = TrainingSession.Status.PUBLISHED
+            session.published_at = timezone.now()
+            session.save(update_fields=["status", "published_at"])
+        return Response(self.get_serializer(session).data)
+
+    @action(detail=True, methods=["post"])
+    def unpublish(self, request, pk=None):
+        session = self.get_object()
+        session.status = TrainingSession.Status.DRAFT
+        session.save(update_fields=["status"])
+        return Response(self.get_serializer(session).data)
 
     @action(detail=False, methods=["post"])
     def sparring(self, request):
