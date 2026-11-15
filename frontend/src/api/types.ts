@@ -4,6 +4,8 @@ export interface GymSummary {
   id: number;
   name: string;
   slug: string;
+  /** Accent color of the student area. */
+  color: string;
 }
 
 export interface Gym extends GymSummary {

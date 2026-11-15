@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
+import { useAuth } from "../../auth/AuthContext";
+import { Wordmark } from "../../components/AppShell";
 import { useCategories, useSchedule } from "../../api/hooks";
 import type { DrillCategory } from "../../api/types";
 import { ColorPicker } from "../../components/pickers";
@@ -14,9 +16,59 @@ export default function SettingsPage() {
   return (
     <section className="flex flex-col gap-8">
       <PageHeader title={t("settings.title")} />
+      <GymSettings />
       <ScheduleSettings />
       <CategorySettings />
     </section>
+  );
+}
+
+/** Gym name and the accent color of the student area. */
+function GymSettings() {
+  const { t } = useTranslation();
+  const { user, refreshUser } = useAuth();
+  const [name, setName] = useState(user?.gym?.name ?? "");
+  const [color, setColor] = useState(user?.gym?.color ?? "#d62828");
+
+  const save = useMutation({
+    mutationFn: async () => api.patch("/my-gym/", { name: name.trim(), color }),
+    onSuccess: () => refreshUser(),
+  });
+
+  return (
+    <div className="rounded-xl border border-rope bg-canvas p-5">
+      <h2 className="mb-1 font-display text-2xl tracking-wide uppercase">{t("settings.gym")}</h2>
+      <p className="mb-4 text-sm text-smoke">{t("settings.gymHint")}</p>
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (name.trim()) save.mutate();
+        }}
+      >
+        <Input label={t("gyms.name")} value={name} onChange={(event) => setName(event.target.value)} required />
+        <ColorPicker value={color} onChange={setColor} label={t("settings.gymColor")} />
+        <div>
+          <p className="mb-1 text-sm text-smoke">{t("settings.studentPreview")}</p>
+          <div
+            data-theme="student"
+            style={{ "--color-glove": color } as CSSProperties}
+            className="flex flex-wrap items-center gap-3 rounded-lg border border-rope bg-ring p-3"
+          >
+            <Wordmark name={name || " "} />
+            <span className="rounded-md bg-glove px-3 py-1.5 text-sm font-medium">{t("nav.today")}</span>
+            <span className="text-sm text-smoke">{t("nav.upcoming")}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button type="submit" disabled={save.isPending}>
+            {t("common.save")}
+          </Button>
+          {save.isSuccess && <span className="text-sm text-belt">{t("settings.saved")}</span>}
+          {save.isError && <span className="text-sm text-glove">{t("settings.gymError")}</span>}
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -58,7 +110,7 @@ function ScheduleSettings() {
             type="button"
             aria-pressed={weekdays.includes(day)}
             onClick={() => toggle(day)}
-            className={`rounded-full px-4 py-2 text-sm font-semibold capitalize ${
+            className={`rounded-full px-4 py-2 text-sm font-semibold first-letter:uppercase ${
               weekdays.includes(day) ? "bg-glove text-chalk" : "border border-rope text-smoke"
             }`}
           >

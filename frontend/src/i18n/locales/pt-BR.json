@@ -115,7 +115,12 @@
     "categories": "Categorias de treino",
     "categoriesHint": "Use para organizar a biblioteca (aquecimento, técnica, condicionamento…).",
     "categoryName": "Nova categoria",
-    "addCategory": "Adicionar categoria"
+    "addCategory": "Adicionar categoria",
+    "gym": "Academia",
+    "gymHint": "Nome da academia e a cor da área dos alunos. A área do treinador continua vermelha.",
+    "studentPreview": "Prévia da área do aluno",
+    "gymError": "Não foi possível salvar. Confira o nome e a cor.",
+    "gymColor": "Cor da área dos alunos"
   },
   "calendar": {
     "previous": "Semanas anteriores",
@@ -190,5 +195,21 @@
     "passwordGeneratedNote": "A senha é gerada automaticamente e mostrada uma única vez.",
     "passwordTitle": "Senha gerada",
     "passwordHint": "Anote ou copie agora e envie para a pessoa. Ela não será mostrada de novo."
+  },
+  "profile": {
+    "title": "Meu perfil",
+    "changePassword": "Trocar senha",
+    "currentPassword": "Senha atual",
+    "newPassword": "Nova senha",
+    "confirmPassword": "Repita a nova senha",
+    "rules_one": "Mínimo de {{count}} caractere. Evite senhas comuns ou só com números.",
+    "rules_other": "Mínimo de {{count}} caracteres. Evite senhas comuns ou só com números.",
+    "tooShort_one": "A nova senha precisa ter pelo menos {{count}} caractere.",
+    "tooShort_other": "A nova senha precisa ter pelo menos {{count}} caracteres.",
+    "mismatch": "As duas senhas novas não são iguais.",
+    "wrongCurrent": "A senha atual está incorreta.",
+    "weakPassword": "Essa senha é fraca demais. Tente uma mais longa ou menos comum.",
+    "changed": "Senha alterada!",
+    "save": "Salvar nova senha"
   }
 }

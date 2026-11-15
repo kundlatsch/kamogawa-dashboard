@@ -24,7 +24,7 @@ export default function SparringBanner() {
         <div
           key={session.id}
           role="alert"
-          className="relative overflow-hidden rounded-xl border-2 border-glove bg-gradient-to-r from-glove-dark to-glove p-4 shadow-[0_0_30px_#d6282866]"
+          className="relative overflow-hidden rounded-xl border-2 border-blood bg-gradient-to-r from-blood-dark to-blood p-4 shadow-[0_0_30px_#d6282866]"
         >
           <div className="flex items-center gap-3">
             <span className="animate-bounce text-4xl" aria-hidden>

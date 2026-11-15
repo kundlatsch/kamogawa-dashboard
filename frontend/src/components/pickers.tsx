@@ -37,11 +37,19 @@ export function EmojiPicker({ value, onChange }: { value: string; onChange: (emo
   );
 }
 
-export function ColorPicker({ value, onChange }: { value: string; onChange: (color: string) => void }) {
+export function ColorPicker({
+  value,
+  onChange,
+  label,
+}: {
+  value: string;
+  onChange: (color: string) => void;
+  label?: string;
+}) {
   const { t } = useTranslation();
   return (
     <fieldset>
-      <legend className="mb-1 text-sm text-smoke">{t("drills.color")}</legend>
+      <legend className="mb-1 text-sm text-smoke">{label ?? t("drills.color")}</legend>
       <div className="flex flex-wrap items-center gap-2">
         {CARD_COLORS.map((color) => (
           <button

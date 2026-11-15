@@ -20,7 +20,7 @@ export default function UpcomingPage() {
           <li
             key={session.id}
             className={`flex flex-wrap items-center gap-3 rounded-xl border p-4 ${
-              session.kind === "SPARRING" ? "border-glove bg-glove/15" : "border-rope bg-canvas"
+              session.kind === "SPARRING" ? "border-blood bg-blood/15" : "border-rope bg-canvas"
             }`}
           >
             <span className="font-semibold first-letter:uppercase">

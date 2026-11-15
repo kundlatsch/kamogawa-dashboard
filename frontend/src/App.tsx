@@ -6,6 +6,7 @@ import { isCoach } from "./api/types";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import AppShell, { type NavItem } from "./components/AppShell";
 import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
 import GymDetailPage from "./pages/admin/GymDetailPage";
 import GymsPage from "./pages/admin/GymsPage";
 import TodayPage from "./pages/student/TodayPage";
@@ -37,6 +38,7 @@ function AppRoutes() {
         <Route element={<AppShell nav={[{ to: "/", labelKey: "nav.gyms" }]} />}>
           <Route index element={<GymsPage />} />
           <Route path="gyms/:gymId" element={<GymDetailPage />} />
+          <Route path="profile" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
@@ -59,6 +61,7 @@ function AppRoutes() {
           <Route path="drills" element={<DrillsPage />} />
           <Route path="students" element={<AccountsPage kind="students" />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="profile" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
@@ -74,6 +77,7 @@ function AppRoutes() {
       <Route element={<AppShell nav={nav} />}>
         <Route index element={<TodayPage />} />
         <Route path="upcoming" element={<UpcomingPage />} />
+        <Route path="profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router-dom";
 
@@ -26,9 +27,15 @@ export default function AppShell({ nav }: { nav: NavItem[] }) {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const isAccountAdmin = user?.role === "ACCOUNT_ADMIN";
+  const isStudent = user?.role === "STUDENT";
 
   return (
-    <div className="min-h-screen" data-theme={user?.role === "STUDENT" ? "student" : "coach"}>
+    <div
+      className="min-h-screen"
+      data-theme={isStudent ? "student" : "staff"}
+      // Students see their gym's color; coaches and admins keep the fixed red theme.
+      style={isStudent && user?.gym ? ({ "--color-glove": user.gym.color } as CSSProperties) : undefined}
+    >
       <header className="sticky top-0 z-40 border-b border-rope bg-ring/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-4 py-3">
           <Wordmark name={user?.gym?.name ?? t("brand.name")} />
@@ -55,9 +62,15 @@ export default function AppShell({ nav }: { nav: NavItem[] }) {
           </nav>
           <div className="flex items-center gap-3 text-sm">
             {user?.role === "STUDENT" && <NotificationBell />}
-            <span className="text-smoke">
+            <NavLink
+              to="/profile"
+              title={t("profile.title")}
+              className={({ isActive }) =>
+                `rounded-md px-2 py-1 ${isActive ? "bg-rope text-chalk" : "text-smoke hover:text-chalk"}`
+              }
+            >
               {user?.avatar_emoji} {user?.display_name}
-            </span>
+            </NavLink>
             <button onClick={logout} className="text-smoke hover:text-glove">
               {t("auth.logout")}
             </button>

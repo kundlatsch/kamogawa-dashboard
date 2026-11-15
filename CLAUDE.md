@@ -38,8 +38,9 @@ See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
   `@dnd-kit` for drag and drop, TanStack Query for server state. Tests with Vitest.
 - Theme: boxing colors — black backgrounds, red accents, white text, gold
   highlights. Keep colors as Tailwind theme tokens, not ad-hoc hex values.
-  `glove` is the module accent: red for students, blue in the coach module
-  (`data-theme="coach"`). Use `blood` for sparring, which stays red everywhere.
+  `glove` is the accent: fixed red for coaches and account admins, and the
+  gym's own color (`Gym.color`, default red) in the student area
+  (`data-theme="student"`). Use `blood` for sparring, which stays red everywhere.
 - Multi-gym: every tenant-owned query must be filtered by `request.user.gym`
   (use `GymScopedViewSet` / `GymScopedSerializer` in `training`), and every new
   endpoint needs a cross-gym isolation test (see `training/test_gym_isolation.py`).

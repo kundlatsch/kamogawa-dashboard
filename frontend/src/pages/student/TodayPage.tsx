@@ -46,7 +46,7 @@ export default function TodayPage() {
         <div key={session.id} className="flex flex-col gap-3">
           <div
             className={`flex flex-wrap items-center gap-2 rounded-xl p-3 ${
-              session.kind === "SPARRING" ? "border border-glove bg-glove/15" : "bg-canvas"
+              session.kind === "SPARRING" ? "border border-blood bg-blood/15" : "bg-canvas"
             }`}
           >
             <KindBadge kind={session.kind} />

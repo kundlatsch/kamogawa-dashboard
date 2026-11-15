@@ -10,6 +10,8 @@ interface AuthState {
   loading: boolean;
   login: (username: string, password: string) => Promise<User>;
   logout: () => void;
+  /** Reload the signed-in user (e.g. after the gym name or color changed). */
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -64,7 +66,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return me.data;
   }, []);
 
-  const value = useMemo(() => ({ user, loading, login, logout }), [user, loading, login, logout]);
+  const refreshUser = useCallback(async () => {
+    const { data } = await api.get<User>("/auth/me/");
+    setUser(data);
+  }, []);
+
+  const value = useMemo(
+    () => ({ user, loading, login, logout, refreshUser }),
+    [user, loading, login, logout, refreshUser],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
