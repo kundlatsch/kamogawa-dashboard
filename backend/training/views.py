@@ -161,6 +161,13 @@ class TrainingSessionViewSet(viewsets.ModelViewSet):
         """Dedicated entry point for sparring sessions (students get a special alert on publish)."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        # Sparring takes over the day: an untouched regular draft on that date is replaced.
+        TrainingSession.objects.filter(
+            date=serializer.validated_data["date"],
+            kind=TrainingSession.Kind.REGULAR,
+            status=TrainingSession.Status.DRAFT,
+            assignments__isnull=True,
+        ).delete()
         serializer.save(created_by=request.user, kind=TrainingSession.Kind.SPARRING)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

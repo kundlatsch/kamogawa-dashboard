@@ -59,6 +59,21 @@ def test_sparring_endpoint_forces_sparring_kind(coach, api_as):
     assert response.json()["kind"] == "SPARRING"
 
 
+def test_sparring_replaces_empty_regular_draft_on_same_day(coach, api_as):
+    TrainingSession.objects.create(date=date(2026, 11, 21))
+    api_as(coach).post("/api/sessions/sparring/", {"date": "2026-11-21"})
+    assert list(TrainingSession.objects.values_list("kind", flat=True)) == ["SPARRING"]
+
+
+def test_sparring_keeps_regular_session_with_drills(coach, api_as):
+    from training.models import Assignment, Drill
+
+    regular = TrainingSession.objects.create(date=date(2026, 11, 21))
+    Assignment.objects.create(session=regular, drill=Drill.objects.create(name="Bag"), is_broadcast=True)
+    api_as(coach).post("/api/sessions/sparring/", {"date": "2026-11-21"})
+    assert TrainingSession.objects.count() == 2
+
+
 def test_session_range_filter(coach, api_as):
     TrainingSession.objects.create(date=date(2026, 11, 16))
     TrainingSession.objects.create(date=date(2026, 12, 1))
