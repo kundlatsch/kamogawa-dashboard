@@ -39,7 +39,7 @@ run dev servers forever.
 
 ```
 User (Django auth user)
- └── Profile: role = COACH | STUDENT, display_name, avatar_emoji, color, active
+ └── Profile: role = ADMIN | COACH | STUDENT, display_name, avatar_emoji, color, active
 
 WeeklySchedule (singleton, coach-editable)
  └── training_weekdays: [MON, WED, SAT]   default, fully configurable
@@ -96,7 +96,8 @@ Key rules:
 | Endpoint | Who | Purpose |
 |---|---|---|
 | `POST auth/token/`, `auth/token/refresh/`, `GET auth/me/` | all | Login + current user |
-| `students/` CRUD | coach | Manage student accounts |
+| `students/` CRUD, `students/{id}/reset-password/` | coach | Manage student accounts; generated passwords |
+| `coaches/` CRUD | admin | Manage coach accounts |
 | `drills/` CRUD | coach (read: all) | Drill library |
 | `schedule/` GET/PUT | coach | Weekly training days config |
 | `sessions/` CRUD, `?from=&to=` | coach | Sessions calendar |
@@ -183,6 +184,24 @@ Each phase ends with tests passing and the stack booting with `docker compose up
 - Cloud deployment, HTTPS, backups.
 - Attendance tracking, progress metrics, payments.
 
-## 9. Open questions (to confirm with the user)
+## 9. Confirmed decisions (2026-11-15)
 
-See the thread; answers will be recorded here once confirmed.
+1. **UI language**: Portuguese (pt-BR) only for now, but fully internationalized
+   from day one (`react-i18next`, all UI strings in locale files under
+   `frontend/src/i18n/locales/`; backend messages through Django's `gettext`).
+   Adding a language = adding a locale file.
+2. **Student accounts**: the coach creates them. The backend generates a random
+   password, shown once to the coach to hand to the student. The coach can
+   reset a student's password (new generated password, shown once). No email.
+3. **Notifications**: in-app only (bell + red sparring banner).
+4. **Completion**: students only view their routine; no "done" tracking. A
+   routine is valid for its session day only — the student dashboard shows
+   today's routine; upcoming sessions show date/kind (e.g. sparring) but not
+   the drills ahead of time; past routines are not shown to students.
+5. **Pair/group building on the board**: confirmed — drop a drill on a student,
+   then drop other students onto that card to join; or multi-select students
+   and drop once.
+6. **Roles**: three roles — `ADMIN` (system owner, manages coaches and
+   everything else), `COACH` (multiple coaches supported), `STUDENT`. An admin
+   account is created from `.env` on first boot. Admins and coaches share the
+   coach module; only admins can manage coach accounts.

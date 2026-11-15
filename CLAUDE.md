@@ -14,8 +14,9 @@ See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
 1. **English only for all generated artifacts.** Code, identifiers, comments,
    docstrings, commit messages, README, docs, plan files, test names, and API
    field names must be written in English — even when the conversation with the
-   user happens in Portuguese. (User-facing UI copy follows the language decided
-   in `plan.md`.)
+   user happens in Portuguese. The only exception is user-facing UI copy, which
+   is pt-BR and lives exclusively in i18n locale files — never hardcode UI
+   strings in components; translation keys are English.
 2. **Commits use only the user's git identity** configured on the machine.
    - Never add `Co-Authored-By` trailers, "Generated with Claude Code" lines,
      or any other AI attribution to commit messages.
