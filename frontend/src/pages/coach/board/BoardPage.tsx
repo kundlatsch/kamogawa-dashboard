@@ -201,7 +201,11 @@ export default function BoardPage() {
             {session.title && <span className="text-smoke">{session.title}</span>}
             <div className="ml-auto">
               {session.status === "DRAFT" ? (
-                <Button onClick={() => publish.mutate("publish")} disabled={publish.isPending}>
+                <Button
+                  onClick={() => publish.mutate("publish")}
+                  disabled={publish.isPending}
+                  className={session.kind === "SPARRING" ? "!bg-blood hover:!bg-blood-dark" : ""}
+                >
                   {session.kind === "SPARRING" ? `🥊 ${t("board.publishSparring")}` : t("board.publish")}
                 </Button>
               ) : (

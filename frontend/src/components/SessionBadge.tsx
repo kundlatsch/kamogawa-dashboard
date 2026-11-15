@@ -5,7 +5,7 @@ import type { SessionKind, SessionStatus } from "../api/types";
 const kindStyles: Record<SessionKind, string> = {
   REGULAR: "bg-rope text-chalk",
   EXTRA: "bg-belt text-ring",
-  SPARRING: "bg-glove text-chalk",
+  SPARRING: "bg-blood text-chalk",
 };
 
 export function KindBadge({ kind }: { kind: SessionKind }) {

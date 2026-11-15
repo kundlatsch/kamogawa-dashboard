@@ -46,7 +46,7 @@ export default function SessionFormModal({
   return (
     <Modal title={isSparring ? t("sessions.newSparring") : t("sessions.newExtra")} onClose={onClose}>
       <form onSubmit={submit} className="flex flex-col gap-4">
-        {isSparring && <p className="rounded-lg bg-glove/15 p-3 text-sm text-chalk">{t("sessions.sparringHint")}</p>}
+        {isSparring && <p className="rounded-lg bg-blood/15 p-3 text-sm text-chalk">{t("sessions.sparringHint")}</p>}
         <div className="grid grid-cols-2 gap-3">
           <Input label={t("sessions.date")} type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
           <Input label={t("sessions.time")} type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
@@ -66,7 +66,11 @@ export default function SessionFormModal({
           <Button type="button" variant="ghost" onClick={onClose}>
             {t("common.cancel")}
           </Button>
-          <Button type="submit" disabled={create.isPending}>
+          <Button
+            type="submit"
+            disabled={create.isPending}
+            className={isSparring ? "!bg-blood hover:!bg-blood-dark" : ""}
+          >
             {isSparring ? `🥊 ${t("sessions.createSparring")}` : t("common.create")}
           </Button>
         </div>

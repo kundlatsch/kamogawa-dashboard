@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router-dom";
 
+import { isStaff } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
 import NotificationBell from "./NotificationBell";
 
@@ -26,7 +27,7 @@ export default function AppShell({ nav }: { nav: NavItem[] }) {
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" data-theme={isStaff(user) ? "coach" : "student"}>
       <header className="sticky top-0 z-40 border-b border-rope bg-ring/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-4 py-3">
           <Brand />

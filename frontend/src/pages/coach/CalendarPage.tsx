@@ -37,7 +37,10 @@ export default function CalendarPage() {
             <Button variant="ghost" onClick={() => setCreating("EXTRA")}>
               + {t("sessions.newExtra")}
             </Button>
-            <Button onClick={() => setCreating("SPARRING")} className="shadow-[0_0_20px_#d6282888]">
+            <Button
+              onClick={() => setCreating("SPARRING")}
+              className="!bg-blood shadow-[0_0_20px_#d6282888] hover:!bg-blood-dark"
+            >
               🥊 {t("sessions.createSparring")}
             </Button>
           </div>
@@ -81,7 +84,7 @@ export default function CalendarPage() {
                     key={session.id}
                     onClick={() => navigate(`/?session=${session.id}`)}
                     className={`flex flex-col items-start gap-1 rounded-md border p-1.5 text-left text-xs hover:border-chalk ${
-                      session.kind === "SPARRING" ? "border-glove bg-glove/15" : "border-rope bg-ring"
+                      session.kind === "SPARRING" ? "border-blood bg-blood/15" : "border-rope bg-ring"
                     }`}
                   >
                     <div className="flex flex-wrap gap-1">

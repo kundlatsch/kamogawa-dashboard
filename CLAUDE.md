@@ -38,6 +38,8 @@ See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
   `@dnd-kit` for drag and drop, TanStack Query for server state. Tests with Vitest.
 - Theme: boxing colors — black backgrounds, red accents, white text, gold
   highlights. Keep colors as Tailwind theme tokens, not ad-hoc hex values.
+  `glove` is the module accent: red for students, blue in the coach module
+  (`data-theme="coach"`). Use `blood` for sparring, which stays red everywhere.
 - Nothing about the schedule is hardcoded: training weekdays, times, and
   categories come from coach-editable configuration.
 
