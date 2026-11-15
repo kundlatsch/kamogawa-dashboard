@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
 import type { MyRoutine, RoutineItem } from "../../api/types";
 import { KindBadge } from "../../components/SessionBadge";
+import SparringBanner from "../../components/SparringBanner";
 import { useAuth } from "../../auth/AuthContext";
 import { formatDate } from "../../lib/dates";
 import { youtubeEmbedUrl, youtubeId } from "../../lib/youtube";
@@ -28,6 +29,8 @@ export default function TodayPage() {
           </h1>
         )}
       </div>
+
+      <SparringBanner />
 
       {isLoading && <p className="text-smoke">{t("common.loading")}</p>}
       {data && data.sessions.length === 0 && (

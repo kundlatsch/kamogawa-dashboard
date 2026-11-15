@@ -93,6 +93,18 @@
     "upcomingHint": "Os exercícios aparecem no dia do treino.",
     "noUpcoming": "Nenhuma sessão marcada por enquanto."
   },
+  "notifications": {
+    "title": "Avisos",
+    "empty": "Nenhum aviso por enquanto.",
+    "kind": {
+      "SESSION_PUBLISHED": "Seu treino de {{date}} está disponível.",
+      "SPARRING": "Sparring marcado para {{date}}! Traga luvas, bucal e protetor."
+    }
+  },
+  "sparring": {
+    "bannerTitle": "Dia de sparring!",
+    "bannerHint": "Traga luvas, bucal e protetor de cabeça."
+  },
   "settings": {
     "title": "Configurações",
     "schedule": "Dias de treino",

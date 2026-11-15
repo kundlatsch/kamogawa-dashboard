@@ -100,5 +100,18 @@ export interface MyRoutine {
   sessions: (SessionSummary & { routine: RoutineItem[] })[];
 }
 
+export interface AppNotification {
+  id: number;
+  kind: "SESSION_PUBLISHED" | "SPARRING";
+  session: SessionSummary | null;
+  created_at: string;
+  read_at: string | null;
+}
+
+export interface NotificationList {
+  unread: number;
+  results: AppNotification[];
+}
+
 export const isStaff = (user: User | null | undefined) =>
   user?.role === "ADMIN" || user?.role === "COACH";

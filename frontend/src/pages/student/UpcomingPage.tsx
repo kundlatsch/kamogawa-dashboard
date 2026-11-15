@@ -1,18 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { api } from "../../api/client";
-import type { SessionSummary } from "../../api/types";
 import { KindBadge } from "../../components/SessionBadge";
+import { useUpcoming } from "../../components/SparringBanner";
 import { PageHeader } from "../../components/ui";
 import { formatDate } from "../../lib/dates";
 
 export default function UpcomingPage() {
   const { t, i18n } = useTranslation();
-  const { data: sessions = [], isLoading } = useQuery({
-    queryKey: ["me", "upcoming"],
-    queryFn: async () => (await api.get<SessionSummary[]>("/me/upcoming/")).data,
-  });
+  const { data: sessions = [], isLoading } = useUpcoming();
 
   return (
     <section className="mx-auto max-w-2xl">

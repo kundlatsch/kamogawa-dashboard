@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext";
+import NotificationBell from "./NotificationBell";
 
 export interface NavItem {
   to: string;
@@ -46,6 +47,7 @@ export default function AppShell({ nav }: { nav: NavItem[] }) {
             ))}
           </nav>
           <div className="flex items-center gap-3 text-sm">
+            {user?.role === "STUDENT" && <NotificationBell />}
             <span className="text-smoke">
               {user?.avatar_emoji} {user?.display_name}
             </span>
