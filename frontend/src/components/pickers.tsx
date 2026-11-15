@@ -1,15 +1,16 @@
 import { useTranslation } from "react-i18next";
 
+// Only emoji that Windows 10 (Segoe UI Emoji) can draw: newer ones like 🥷 or ❤️‍🔥 show as an empty box.
 export const DRILL_EMOJIS = [
   "🥊", "👊", "🤜", "💥", "🔥", "⚡", "💪", "🏃", "🦵", "🧘", "⏱️", "🔔",
-  "🎯", "🛡️", "🤸", "🏋️", "❤️‍🔥", "🌀", "👟", "🥵", "🧊", "🏆", "⭐",
+  "🎯", "🛡️", "🤸", "🏋️", "🌀", "👟", "🥵", "🧊", "🏆", "⭐",
 ];
 
 export const CARD_COLORS = [
   "#d62828", "#9b1b1b", "#f77f00", "#e9b949", "#2a9d8f", "#3a86ff", "#9d4edd", "#ef476f", "#6b7280", "#f5f5f5",
 ];
 
-export const AVATAR_EMOJIS = ["🥊", "🔥", "⚡", "🐯", "🦁", "🐺", "🦅", "🐉", "🦈", "💪", "👊", "🏆", "⭐", "😎", "🤠", "🥷"];
+export const AVATAR_EMOJIS = ["🥊", "🔥", "⚡", "🐯", "🦁", "🐺", "🦅", "🐉", "🦈", "💪", "👊", "🏆", "⭐", "😎", "🤠"];
 
 /** Last user-perceived character, so multi-code-point emoji (e.g. ❤️‍🔥) stay intact. */
 export function lastGrapheme(text: string): string {
