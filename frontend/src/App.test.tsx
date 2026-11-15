@@ -3,10 +3,9 @@ import { render, screen } from "@testing-library/react";
 import App from "./App";
 
 describe("App", () => {
-  it("renders the brand name in Portuguese locale", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true }));
+  it("shows the login screen when signed out", () => {
     render(<App />);
-    expect(screen.getByRole("heading", { name: "Chacão Boxing Team" })).toBeInTheDocument();
-    expect(await screen.findByText("Servidor conectado")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Entrar" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Usuário")).toBeInTheDocument();
   });
 });

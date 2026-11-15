@@ -1,31 +1,76 @@
-import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-type HealthState = "checking" | "ok" | "error";
+import { isStaff } from "./api/types";
+import { AuthProvider, useAuth } from "./auth/AuthContext";
+import AppShell, { type NavItem } from "./components/AppShell";
+import LoginPage from "./pages/LoginPage";
+import Placeholder from "./pages/Placeholder";
+import AccountsPage from "./pages/coach/AccountsPage";
+
+const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 15_000, retry: 1 } } });
+
+function AppRoutes() {
+  const { t } = useTranslation();
+  const { user, loading } = useAuth();
+
+  if (loading) return <p className="p-6 text-smoke">{t("common.loading")}</p>;
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="*" element={<LoginPage />} />
+      </Routes>
+    );
+  }
+
+  if (isStaff(user)) {
+    const nav: NavItem[] = [
+      { to: "/", labelKey: "nav.board" },
+      { to: "/calendar", labelKey: "nav.calendar" },
+      { to: "/drills", labelKey: "nav.drills" },
+      { to: "/students", labelKey: "nav.students" },
+      ...(user.role === "ADMIN" ? [{ to: "/coaches", labelKey: "nav.coaches" }] : []),
+      { to: "/settings", labelKey: "nav.settings" },
+    ];
+    return (
+      <Routes>
+        <Route element={<AppShell nav={nav} />}>
+          <Route index element={<Placeholder titleKey="nav.board" />} />
+          <Route path="calendar" element={<Placeholder titleKey="nav.calendar" />} />
+          <Route path="drills" element={<Placeholder titleKey="nav.drills" />} />
+          <Route path="students" element={<AccountsPage kind="students" />} />
+          {user.role === "ADMIN" && <Route path="coaches" element={<AccountsPage kind="coaches" />} />}
+          <Route path="settings" element={<Placeholder titleKey="nav.settings" />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    );
+  }
+
+  const nav: NavItem[] = [
+    { to: "/", labelKey: "nav.today" },
+    { to: "/upcoming", labelKey: "nav.upcoming" },
+  ];
+  return (
+    <Routes>
+      <Route element={<AppShell nav={nav} />}>
+        <Route index element={<Placeholder titleKey="nav.today" />} />
+        <Route path="upcoming" element={<Placeholder titleKey="nav.upcoming" />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  );
+}
 
 export default function App() {
-  const { t } = useTranslation();
-  const [health, setHealth] = useState<HealthState>("checking");
-
-  useEffect(() => {
-    fetch("/api/health/")
-      .then((response) => setHealth(response.ok ? "ok" : "error"))
-      .catch(() => setHealth("error"));
-  }, []);
-
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
-      <span className="text-6xl" aria-hidden>
-        🥊
-      </span>
-      <h1 className="font-display text-5xl tracking-wide text-glove uppercase">{t("brand.name")}</h1>
-      <p className="text-smoke">{t("brand.tagline")}</p>
-      <p
-        data-testid="health"
-        className={health === "ok" ? "text-belt" : health === "error" ? "text-glove" : "text-smoke"}
-      >
-        {t(`health.${health}`)}
-      </p>
-    </main>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

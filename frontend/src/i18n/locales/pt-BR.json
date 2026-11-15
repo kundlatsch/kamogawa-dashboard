@@ -1,11 +1,57 @@
 {
   "brand": {
     "name": "Chacão Boxing Team",
+    "suffix": "Boxing Team",
     "tagline": "Painel de treinos"
   },
-  "health": {
-    "checking": "Verificando servidor…",
-    "ok": "Servidor conectado",
-    "error": "Servidor indisponível"
+  "common": {
+    "loading": "Carregando…",
+    "cancel": "Cancelar",
+    "create": "Criar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "copy": "Copiar",
+    "done": "Pronto",
+    "comingSoon": "Em construção."
+  },
+  "auth": {
+    "username": "Usuário",
+    "password": "Senha",
+    "login": "Entrar",
+    "logout": "Sair",
+    "invalid": "Usuário ou senha incorretos."
+  },
+  "nav": {
+    "board": "Quadro",
+    "calendar": "Calendário",
+    "drills": "Treinos",
+    "students": "Alunos",
+    "coaches": "Treinadores",
+    "settings": "Configurações",
+    "today": "Hoje",
+    "upcoming": "Próximos"
+  },
+  "accounts": {
+    "students": {
+      "title": "Alunos",
+      "new": "Novo aluno",
+      "empty": "Nenhum aluno cadastrado ainda."
+    },
+    "coaches": {
+      "title": "Treinadores",
+      "new": "Novo treinador",
+      "empty": "Nenhum treinador cadastrado ainda."
+    },
+    "displayName": "Nome",
+    "avatar": "Avatar",
+    "color": "Cor",
+    "resetPassword": "Nova senha",
+    "deactivate": "Desativar",
+    "confirmDeactivate": "Desativar {{name}}? A pessoa não conseguirá mais entrar.",
+    "createError": "Não foi possível criar. O usuário já existe?",
+    "passwordGeneratedNote": "A senha é gerada automaticamente e mostrada uma única vez.",
+    "passwordTitle": "Senha gerada",
+    "passwordHint": "Anote ou copie agora e envie para a pessoa. Ela não será mostrada de novo."
   }
 }
