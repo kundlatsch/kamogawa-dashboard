@@ -1,3 +1,4 @@
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from . import views
@@ -5,5 +6,9 @@ from . import views
 router = DefaultRouter()
 router.register("drill-categories", views.DrillCategoryViewSet, basename="drill-category")
 router.register("drills", views.DrillViewSet, basename="drill")
+router.register("sessions", views.TrainingSessionViewSet, basename="session")
 
-urlpatterns = router.urls
+urlpatterns = [
+    path("schedule/", views.weekly_schedule, name="weekly-schedule"),
+    *router.urls,
+]

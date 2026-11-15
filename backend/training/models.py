@@ -46,3 +46,54 @@ class Drill(models.Model):
 
     def __str__(self) -> str:
         return f"{self.emoji} {self.name}"
+
+
+def default_weekdays() -> list[int]:
+    # Python weekday numbers: Monday=0 ... Sunday=6.
+    return [0, 2, 5]
+
+
+class WeeklySchedule(models.Model):
+    """Singleton holding the gym's regular training days, editable by coaches."""
+
+    training_weekdays = models.JSONField(default=default_weekdays)
+    default_start_time = models.TimeField(default="19:00")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def load(cls) -> "WeeklySchedule":
+        schedule, _ = cls.objects.get_or_create(pk=1)
+        return schedule
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+
+class TrainingSession(models.Model):
+    class Kind(models.TextChoices):
+        REGULAR = "REGULAR", "Regular"
+        EXTRA = "EXTRA", "Extra"
+        SPARRING = "SPARRING", "Sparring"
+
+    class Status(models.TextChoices):
+        DRAFT = "DRAFT", "Draft"
+        PUBLISHED = "PUBLISHED", "Published"
+
+    date = models.DateField(db_index=True)
+    start_time = models.TimeField(null=True, blank=True)
+    title = models.CharField(max_length=120, blank=True)
+    notes = models.TextField(blank=True)
+    kind = models.CharField(max_length=16, choices=Kind.choices, default=Kind.REGULAR)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
+    published_at = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["date", "start_time", "id"]
+
+    def __str__(self) -> str:
+        return f"{self.date} {self.kind} {self.title}".strip()
