@@ -15,6 +15,26 @@ and page titles). The gym's logo and brand assets will be dropped into
 `frontend/src/assets/brand/` when provided; until then a text wordmark with a
 🥊 glyph is used.
 
+### Multi-gym architecture (2026-11-15)
+
+The system is a **multi-gym platform**; Chacão Boxing Team is the first tenant.
+
+- **Gym** is the tenant: every drill, category, weekly schedule, session,
+  assignment and coach/student account belongs to exactly one gym. All coach
+  and student API queries are scoped to `request.user.gym`; cross-gym ids are
+  rejected (404 / validation error).
+- **Roles**:
+  - `ACCOUNT_ADMIN`: platform-level, belongs to no gym. Creates gyms (with one
+    or more coaches), manages coaches (add, reset password, deactivate) and
+    can deactivate gyms. Does not plan training. Bootstrapped from `.env`.
+  - `COACH`: belongs to one gym; runs the coach module and creates students.
+  - `STUDENT`: belongs to one gym; sees their routine.
+- **Branding**: the header shows the user's gym name; the platform keeps the
+  Chacão visual style (black/red, blue for the coach module) for every gym for
+  now. Per-gym logo/colors can be added to the Gym model later.
+- Existing data is migrated into a "Chacão Boxing Team" gym, and the former
+  `ADMIN` role becomes `ACCOUNT_ADMIN`.
+
 ## 2. Tech stack
 
 | Layer | Choice | Notes |
