@@ -22,5 +22,26 @@ export interface GeneratedPassword {
   generated_password: string;
 }
 
+export interface DrillCategory {
+  id: number;
+  name: string;
+  color: string;
+  order: number;
+}
+
+export interface Drill {
+  id: number;
+  name: string;
+  description: string;
+  emoji: string;
+  color: string;
+  youtube_url: string;
+  thumbnail_url: string;
+  category: number | null;
+  default_rounds: number | null;
+  default_duration_minutes: number | null;
+  archived: boolean;
+}
+
 export const isStaff = (user: User | null | undefined) =>
   user?.role === "ADMIN" || user?.role === "COACH";
