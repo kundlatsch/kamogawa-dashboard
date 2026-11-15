@@ -10,6 +10,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY . .
+RUN DJANGO_SECRET_KEY=build-only python manage.py collectstatic --noinput
 
 EXPOSE 8000
 

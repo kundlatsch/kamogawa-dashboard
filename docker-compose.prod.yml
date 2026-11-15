@@ -1,0 +1,19 @@
+﻿# Production-like override for the gym's local server:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# Serves the built frontend through nginx and runs Django on gunicorn (no source mounts).
+services:
+  backend:
+    environment:
+      DJANGO_DEBUG: "false"
+    command: !reset null
+    volumes: !reset []
+    ports: !reset []
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    environment: !reset {}
+    volumes: !reset []
+    ports: !override
+      - "${APP_PORT:-8088}:80"
