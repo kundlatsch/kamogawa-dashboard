@@ -1,0 +1,53 @@
+# CLAUDE.md — Chacão Boxing Dashboard
+
+Guidance for AI agents (Claude Code and others) working in this repository.
+
+## Project
+
+Boxing training dashboard: a coach (admin) plans training sessions and assigns
+drills to students (solo, pairs, groups, or broadcast to all). React frontend,
+Django REST backend, PostgreSQL, fully containerized with Docker Compose.
+See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
+
+## Mandatory rules
+
+1. **English only for all generated artifacts.** Code, identifiers, comments,
+   docstrings, commit messages, README, docs, plan files, test names, and API
+   field names must be written in English — even when the conversation with the
+   user happens in Portuguese. (User-facing UI copy follows the language decided
+   in `plan.md`.)
+2. **Commits use only the user's git identity** configured on the machine.
+   - Never add `Co-Authored-By` trailers, "Generated with Claude Code" lines,
+     or any other AI attribution to commit messages.
+   - Never pass `--author` or override `user.name` / `user.email`.
+3. **Small, focused commits.** Commit after each step of the plan; one logical
+   change per commit. Use conventional-style messages
+   (`feat:`, `fix:`, `chore:`, `docs:`, `test:`, `refactor:`).
+4. **Everything runs in Docker.** New services or dependencies must be wired
+   into `docker-compose.yml`; do not rely on tools installed on the host.
+5. **Never commit secrets.** Real values live in `.env` (git-ignored); keep
+   `.env.example` updated with safe placeholders.
+
+## Conventions
+
+- Backend: Django apps under `backend/` (`accounts`, `training`,
+  `notifications`). DRF viewsets + serializers; permissions enforce that only
+  the coach can write. Tests with pytest-django.
+- Frontend: `frontend/` — React + TypeScript + Vite, Tailwind for styling,
+  `@dnd-kit` for drag and drop, TanStack Query for server state. Tests with Vitest.
+- Theme: boxing colors — black backgrounds, red accents, white text, gold
+  highlights. Keep colors as Tailwind theme tokens, not ad-hoc hex values.
+- Nothing about the schedule is hardcoded: training weekdays, times, and
+  categories come from coach-editable configuration.
+
+## Common commands
+
+```bash
+docker compose up --build                 # start the full stack
+docker compose exec backend python manage.py migrate
+docker compose exec backend python manage.py seed_demo
+docker compose exec backend pytest
+docker compose exec frontend npm test
+```
+
+On this Windows host, use `npm.cmd` instead of `npm` when running Node outside Docker.
