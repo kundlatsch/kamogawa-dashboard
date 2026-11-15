@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from accounts.models import User
 from accounts.permissions import IsStaffRole, IsStaffRoleOrReadOnly
+from notifications.services import notify_session_published
 
 from .models import Assignment, Drill, DrillCategory, TrainingSession, WeeklySchedule
 from .scheduling import generate_regular_sessions
@@ -145,6 +146,7 @@ class TrainingSessionViewSet(viewsets.ModelViewSet):
             session.status = TrainingSession.Status.PUBLISHED
             session.published_at = timezone.now()
             session.save(update_fields=["status", "published_at"])
+            notify_session_published(session)
         return Response(self.get_serializer(session).data)
 
     @action(detail=True, methods=["post"])
