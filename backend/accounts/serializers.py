@@ -42,6 +42,17 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "role", "gym"]
 
 
+class ProfileSerializer(serializers.ModelSerializer):
+    """Fields a user may change about themselves (never the login or role)."""
+
+    display_name = serializers.CharField(max_length=80, allow_blank=False, trim_whitespace=True)
+    color = serializers.RegexField(r"^#[0-9a-fA-F]{6}$", max_length=7)
+
+    class Meta:
+        model = User
+        fields = ["display_name", "avatar_emoji", "color"]
+
+
 class PublicUserSerializer(serializers.ModelSerializer):
     """Minimal representation used when showing training partners."""
 

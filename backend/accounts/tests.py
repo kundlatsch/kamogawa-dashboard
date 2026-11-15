@@ -157,3 +157,30 @@ def test_students_cannot_edit_gym(make_user, api_as):
 
 def test_me_exposes_gym_color(make_user, api_as, gym):
     assert api_as(make_user("ana")).get("/api/auth/me/").json()["gym"]["color"] == "#d62828"
+
+
+def test_user_updates_own_name_emoji_and_color(make_user, api_as):
+    student = make_user("ana")
+    response = api_as(student).patch(
+        "/api/auth/me/", {"display_name": "Ana Pugilista", "avatar_emoji": "🐯", "color": "#3a86ff"}
+    )
+    assert response.status_code == 200
+    student.refresh_from_db()
+    assert (student.display_name, student.avatar_emoji, student.color) == ("Ana Pugilista", "🐯", "#3a86ff")
+
+
+def test_profile_update_cannot_change_login_role_or_gym(make_user, api_as, other_gym):
+    student = make_user("ana")
+    api_as(student).patch(
+        "/api/auth/me/", {"username": "hacker", "role": "ACCOUNT_ADMIN", "gym": other_gym.id}, format="json"
+    )
+    student.refresh_from_db()
+    assert (student.username, student.role, student.gym_id) == ("ana", "STUDENT", student.gym_id)
+    assert student.gym != other_gym
+
+
+def test_profile_update_validates_name_and_color(make_user, api_as):
+    client = api_as(make_user("ana"))
+    assert client.patch("/api/auth/me/", {"display_name": "  "}).status_code == 400
+    assert client.patch("/api/auth/me/", {"color": "red"}).status_code == 400
+

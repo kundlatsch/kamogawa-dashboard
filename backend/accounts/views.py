@@ -13,12 +13,18 @@ from .serializers import (
     GymSerializer,
     NewAccountSerializer,
     OwnGymSerializer,
+    ProfileSerializer,
     UserSerializer,
 )
 
 
-@api_view(["GET"])
+@api_view(["GET", "PATCH"])
 def me(request):
+    """The signed-in user; PATCH updates their own display name, emoji and color."""
+    if request.method == "PATCH":
+        serializer = ProfileSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
     return Response(UserSerializer(request.user).data)
 
 
