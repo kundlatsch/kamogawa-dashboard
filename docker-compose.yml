@@ -26,7 +26,7 @@ services:
       DJANGO_DEBUG: ${DJANGO_DEBUG:-true}
       POSTGRES_HOST: db
     # Dev: auto-reloading server on top of the mounted source.
-    command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python manage.py migrate --noinput && python manage.py ensure_admin && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
     ports:
