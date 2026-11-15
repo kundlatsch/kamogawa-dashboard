@@ -1,6 +1,10 @@
 from rest_framework import serializers
 
-from .models import Drill, DrillCategory, TrainingSession, WeeklySchedule
+from django.db.models import Max
+
+from accounts.models import User
+
+from .models import Assignment, Drill, DrillCategory, TrainingSession, WeeklySchedule
 
 
 class WeeklyScheduleSerializer(serializers.ModelSerializer):
@@ -43,3 +47,50 @@ class DrillSerializer(serializers.ModelSerializer):
             "default_duration_minutes",
             "archived",
         ]
+
+
+class AssignmentSerializer(serializers.ModelSerializer):
+    participants = serializers.PrimaryKeyRelatedField(
+        many=True,
+        required=False,
+        queryset=User.objects.filter(role=User.Role.STUDENT, is_active=True),
+    )
+    drill_detail = DrillSerializer(source="drill", read_only=True)
+
+    class Meta:
+        model = Assignment
+        fields = [
+            "id",
+            "session",
+            "drill",
+            "drill_detail",
+            "participants",
+            "is_broadcast",
+            "order",
+            "notes",
+            "rounds",
+            "duration_minutes",
+        ]
+        read_only_fields = ["order"]
+
+    def validate(self, attrs):
+        is_broadcast = attrs.get("is_broadcast", getattr(self.instance, "is_broadcast", False))
+        if "participants" in attrs:
+            participants = attrs["participants"]
+        elif self.instance:
+            participants = list(self.instance.participants.all())
+        else:
+            participants = []
+        if is_broadcast and participants:
+            raise serializers.ValidationError("Broadcast assignments cannot have participants.")
+        if not is_broadcast and not participants:
+            raise serializers.ValidationError("Pick at least one student or make it a broadcast.")
+        if self.instance and "session" in attrs and attrs["session"] != self.instance.session:
+            raise serializers.ValidationError({"session": "An assignment cannot move between sessions."})
+        return attrs
+
+    def create(self, validated_data):
+        session = validated_data["session"]
+        last = session.assignments.aggregate(last=Max("order"))["last"]
+        validated_data["order"] = 0 if last is None else last + 1
+        return super().create(validated_data)

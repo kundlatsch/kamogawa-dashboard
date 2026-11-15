@@ -1,15 +1,18 @@
 from datetime import date
 
+from django.db import transaction
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+from accounts.models import User
 from accounts.permissions import IsStaffRole, IsStaffRoleOrReadOnly
 
-from .models import Drill, DrillCategory, TrainingSession, WeeklySchedule
+from .models import Assignment, Drill, DrillCategory, TrainingSession, WeeklySchedule
 from .scheduling import generate_regular_sessions
 from .serializers import (
+    AssignmentSerializer,
     DrillCategorySerializer,
     DrillSerializer,
     TrainingSessionSerializer,
@@ -48,6 +51,62 @@ class DrillViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         instance.archived = True
         instance.save(update_fields=["archived", "updated_at"])
+
+
+class AssignmentViewSet(viewsets.ModelViewSet):
+    serializer_class = AssignmentSerializer
+    permission_classes = [IsStaffRole]
+
+    def get_queryset(self):
+        queryset = Assignment.objects.select_related("drill", "drill__category").prefetch_related(
+            "participants"
+        )
+        if "session" in self.request.query_params:
+            queryset = queryset.filter(session_id=self.request.query_params["session"])
+        return queryset
+
+    def _student(self, request):
+        try:
+            return User.objects.get(
+                pk=request.data.get("student"), role=User.Role.STUDENT, is_active=True
+            )
+        except (User.DoesNotExist, ValueError, TypeError):
+            raise ValidationError({"student": "Unknown student."})
+
+    @action(detail=True, methods=["post"], url_path="add-participant")
+    def add_participant(self, request, pk=None):
+        """Join a student to an existing drill (turns a solo drill into a pair or group)."""
+        assignment = self.get_object()
+        if assignment.is_broadcast:
+            raise ValidationError("Broadcast assignments already include everyone.")
+        assignment.participants.add(self._student(request))
+        return Response(self.get_serializer(assignment).data)
+
+    @action(detail=True, methods=["post"], url_path="remove-participant")
+    def remove_participant(self, request, pk=None):
+        """Remove a student; the assignment is deleted when nobody is left."""
+        assignment = self.get_object()
+        assignment.participants.remove(self._student(request))
+        if not assignment.is_broadcast and not assignment.participants.exists():
+            assignment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(self.get_serializer(assignment).data)
+
+    @action(detail=False, methods=["post"])
+    @transaction.atomic
+    def reorder(self, request):
+        """Set the routine order of a session: `{"session": id, "ids": [assignment ids in order]}`."""
+        session_id = request.data.get("session")
+        ids = request.data.get("ids")
+        if not isinstance(ids, list):
+            raise ValidationError({"ids": "Send the ordered list of assignment ids."})
+        assignments = {a.id: a for a in Assignment.objects.filter(session_id=session_id)}
+        if set(ids) != set(assignments):
+            raise ValidationError({"ids": "The list must contain every assignment of the session."})
+        for position, assignment_id in enumerate(ids):
+            assignments[assignment_id].order = position
+        Assignment.objects.bulk_update(assignments.values(), ["order"])
+        return Response(self.get_serializer(self.get_queryset().filter(session_id=session_id), many=True).data)
 
 
 @api_view(["GET", "PUT"])

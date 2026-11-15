@@ -97,3 +97,30 @@ class TrainingSession(models.Model):
 
     def __str__(self) -> str:
         return f"{self.date} {self.kind} {self.title}".strip()
+
+
+class Assignment(models.Model):
+    """A drill placed in a session for a set of students.
+
+    One record is shared by every participant: a pair or group drill is a single
+    assignment that appears in each participant's routine. Broadcast assignments
+    have no participants and apply to every active student.
+    """
+
+    session = models.ForeignKey(TrainingSession, on_delete=models.CASCADE, related_name="assignments")
+    drill = models.ForeignKey(Drill, on_delete=models.PROTECT, related_name="assignments")
+    participants = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, blank=True, related_name="training_assignments"
+    )
+    is_broadcast = models.BooleanField(default=False)
+    order = models.PositiveIntegerField(default=0)
+    notes = models.TextField(blank=True)
+    rounds = models.PositiveSmallIntegerField(null=True, blank=True)
+    duration_minutes = models.PositiveSmallIntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["session", "order", "id"]
+
+    def __str__(self) -> str:
+        return f"{self.session} · {self.drill}"
