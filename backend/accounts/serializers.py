@@ -1,3 +1,4 @@
+from django.contrib.auth import password_validation
 from rest_framework import serializers
 
 from .models import Gym, User
@@ -6,7 +7,30 @@ from .models import Gym, User
 class GymSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Gym
-        fields = ["id", "name", "slug"]
+        fields = ["id", "name", "slug", "color"]
+
+
+class OwnGymSerializer(serializers.ModelSerializer):
+    """What a coach may change about their own gym."""
+
+    class Meta:
+        model = Gym
+        fields = ["id", "name", "slug", "color"]
+        read_only_fields = ["id", "slug"]
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(trim_whitespace=False)
+    new_password = serializers.CharField(trim_whitespace=False)
+
+    def validate_current_password(self, value):
+        if not self.context["request"].user.check_password(value):
+            raise serializers.ValidationError("The current password is incorrect.")
+        return value
+
+    def validate(self, attrs):
+        password_validation.validate_password(attrs["new_password"], self.context["request"].user)
+        return attrs
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -45,7 +69,7 @@ class GymSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gym
-        fields = ["id", "name", "slug", "is_active", "created_at", "coach_count", "student_count", "coaches"]
+        fields = ["id", "name", "slug", "color", "is_active", "created_at", "coach_count", "student_count", "coaches"]
         read_only_fields = ["slug", "created_at"]
 
     def validate_coaches(self, value):

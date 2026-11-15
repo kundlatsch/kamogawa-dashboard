@@ -13,5 +13,7 @@ urlpatterns = [
     path("auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("auth/me/", views.me, name="me"),
+    path("auth/change-password/", views.change_password, name="change-password"),
+    path("my-gym/", views.my_gym, name="my-gym"),
     *router.urls,
 ]

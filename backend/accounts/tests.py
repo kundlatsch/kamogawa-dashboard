@@ -111,3 +111,49 @@ def test_deactivated_gym_locks_out_its_members(coach, api_as, gym, account_admin
     gym.refresh_from_db()
     assert gym.is_active is False
     assert api_as(coach).get("/api/drills/").status_code == 403
+
+
+
+def test_user_changes_own_password(make_user, api_as):
+    student = make_user("ana")
+    response = api_as(student).post(
+        "/api/auth/change-password/", {"current_password": "pass12345", "new_password": "Luva-Vermelha-2026"}
+    )
+    assert response.status_code == 204
+    student.refresh_from_db()
+    assert student.check_password("Luva-Vermelha-2026")
+
+
+def test_change_password_requires_current_password(make_user, api_as):
+    student = make_user("ana")
+    response = api_as(student).post(
+        "/api/auth/change-password/", {"current_password": "wrong", "new_password": "Luva-Vermelha-2026"}
+    )
+    assert response.status_code == 400
+    assert "current_password" in response.json()
+
+
+def test_change_password_rejects_weak_password(account_admin, api_as):
+    response = api_as(account_admin).post(
+        "/api/auth/change-password/", {"current_password": "pass12345", "new_password": "123"}
+    )
+    assert response.status_code == 400
+
+
+def test_coach_edits_own_gym_name_and_color(coach, api_as, gym):
+    response = api_as(coach).patch("/api/my-gym/", {"name": "Chacão BT", "color": "#3a86ff"})
+    assert response.status_code == 200
+    gym.refresh_from_db()
+    assert (gym.name, gym.color) == ("Chacão BT", "#3a86ff")
+
+
+def test_gym_color_must_be_hex(coach, api_as):
+    assert api_as(coach).patch("/api/my-gym/", {"color": "blue"}).status_code == 400
+
+
+def test_students_cannot_edit_gym(make_user, api_as):
+    assert api_as(make_user("ana")).patch("/api/my-gym/", {"name": "Mine"}).status_code == 403
+
+
+def test_me_exposes_gym_color(make_user, api_as, gym):
+    assert api_as(make_user("ana")).get("/api/auth/me/").json()["gym"]["color"] == "#d62828"

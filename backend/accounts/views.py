@@ -2,18 +2,46 @@ from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 
 from .models import Gym, User
 from .passwords import generate_password
 from .permissions import IsAccountAdmin, IsCoach
-from .serializers import GymSerializer, NewAccountSerializer, UserSerializer
+from .serializers import (
+    ChangePasswordSerializer,
+    GymSerializer,
+    NewAccountSerializer,
+    OwnGymSerializer,
+    UserSerializer,
+)
 
 
 @api_view(["GET"])
 def me(request):
     return Response(UserSerializer(request.user).data)
+
+
+@api_view(["POST"])
+def change_password(request):
+    """Any signed-in user changes their own password by confirming the current one."""
+    serializer = ChangePasswordSerializer(data=request.data, context={"request": request})
+    serializer.is_valid(raise_exception=True)
+    request.user.set_password(serializer.validated_data["new_password"])
+    request.user.save(update_fields=["password"])
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["GET", "PATCH"])
+@permission_classes([IsCoach])
+def my_gym(request):
+    """Coaches edit their own gym's name and student-area color."""
+    gym = request.user.gym
+    if request.method == "PATCH":
+        serializer = OwnGymSerializer(gym, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+    return Response(OwnGymSerializer(gym).data)
 
 
 def create_account(gym: Gym, role: str, data: dict) -> tuple[User, str]:

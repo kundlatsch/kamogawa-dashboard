@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -9,6 +10,12 @@ class Gym(models.Model):
 
     name = models.CharField(max_length=120)
     slug = models.SlugField(max_length=140, unique=True)
+    # Accent color of the student area (the coach module keeps the fixed red theme).
+    color = models.CharField(
+        max_length=7,
+        default="#d62828",
+        validators=[RegexValidator(r"^#[0-9a-fA-F]{6}$", "Use a hex color like #d62828.")],
+    )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
