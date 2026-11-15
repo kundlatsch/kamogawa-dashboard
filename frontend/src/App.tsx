@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import Placeholder from "./pages/Placeholder";
 import AccountsPage from "./pages/coach/AccountsPage";
 import CalendarPage from "./pages/coach/CalendarPage";
+import BoardPage from "./pages/coach/board/BoardPage";
 import DrillsPage from "./pages/coach/DrillsPage";
 import SettingsPage from "./pages/coach/SettingsPage";
 
@@ -39,7 +40,7 @@ function AppRoutes() {
     return (
       <Routes>
         <Route element={<AppShell nav={nav} />}>
-          <Route index element={<Placeholder titleKey="nav.board" />} />
+          <Route index element={<BoardPage />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="drills" element={<DrillsPage />} />
           <Route path="students" element={<AccountsPage kind="students" />} />

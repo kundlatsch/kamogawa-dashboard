@@ -62,5 +62,18 @@ export interface TrainingSession {
   published_at: string | null;
 }
 
+export interface Assignment {
+  id: number;
+  session: number;
+  drill: number;
+  drill_detail: Drill;
+  participants: number[];
+  is_broadcast: boolean;
+  order: number;
+  notes: string;
+  rounds: number | null;
+  duration_minutes: number | null;
+}
+
 export const isStaff = (user: User | null | undefined) =>
   user?.role === "ADMIN" || user?.role === "COACH";

@@ -62,6 +62,26 @@
     "archive": "Arquivar",
     "confirmArchive": "Arquivar este treino? Ele some da biblioteca, mas continua no histórico."
   },
+  "board": {
+    "broadcast": "Todos",
+    "broadcastHint": "Aparece na rotina de todos os alunos.",
+    "dropHere": "Arraste um treino para cá",
+    "dragStudentHint": "Arraste este aluno sobre um treino para formar dupla ou grupo",
+    "select": "Selecionar {{name}} para treino em grupo",
+    "removeStudent": "Tirar este aluno do treino",
+    "removeDrill": "Remover treino",
+    "with": "com",
+    "participants": "Alunos neste treino",
+    "notes": "Observações para os alunos",
+    "saving": "Salvando…",
+    "error": "Algo deu errado. Tente de novo.",
+    "howTo": "Arraste um treino para um aluno (individual) ou para \"Todos\". Para formar dupla ou grupo, arraste o avatar de outro aluno sobre o card, ou marque vários alunos e solte o treino em um deles.",
+    "groupSelected_one": "{{count}} aluno selecionado.",
+    "groupSelected_other": "{{count}} alunos selecionados: o próximo treino solto em um deles vai para o grupo todo.",
+    "clearSelection": "Limpar seleção",
+    "noSessions": "Nenhuma sessão nas próximas semanas. Confira os dias de treino ou crie uma sessão no",
+    "noStudents": "Nenhum aluno ainda. Cadastre em"
+  },
   "settings": {
     "title": "Configurações",
     "schedule": "Dias de treino",
