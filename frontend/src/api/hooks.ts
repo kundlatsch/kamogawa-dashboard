@@ -29,4 +29,4 @@ export const useCategories = () =>
   });
 
 export const useStudents = () =>
-  useQuery({ queryKey: ["students"], queryFn: async () => (await api.get<User[]>("/students/")).data });
+  useQuery({ queryKey: ["/students/"],queryFn: async () => (await api.get<User[]>("/students/")).data });

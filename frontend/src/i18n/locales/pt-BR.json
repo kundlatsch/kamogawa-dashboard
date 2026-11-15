@@ -28,6 +28,7 @@
     "drills": "Treinos",
     "students": "Alunos",
     "coaches": "Treinadores",
+    "gyms": "Academias",
     "settings": "Configurações",
     "today": "Hoje",
     "upcoming": "Próximos"
@@ -141,6 +142,32 @@
     "title": "Título",
     "notes": "Observações",
     "saveError": "Não foi possível criar a sessão."
+  },
+  "roles": {
+    "ACCOUNT_ADMIN": "Admin de contas",
+    "COACH": "Treinador",
+    "STUDENT": "Aluno"
+  },
+  "gyms": {
+    "title": "Academias",
+    "new": "Nova academia",
+    "hint": "Cada academia tem seus próprios treinadores, alunos, treinos e calendário.",
+    "empty": "Nenhuma academia cadastrada ainda.",
+    "name": "Nome da academia",
+    "coaches": "Treinadores",
+    "addCoach": "Adicionar treinador",
+    "coachCount_one": "{{count}} treinador",
+    "coachCount_other": "{{count}} treinadores",
+    "studentCount_one": "{{count}} aluno",
+    "studentCount_other": "{{count}} alunos",
+    "inactive": "Desativada",
+    "inactiveHint": "Academia desativada: os treinadores e alunos dela não conseguem usar o sistema. Os dados continuam salvos.",
+    "deactivate": "Desativar academia",
+    "reactivate": "Reativar academia",
+    "confirmDeactivate": "Desativar {{name}}? Ninguém da academia conseguirá usar o sistema até você reativar.",
+    "createError": "Não foi possível criar. Algum usuário já existe?",
+    "credentialsTitle": "Acessos de {{name}}",
+    "notFound": "Academia não encontrada."
   },
   "accounts": {
     "students": {

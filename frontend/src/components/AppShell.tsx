@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router-dom";
 
-import { isStaff } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
 import NotificationBell from "./NotificationBell";
 
@@ -10,13 +9,14 @@ export interface NavItem {
   labelKey: string;
 }
 
-export function Brand() {
-  const { t } = useTranslation();
+/** Wordmark: the first word in the accent color, the rest in white (e.g. "CHACÃO Boxing Team"). */
+export function Wordmark({ name }: { name: string }) {
+  const [first, ...rest] = name.trim().split(/\s+/);
   return (
     <span className="flex items-center gap-2 font-display text-2xl tracking-wide uppercase">
       <span aria-hidden>🥊</span>
       <span>
-        <span className="text-glove">Chacão</span> {t("brand.suffix")}
+        <span className="text-glove">{first}</span> {rest.join(" ")}
       </span>
     </span>
   );
@@ -25,18 +25,24 @@ export function Brand() {
 export default function AppShell({ nav }: { nav: NavItem[] }) {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
+  const isAccountAdmin = user?.role === "ACCOUNT_ADMIN";
 
   return (
-    <div className="min-h-screen" data-theme={isStaff(user) ? "coach" : "student"}>
+    <div className="min-h-screen" data-theme={user?.role === "STUDENT" ? "student" : "coach"}>
       <header className="sticky top-0 z-40 border-b border-rope bg-ring/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-4 py-3">
-          <Brand />
+          <Wordmark name={user?.gym?.name ?? t("brand.name")} />
+          {isAccountAdmin && (
+            <span className="rounded bg-belt px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-ring uppercase">
+              {t("roles.ACCOUNT_ADMIN")}
+            </span>
+          )}
           <nav className="flex flex-1 flex-wrap gap-1">
             {nav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end
+                end={item.to === "/" && !isAccountAdmin}
                 className={({ isActive }) =>
                   `rounded-md px-3 py-1.5 text-sm font-medium ${
                     isActive ? "bg-glove text-chalk" : "text-smoke hover:text-chalk"

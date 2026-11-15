@@ -7,22 +7,37 @@ import type { GeneratedPassword, User } from "../../api/types";
 import { Button, Input, Modal, PageHeader } from "../../components/ui";
 
 /** Manages accounts of one role (students or coaches); passwords are always server-generated. */
-export default function AccountsPage({ kind }: { kind: "students" | "coaches" }) {
+export default function AccountsPage({
+  kind,
+  endpoint = `/${kind}/`,
+  title,
+}: {
+  kind: "students" | "coaches";
+  /** API collection, e.g. `/students/` or `/gyms/3/coaches/`. */
+  endpoint?: string;
+  title?: string;
+}) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [creating, setCreating] = useState(false);
   const [revealed, setRevealed] = useState<{ user: string; password: string } | null>(null);
 
+  // Gym cards show coach/student counts, so refresh them too.
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: [endpoint] });
+    queryClient.invalidateQueries({ queryKey: ["gyms"] });
+  };
+
   const { data: accounts = [], isLoading } = useQuery({
-    queryKey: [kind],
-    queryFn: async () => (await api.get<User[]>(`/${kind}/`)).data,
+    queryKey: [endpoint],
+    queryFn: async () => (await api.get<User[]>(endpoint)).data,
   });
 
   const create = useMutation({
     mutationFn: async (payload: Partial<User>) =>
-      (await api.post<User & GeneratedPassword>(`/${kind}/`, payload)).data,
+      (await api.post<User & GeneratedPassword>(endpoint, payload)).data,
     onSuccess: (created) => {
-      queryClient.invalidateQueries({ queryKey: [kind] });
+      refresh();
       setCreating(false);
       setRevealed({ user: created.username, password: created.generated_password });
     },
@@ -31,20 +46,20 @@ export default function AccountsPage({ kind }: { kind: "students" | "coaches" })
   const reset = useMutation({
     mutationFn: async (account: User) => ({
       account,
-      data: (await api.post<GeneratedPassword>(`/${kind}/${account.id}/reset-password/`)).data,
+      data: (await api.post<GeneratedPassword>(`${endpoint}${account.id}/reset-password/`)).data,
     }),
     onSuccess: ({ account, data }) => setRevealed({ user: account.username, password: data.generated_password }),
   });
 
   const deactivate = useMutation({
-    mutationFn: async (account: User) => api.delete(`/${kind}/${account.id}/`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [kind] }),
+    mutationFn: async (account: User) => api.delete(`${endpoint}${account.id}/`),
+    onSuccess: refresh,
   });
 
   return (
     <section>
       <PageHeader
-        title={t(`accounts.${kind}.title`)}
+        title={title ?? t(`accounts.${kind}.title`)}
         actions={<Button onClick={() => setCreating(true)}>+ {t(`accounts.${kind}.new`)}</Button>}
       />
 

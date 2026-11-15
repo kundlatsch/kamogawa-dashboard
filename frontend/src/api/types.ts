@@ -1,4 +1,17 @@
-export type Role = "ADMIN" | "COACH" | "STUDENT";
+export type Role = "ACCOUNT_ADMIN" | "COACH" | "STUDENT";
+
+export interface GymSummary {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface Gym extends GymSummary {
+  is_active: boolean;
+  created_at: string;
+  coach_count: number;
+  student_count: number;
+}
 
 export interface User {
   id: number;
@@ -7,6 +20,7 @@ export interface User {
   avatar_emoji: string;
   color: string;
   role: Role;
+  gym: GymSummary | null;
   is_active: boolean;
 }
 
@@ -113,5 +127,5 @@ export interface NotificationList {
   results: AppNotification[];
 }
 
-export const isStaff = (user: User | null | undefined) =>
-  user?.role === "ADMIN" || user?.role === "COACH";
+/** Coaches run the coach module of their gym. */
+export const isCoach = (user: User | null | undefined) => user?.role === "COACH";
