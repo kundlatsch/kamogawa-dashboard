@@ -1,0 +1,11 @@
+{
+  "brand": {
+    "name": "Chacão Boxing Team",
+    "tagline": "Painel de treinos"
+  },
+  "health": {
+    "checking": "Verificando servidor…",
+    "ok": "Servidor conectado",
+    "error": "Servidor indisponível"
+  }
+}
