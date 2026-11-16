@@ -338,7 +338,9 @@
     "removePhoto": "Remover foto",
     "uploading": "Enviando…",
     "photoError": "Não foi possível usar essa imagem. Envie um JPG, PNG ou WebP de até 5 MB.",
-    "photoHint": "A foto aparece no lugar do emoji. Sem foto, o emoji é usado."
+    "photoHint": "A foto aparece no lugar do emoji. Sem foto, o emoji é usado.",
+    "weeklyClasses": "Treinos por semana",
+    "weeklyClassesHint": "Quantos treinos você se compromete a fazer por semana. Todo domingo à noite, cada treino a menos do que isso (sem check-in) conta como falta."
   },
   "handedness": {
     "RIGHT": "Destro",
@@ -458,7 +460,7 @@
   },
   "ranking": {
     "title": "Ranking e missões",
-    "hint": "Presenças e faltas contam as aulas em que você marcou quem veio. Missões são objetivos que você passa para os alunos perseguirem.",
+    "hint": "Presenças são os check-ins (menos os que você marcou como falta). Faltas são fechadas todo domingo às 23h: treinos por semana do aluno menos os check-ins, e as faltas que você marcar no painel de presenças.",
     "position": "#",
     "student": "Aluno",
     "class": "Classe",

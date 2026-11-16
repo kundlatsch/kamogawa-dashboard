@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 
@@ -70,6 +71,7 @@ export default function StudentProfilePage() {
             {student.handedness !== "UNSPECIFIED" && ` · ${t(`handedness.${student.handedness}`)}`}
           </p>
           {student.limitations && <p className="text-sm text-belt">⚠ {student.limitations}</p>}
+          <WeeklyClassesField student={student} />
           {entry && (
             <>
               <p className="text-xs text-smoke">
@@ -166,5 +168,43 @@ export default function StudentProfilePage() {
       </div>
 
     </section>
+  );
+}
+
+/** Classes a week the student committed to; the Sunday routine turns the gap into absences. */
+function WeeklyClassesField({ student }: { student: User }) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const [value, setValue] = useState(student.weekly_classes == null ? "" : String(student.weekly_classes));
+  const save = useMutation({
+    mutationFn: async () =>
+      api.patch(`/students/${student.id}/`, { weekly_classes: value === "" ? null : Number(value) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["/students/"] }),
+  });
+  return (
+    <form
+      className="flex flex-wrap items-center gap-2 text-sm"
+      onSubmit={(event) => {
+        event.preventDefault();
+        save.mutate();
+      }}
+    >
+      <label className="flex items-center gap-2">
+        <span className="text-smoke">{t("profile.weeklyClasses")}</span>
+        <input
+          type="number"
+          min={0}
+          max={14}
+          value={value}
+          placeholder="—"
+          onChange={(event) => setValue(event.target.value)}
+          className="w-16 rounded-md border border-rope bg-ring px-2 py-1 text-chalk"
+        />
+      </label>
+      <button type="submit" className="text-xs text-smoke underline hover:text-chalk" disabled={save.isPending}>
+        {t("common.save")}
+      </button>
+      {save.isSuccess && <span className="text-xs text-belt">{t("settings.saved")}</span>}
+    </form>
   );
 }

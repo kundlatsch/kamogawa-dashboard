@@ -15,6 +15,7 @@ const user: User = {
   color: "#d62828",
   handedness: "UNSPECIFIED",
   limitations: "",
+  weekly_classes: null,
   role: "STUDENT",
   gym: { id: 1, name: "Chacão Boxing Team", slug: "chacao-boxing-team", color: "#d62828", assessment_scale_min: 1, assessment_scale_max: 10 },
   is_active: true,
@@ -41,6 +42,7 @@ describe("ProfilePage", () => {
     fireEvent.click(screen.getByRole("button", { name: "#3a86ff" }));
     fireEvent.click(screen.getByRole("button", { name: "Canhoto" }));
     fireEvent.change(screen.getByLabelText("Limitações"), { target: { value: " Sem sparring " } });
+    fireEvent.change(screen.getByLabelText("Treinos por semana"), { target: { value: "2" } });
     fireEvent.click(screen.getByRole("button", { name: "Salvar perfil" }));
 
     await waitFor(() =>
@@ -50,6 +52,7 @@ describe("ProfilePage", () => {
         color: "#3a86ff",
         handedness: "LEFT",
         limitations: "Sem sparring",
+        weekly_classes: 2,
       }),
     );
     expect(refreshUser).toHaveBeenCalled();

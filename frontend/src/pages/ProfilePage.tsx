@@ -99,6 +99,8 @@ function ProfileDetails() {
   const [color, setColor] = useState(user?.color ?? "#d62828");
   const [handedness, setHandedness] = useState<Handedness>(user?.handedness ?? "UNSPECIFIED");
   const [limitations, setLimitations] = useState(user?.limitations ?? "");
+  const [weeklyClasses, setWeeklyClasses] = useState(user?.weekly_classes == null ? "" : String(user.weekly_classes));
+  const isStudent = user?.role === "STUDENT";
 
   const save = useMutation({
     mutationFn: async () =>
@@ -108,6 +110,7 @@ function ProfileDetails() {
         color,
         handedness,
         limitations: limitations.trim(),
+        ...(isStudent ? { weekly_classes: weeklyClasses === "" ? null : Number(weeklyClasses) } : {}),
       }),
     onSuccess: () => refreshUser(),
   });
@@ -173,6 +176,19 @@ function ProfileDetails() {
           className="rounded-md border border-rope bg-ring px-3 py-2 text-chalk outline-none focus:border-glove"
         />
       </label>
+      {isStudent && (
+        <div className="flex flex-col gap-1">
+          <Input
+            label={t("profile.weeklyClasses")}
+            type="number"
+            min={0}
+            max={14}
+            value={weeklyClasses}
+            onChange={(event) => setWeeklyClasses(event.target.value)}
+          />
+          <span className="text-xs text-smoke">{t("profile.weeklyClassesHint")}</span>
+        </div>
+      )}
       <div className="flex items-center gap-3">
         <Button type="submit" disabled={save.isPending}>
           {t("profile.saveDetails")}

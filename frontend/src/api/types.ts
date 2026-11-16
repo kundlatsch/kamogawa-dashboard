@@ -31,6 +31,8 @@ export interface User {
   color: string;
   handedness: Handedness;
   limitations: string;
+  /** Classes a week the student committed to (weekly absences); null = not tracked. */
+  weekly_classes: number | null;
   /** Coach-assigned fighting style (id of a FighterClass). */
   fighter_class: number | null;
   role: Role;
