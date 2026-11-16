@@ -16,5 +16,6 @@ urlpatterns = [
     path("api/", include("training.urls")),
     path("api/", include("notifications.urls")),
     path("api/", include("progress.urls")),
+    path("api/", include("gamification.urls")),
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
 ]

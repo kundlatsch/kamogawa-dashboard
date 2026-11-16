@@ -1,0 +1,104 @@
+from django.conf import settings
+from django.db import models
+
+from training.models import hex_color
+
+
+class FighterClass(models.Model):
+    """A fighting style the coach assigns to a student (Out-Boxer, Swarmer, ...). Coach-editable list.
+
+    `art_key` points at artwork bundled with the frontend; classes without art show their emoji.
+    """
+
+    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="fighter_classes")
+    name = models.CharField(max_length=80)
+    description = models.TextField(blank=True)
+    emoji = models.CharField(max_length=16, default="🥊")
+    color = models.CharField(max_length=7, default="#d62828", validators=[hex_color])
+    art_key = models.CharField(max_length=40, blank=True)
+    order = models.PositiveIntegerField(default=0)
+    archived = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["order", "name"]
+        verbose_name_plural = "fighter classes"
+        constraints = [models.UniqueConstraint(fields=["gym", "name"], name="unique_fighter_class_name_per_gym")]
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class Mission(models.Model):
+    """A challenge students complete for XP once the coach approves it."""
+
+    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="missions")
+    title = models.CharField(max_length=120)
+    description = models.TextField(blank=True)
+    emoji = models.CharField(max_length=16, default="🎯")
+    xp_reward = models.PositiveIntegerField(default=20)
+    active = models.BooleanField(default=True)
+    starts_on = models.DateField(null=True, blank=True)
+    ends_on = models.DateField(null=True, blank=True)
+    # Repeatable missions can be completed again once the previous completion was reviewed.
+    repeatable = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-active", "ends_on", "title"]
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class MissionCompletion(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "PENDING", "Pending review"
+        APPROVED = "APPROVED", "Approved"
+        REJECTED = "REJECTED", "Rejected"
+
+    mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name="completions")
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="mission_completions")
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
+    note = models.CharField(max_length=300, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
+
+class XpEvent(models.Model):
+    """One XP gain or loss. A student's XP is the sum of their events, so every point is auditable."""
+
+    class Reason(models.TextChoices):
+        ATTENDANCE = "ATTENDANCE", "Attended a class"
+        MISSION = "MISSION", "Completed a mission"
+        MANUAL = "MANUAL", "Granted by the coach"
+
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="xp_events")
+    amount = models.IntegerField()
+    reason = models.CharField(max_length=16, choices=Reason.choices)
+    session = models.ForeignKey(
+        "training.TrainingSession", null=True, blank=True, on_delete=models.CASCADE, related_name="+"
+    )
+    mission_completion = models.OneToOneField(
+        MissionCompletion, null=True, blank=True, on_delete=models.CASCADE, related_name="xp_event"
+    )
+    note = models.CharField(max_length=200, blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["student", "session"],
+                condition=models.Q(reason="ATTENDANCE"),
+                name="one_attendance_xp_per_session",
+            )
+        ]

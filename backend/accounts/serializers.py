@@ -14,10 +14,12 @@ class OwnGymSerializer(serializers.ModelSerializer):
     """What a coach may change about their own gym."""
 
     checkin_deadline_minutes = serializers.IntegerField(min_value=0, max_value=24 * 60, required=False)
+    attendance_xp = serializers.IntegerField(min_value=0, max_value=1000, required=False)
+    xp_per_level = serializers.IntegerField(min_value=1, max_value=10_000, required=False)
 
     class Meta:
         model = Gym
-        fields = ["id", "name", "slug", "color", "checkin_deadline_minutes"]
+        fields = ["id", "name", "slug", "color", "checkin_deadline_minutes", "attendance_xp", "xp_per_level"]
         read_only_fields = ["id", "slug"]
 
 
@@ -54,6 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
             "color",
             "handedness",
             "limitations",
+            "fighter_class",
             "role",
             "gym",
             "is_active",
@@ -62,6 +65,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_avatar_url(self, user):
         return avatar_url(user)
+
+    def validate_fighter_class(self, value):
+        request = self.context.get("request")
+        if value is not None and (request is None or value.gym_id != request.user.gym_id):
+            raise serializers.ValidationError("Unknown fighter class.")
+        return value
 
 
 class ProfileSerializer(serializers.ModelSerializer):

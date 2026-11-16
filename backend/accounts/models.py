@@ -19,6 +19,9 @@ class Gym(models.Model):
     is_active = models.BooleanField(default=True)
     # Students confirm presence until this many minutes before a class starts.
     checkin_deadline_minutes = models.PositiveSmallIntegerField(default=120)
+    # Gamification: XP for each class a student attends, and XP needed per level.
+    attendance_xp = models.PositiveSmallIntegerField(default=10)
+    xp_per_level = models.PositiveSmallIntegerField(default=100)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -58,6 +61,10 @@ class User(AbstractUser):
     handedness = models.CharField(max_length=16, choices=Handedness.choices, default=Handedness.UNSPECIFIED)
     # Free text the user keeps up to date: injuries, sparring or equipment restrictions.
     limitations = models.TextField(blank=True, max_length=1000)
+    # Fighting style chosen by the coach (students cannot change it).
+    fighter_class = models.ForeignKey(
+        "gamification.FighterClass", null=True, blank=True, on_delete=models.SET_NULL, related_name="students"
+    )
 
     class Meta:
         ordering = ["display_name", "username"]
