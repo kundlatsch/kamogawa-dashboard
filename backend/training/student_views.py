@@ -17,6 +17,7 @@ from accounts.permissions import IsGymMember
 from accounts.serializers import PublicUserSerializer
 
 from .models import Assignment, TrainingSession
+from .periodization import GymTimeline
 from .serializers import DrillSerializer
 
 UPCOMING_DAYS = 30
@@ -65,8 +66,10 @@ def my_routine(request):
         Prefetch("assignments", queryset=assignments, to_attr="my_assignments")
     )
     data = []
+    timeline = GymTimeline(user.gym)
     for session in sessions:
         item = SessionSummarySerializer(session).data
+        item["objective"] = timeline.objective_for(session)
         item["routine"] = RoutineItemSerializer(
             session.my_assignments, many=True, context={"request": request}
         ).data

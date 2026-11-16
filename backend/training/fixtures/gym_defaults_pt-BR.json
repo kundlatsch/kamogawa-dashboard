@@ -1,0 +1,16 @@
+{
+  "valences": [
+    {"name": "Velocidade", "color": "#3a86ff"},
+    {"name": "Força", "color": "#d62828"},
+    {"name": "Resistência", "color": "#2a9d8f"},
+    {"name": "Potência", "color": "#f77f00"},
+    {"name": "Coordenação", "color": "#9b5de5"},
+    {"name": "Agilidade", "color": "#e9c46a"}
+  ],
+  "microcycle_phases": [
+    {"name": "Adaptação", "color": "#2a9d8f"},
+    {"name": "Desenvolvimento", "color": "#3a86ff"},
+    {"name": "Choque", "color": "#d62828"},
+    {"name": "Recuperação / avaliação", "color": "#e9c46a"}
+  ]
+}

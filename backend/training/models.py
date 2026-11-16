@@ -86,6 +86,8 @@ class TrainingSession(models.Model):
     title = models.CharField(max_length=120, blank=True)
     notes = models.TextField(blank=True)
     kind = models.CharField(max_length=16, choices=Kind.choices, default=Kind.REGULAR)
+    # Blank means the session inherits the objective of the microcycle containing its date.
+    objective_override = models.TextField(blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
     published_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(
@@ -125,3 +127,89 @@ class Assignment(models.Model):
 
     def __str__(self) -> str:
         return f"{self.session} · {self.drill}"
+
+
+# --- Periodization -----------------------------------------------------------------------------
+#
+# A macrocycle (the big cycle) holds ordered mesocycles, each training one valence; a mesocycle
+# holds ordered microcycles with a phase and an objective. Only the macrocycle stores a date:
+# every other date is derived from the ordered microcycle lengths (see training/periodization.py),
+# so reordering mesocycles shifts the calendar automatically.
+
+
+class Valence(models.Model):
+    """A physical capacity a mesocycle focuses on (speed, strength, ...). Coach-editable list."""
+
+    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="valences")
+    name = models.CharField(max_length=60)
+    color = models.CharField(max_length=7, default="#d62828", validators=[hex_color])
+    order = models.PositiveIntegerField(default=0)
+    archived = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["order", "name"]
+        constraints = [models.UniqueConstraint(fields=["gym", "name"], name="unique_valence_name_per_gym")]
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class MicrocyclePhase(models.Model):
+    """The kind of week (adaptation, development, shock, recovery/assessment). Coach-editable list."""
+
+    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="microcycle_phases")
+    name = models.CharField(max_length=60)
+    color = models.CharField(max_length=7, default="#d62828", validators=[hex_color])
+    order = models.PositiveIntegerField(default=0)
+    archived = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["order", "name"]
+        constraints = [models.UniqueConstraint(fields=["gym", "name"], name="unique_phase_name_per_gym")]
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class Macrocycle(models.Model):
+    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="macrocycles")
+    name = models.CharField(max_length=120)
+    start_date = models.DateField()
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-start_date", "id"]
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class Mesocycle(models.Model):
+    macrocycle = models.ForeignKey(Macrocycle, on_delete=models.CASCADE, related_name="mesocycles")
+    valence = models.ForeignKey(Valence, on_delete=models.PROTECT, related_name="mesocycles")
+    name = models.CharField(max_length=120, blank=True)
+    notes = models.TextField(blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["macrocycle", "order", "id"]
+
+    def __str__(self) -> str:
+        return self.name or str(self.valence)
+
+
+class Microcycle(models.Model):
+    mesocycle = models.ForeignKey(Mesocycle, on_delete=models.CASCADE, related_name="microcycles")
+    phase = models.ForeignKey(
+        MicrocyclePhase, null=True, blank=True, on_delete=models.SET_NULL, related_name="microcycles"
+    )
+    objective = models.TextField(blank=True)
+    length_days = models.PositiveSmallIntegerField(default=7)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["mesocycle", "order", "id"]
+
+    def __str__(self) -> str:
+        return f"{self.mesocycle} · {self.order + 1}"

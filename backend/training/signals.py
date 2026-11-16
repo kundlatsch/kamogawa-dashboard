@@ -1,0 +1,12 @@
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from accounts.models import Gym
+
+from .defaults import seed_gym_defaults
+
+
+@receiver(post_save, sender=Gym)
+def seed_new_gym(sender, instance, created, raw=False, **kwargs):
+    if created and not raw:
+        seed_gym_defaults(instance)
