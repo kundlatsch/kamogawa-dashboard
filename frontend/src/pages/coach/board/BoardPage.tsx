@@ -17,7 +17,7 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { api } from "../../../api/client";
 import { useDrills, useSessionBlocks, useSessions, useStudents } from "../../../api/hooks";
-import type { Assignment, SessionBlock, TrainingSession, User } from "../../../api/types";
+import type { Assignment, CheckIn, SessionBlock, TrainingSession, User } from "../../../api/types";
 import DrillCard from "../../../components/DrillCard";
 import { KindBadge, StatusBadge } from "../../../components/SessionBadge";
 import { Button, PageHeader } from "../../../components/ui";
@@ -25,6 +25,7 @@ import { columnAssignments, columnStudentId, dropTargets, moveBefore, studentCol
 import { addDays, blockStartTime, formatDate, toISODate, todayISO } from "../../../lib/dates";
 import AssignmentModal, { type AssignmentChanges } from "./AssignmentModal";
 import BoardColumn from "./BoardColumn";
+import CheckInPanel from "./CheckInPanel";
 import { Draggable, type DragData, type DropData } from "./dnd";
 import Avatar from "../../../components/Avatar";
 
@@ -65,6 +66,14 @@ export default function BoardPage() {
     blockChoice !== null && (blockChoice !== "none" || hasUnblocked) ? blockChoice : (blocks[0]?.id ?? "none");
   // The board shows one block of the class at a time; new drills land in that block.
   const blockAssignments = assignments.filter((a) => (activeBlock === "none" ? a.block === null : a.block === activeBlock));
+
+  const { data: checkIns = [] } = useQuery({
+    queryKey: ["checkins", session?.id],
+    enabled: Boolean(session),
+    queryFn: async () => (await api.get<CheckIn[]>("/checkins/", { params: { session: session!.id } })).data,
+    refetchInterval: 60_000,
+  });
+  const checkInOf = (studentId: number) => checkIns.find((c) => c.student === studentId);
 
   const studentsById = useMemo(() => new Map(students.map((s) => [s.id, s])), [students]);
   const visibleDrills = drills.filter((d) => d.name.toLowerCase().includes(search.toLowerCase()));
@@ -231,6 +240,9 @@ export default function BoardPage() {
         {session && <SessionObjective key={session.id} session={session} />}
 
         <p className="text-sm text-smoke">{t("board.howTo")}</p>
+        {session && session.status === "PUBLISHED" && (
+          <CheckInPanel session={session} checkIns={checkIns} students={students} />
+        )}
         {session && (
           <BlockTabs
             blocks={blocks}
@@ -291,6 +303,7 @@ export default function BoardPage() {
                   student={student}
                   assignments={columnAssignments(blockAssignments, column)}
                   studentsById={studentsById}
+                  checkIn={checkInOf(student.id)}
                   selected={selected.has(student.id)}
                   onToggleSelect={() => toggleSelect(student.id)}
                   onOpen={setEditing}

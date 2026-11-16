@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 
+import CheckInButton from "../../components/CheckInButton";
 import { KindBadge } from "../../components/SessionBadge";
 import { useUpcoming } from "../../components/SparringBanner";
 import { PageHeader } from "../../components/ui";
@@ -29,6 +30,9 @@ export default function UpcomingPage() {
             {session.start_time && <span className="text-smoke">{session.start_time.slice(0, 5)}</span>}
             <KindBadge kind={session.kind} />
             {session.title && <span className="text-sm">{session.title}</span>}
+            <div className="w-full">
+              <CheckInButton sessionId={session.id} state={session.checkin} />
+            </div>
           </li>
         ))}
       </ul>

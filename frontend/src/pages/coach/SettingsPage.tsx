@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -6,7 +6,7 @@ import { api } from "../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Wordmark } from "../../components/AppShell";
 import { useCategories, useSchedule } from "../../api/hooks";
-import type { DrillCategory } from "../../api/types";
+import type { DrillCategory, GymSummary } from "../../api/types";
 import BlockSettings from "../../components/BlockSettings";
 import NamedListSettings from "../../components/NamedListSettings";
 import { ColorPicker } from "../../components/pickers";
@@ -20,6 +20,7 @@ export default function SettingsPage() {
       <PageHeader title={t("settings.title")} />
       <GymSettings />
       <ScheduleSettings />
+      <CheckinSettings />
       <BlockSettings />
       <CategorySettings />
       <NamedListSettings
@@ -225,6 +226,53 @@ function CategorySettings() {
             + {t("settings.addCategory")}
           </Button>
         </div>
+      </form>
+    </div>
+  );
+}
+
+/** How long before class students can still check in or cancel. */
+function CheckinSettings() {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const { data: gym } = useQuery({
+    queryKey: ["my-gym"],
+    queryFn: async () => (await api.get<GymSummary>("/my-gym/")).data,
+  });
+  const [minutes, setMinutes] = useState("");
+  useEffect(() => {
+    if (gym?.checkin_deadline_minutes !== undefined) setMinutes(String(gym.checkin_deadline_minutes));
+  }, [gym]);
+  const save = useMutation({
+    mutationFn: async () => api.patch("/my-gym/", { checkin_deadline_minutes: Number(minutes) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-gym"] }),
+  });
+
+  return (
+    <div className="rounded-xl border border-rope bg-canvas p-5">
+      <h2 className="mb-1 font-display text-2xl tracking-wide uppercase">{t("checkin.title")}</h2>
+      <p className="mb-4 text-sm text-smoke">{t("settings.checkinDeadlineHint")}</p>
+      <form
+        className="flex flex-wrap items-end gap-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (minutes !== "") save.mutate();
+        }}
+      >
+        <Input
+          label={t("settings.checkinDeadline")}
+          type="number"
+          min={0}
+          max={1440}
+          step={15}
+          value={minutes}
+          onChange={(event) => setMinutes(event.target.value)}
+        />
+        <Button type="submit" disabled={save.isPending}>
+          {t("common.save")}
+        </Button>
+        {save.isSuccess && <span className="text-sm text-belt">{t("settings.saved")}</span>}
+        {save.isError && <span className="text-sm text-glove">{t("cycles.saveError")}</span>}
       </form>
     </div>
   );

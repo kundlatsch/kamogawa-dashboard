@@ -62,7 +62,7 @@ export default function AppShell({ nav }: { nav: NavItem[] }) {
             ))}
           </nav>
           <div className="flex items-center gap-3 text-sm">
-            {user?.role === "STUDENT" && <NotificationBell />}
+            {(isStudent || user?.role === "COACH") && <NotificationBell />}
             <NavLink
               to="/profile"
               title={t("profile.title")}

@@ -6,6 +6,8 @@ export interface GymSummary {
   slug: string;
   /** Accent color of the student area. */
   color: string;
+  /** Students check in until this many minutes before class (only sent to coaches). */
+  checkin_deadline_minutes?: number;
 }
 
 export interface Gym extends GymSummary {
@@ -124,15 +126,43 @@ export interface RoutineItem {
   partners: PublicUser[];
 }
 
+export interface MyCheckIn {
+  id: number;
+  has_pain: boolean;
+  pain_location: string;
+  pain_level: number | null;
+  notes: string;
+  created_at: string;
+}
+
+export interface CheckInState {
+  /** ISO datetime after which only the coach can change the check-in. */
+  deadline: string;
+  open: boolean;
+  mine: MyCheckIn | null;
+}
+
+export interface CheckIn extends MyCheckIn {
+  session: number;
+  student: number;
+  added_by_coach: boolean;
+  /** Null until the coach confirms who actually came. */
+  attended: boolean | null;
+}
+
+export type UpcomingSession = SessionSummary & { checkin: CheckInState };
+
 export interface MyRoutine {
   date: string;
-  sessions: (SessionSummary & { objective: string; routine: RoutineItem[] })[];
+  sessions: (SessionSummary & { objective: string; checkin: CheckInState; routine: RoutineItem[] })[];
 }
 
 export interface AppNotification {
   id: number;
-  kind: "SESSION_PUBLISHED" | "SPARRING";
+  kind: "SESSION_PUBLISHED" | "SPARRING" | "INJURY_REPORTED";
   session: SessionSummary | null;
+  /** Who the notification is about (e.g. the student who reported pain). */
+  subject: PublicUser | null;
   created_at: string;
   read_at: string | null;
 }

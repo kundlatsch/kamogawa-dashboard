@@ -61,15 +61,16 @@ export default function NotificationBell() {
                 ? formatDate(session.date, i18n.language, { weekday: "long", day: "numeric", month: "long" })
                 : "";
               const sparring = notification.kind === "SPARRING";
+              const injury = notification.kind === "INJURY_REPORTED";
               return (
                 <li
                   key={notification.id}
-                  className={`m-1 rounded-lg p-2 text-sm ${sparring ? "border border-blood bg-blood/15" : "bg-ring"} ${
+                  className={`m-1 rounded-lg p-2 text-sm ${sparring || injury ? "border border-blood bg-blood/15" : "bg-ring"} ${
                     notification.read_at ? "" : "font-semibold"
                   }`}
                 >
-                  {sparring ? "🥊 " : "📋 "}
-                  {t(`notifications.kind.${notification.kind}`, { date })}
+                  {sparring ? "🥊 " : injury ? "🤕 " : "📋 "}
+                  {t(`notifications.kind.${notification.kind}`, { date, name: notification.subject?.display_name })}
                 </li>
               );
             })}

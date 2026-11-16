@@ -2,13 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../api/client";
-import type { SessionSummary } from "../api/types";
+import type { UpcomingSession } from "../api/types";
 import { formatDate } from "../lib/dates";
 
 export const useUpcoming = () =>
   useQuery({
     queryKey: ["me", "upcoming"],
-    queryFn: async () => (await api.get<SessionSummary[]>("/me/upcoming/")).data,
+    queryFn: async () => (await api.get<UpcomingSession[]>("/me/upcoming/")).data,
   });
 
 /** Loud red alert for every upcoming sparring day. */

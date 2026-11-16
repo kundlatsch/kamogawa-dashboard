@@ -7,6 +7,7 @@ import type { MyRoutine, RoutineItem } from "../../api/types";
 import { KindBadge } from "../../components/SessionBadge";
 import SparringBanner from "../../components/SparringBanner";
 import WeekCard from "../../components/WeekCard";
+import CheckInButton from "../../components/CheckInButton";
 import { useAuth } from "../../auth/AuthContext";
 import { blockStartTime, formatDate } from "../../lib/dates";
 import { groupByBlock } from "../../lib/routine";
@@ -57,6 +58,9 @@ export default function TodayPage() {
             {session.start_time && <span className="font-semibold">{session.start_time.slice(0, 5)}</span>}
             {session.title && <span>{session.title}</span>}
             {session.notes && <p className="w-full text-sm text-smoke">{session.notes}</p>}
+            <div className="w-full">
+              <CheckInButton sessionId={session.id} state={session.checkin} />
+            </div>
             {session.objective && (
               <p className="w-full text-sm">
                 <span className="font-semibold text-belt">🎯 {t("student.weekObjective")}:</span> {session.objective}

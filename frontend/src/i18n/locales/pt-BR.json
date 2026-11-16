@@ -104,7 +104,19 @@
       "COLLECTIVE": "Bloco coletivo: arraste o treino para \"Todos\". Todos fazem juntos no horário fixo.",
       "INDIVIDUAL": "Bloco individual: cada aluno começa assim que termina o aquecimento geral. Arraste um treino para cada aluno.",
       "PAIRS": "Bloco em duplas: solte o treino em um aluno e arraste o parceiro sobre o card."
-    }
+    },
+    "checkins": "Presenças",
+    "checkedIn_one": "{{count}} confirmado",
+    "checkedIn_other": "{{count}} confirmados",
+    "noCheckins": "Ninguém confirmou presença ainda.",
+    "painAlert": "Dor: {{location}} ({{level}}/10)",
+    "painAlertNoLevel": "Dor: {{location}}",
+    "addCheckin": "Adicionar aluno",
+    "attended": "Veio",
+    "absent": "Faltou",
+    "attendanceHint": "Depois da aula, marque quem veio.",
+    "removeCheckin": "Tirar {{name}} da lista",
+    "addedByCoach": "adicionado pelo treinador"
   },
   "student": {
     "hello": "Fala, {{name}}! 👊",
@@ -125,7 +137,8 @@
     "empty": "Nenhum aviso por enquanto.",
     "kind": {
       "SESSION_PUBLISHED": "Seu treino de {{date}} está disponível.",
-      "SPARRING": "Sparring marcado para {{date}}! Traga luvas, bucal e protetor."
+      "SPARRING": "Sparring marcado para {{date}}! Traga luvas, bucal e protetor.",
+      "INJURY_REPORTED": "{{name}} relatou dor ou lesão no check-in de {{date}}."
     }
   },
   "sparring": {
@@ -175,7 +188,9 @@
     "focuses": "Focos da semana",
     "focusesHint": "Opções de foco que você escolhe para cada aluno toda semana (ex.: guarda alta, jab, respiração).",
     "focusName": "Nome do foco",
-    "addFocus": "Adicionar foco"
+    "addFocus": "Adicionar foco",
+    "checkinDeadline": "Prazo do check-in (minutos antes da aula)",
+    "checkinDeadlineHint": "Depois desse prazo o aluno não consegue mais confirmar ou cancelar presença."
   },
   "calendar": {
     "previous": "Semanas anteriores",
@@ -379,5 +394,25 @@
     "pickStudents": "Escolha pelo menos um aluno.",
     "addHomework": "Adicionar tarefa",
     "everyone": "Todos"
+  },
+  "checkin": {
+    "confirm": "Confirmar presença",
+    "confirmed": "Presença confirmada",
+    "edit": "Alterar",
+    "cancel": "Cancelar presença",
+    "closed": "Check-in encerrado",
+    "until": "até {{time}}",
+    "untilDate": "até {{date}} às {{time}}",
+    "title": "Check-in",
+    "hasPain": "Estou com dor ou lesão",
+    "noPain": "Sem dor",
+    "painLocation": "Onde?",
+    "painLocationPlaceholder": "Ex.: ombro direito",
+    "painLevel": "Intensidade da dor: {{level}}/10",
+    "notes": "Algo mais para o treinador?",
+    "save": "Confirmar",
+    "error": "Não foi possível salvar. O prazo pode ter acabado.",
+    "withPain": "com dor",
+    "notCheckedIn": "Você não confirmou presença."
   }
 }

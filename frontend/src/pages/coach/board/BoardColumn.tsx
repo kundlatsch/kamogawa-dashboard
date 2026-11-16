@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import type { Assignment, User } from "../../../api/types";
+import type { Assignment, CheckIn, User } from "../../../api/types";
 import type { ColumnKey } from "../../../lib/board";
 import { Draggable, Droppable } from "./dnd";
 import Avatar from "../../../components/Avatar";
@@ -8,6 +8,7 @@ import Avatar from "../../../components/Avatar";
 export default function BoardColumn({
   column,
   student,
+  checkIn,
   assignments,
   studentsById,
   selected,
@@ -17,6 +18,8 @@ export default function BoardColumn({
 }: {
   column: ColumnKey;
   student?: User;
+  /** The student's check-in for this class, if any (shown as a badge). */
+  checkIn?: CheckIn;
   assignments: Assignment[];
   studentsById: Map<number, User>;
   selected?: boolean;
@@ -50,7 +53,17 @@ export default function BoardColumn({
                   <Avatar person={student} size="md" ring />
                 </span>
               </Draggable>
-              <p className="min-w-0 flex-1 truncate font-semibold">{student.display_name}</p>
+              <p className="min-w-0 flex-1 truncate font-semibold">
+                {student.display_name}
+                {checkIn && (
+                  <span
+                    className={`ml-1 text-xs ${checkIn.has_pain ? "text-blood" : "text-belt"}`}
+                    title={checkIn.has_pain ? `${checkIn.pain_location} (${checkIn.pain_level ?? "?"}/10)` : t("checkin.confirmed")}
+                  >
+                    {checkIn.has_pain ? "🤕" : "✓"}
+                  </span>
+                )}
+              </p>
               <input
                 type="checkbox"
                 aria-label={t("board.select", { name: student.display_name })}
