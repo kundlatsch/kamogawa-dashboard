@@ -21,6 +21,8 @@ urlpatterns = [
     path("cycles/current/", cycle_views.current_cycle, name="current-cycle"),
     path("me/routine/", student_views.my_routine, name="my-routine"),
     path("me/upcoming/", student_views.my_upcoming, name="my-upcoming"),
+    path("me/calendar/", student_views.my_calendar, name="my-calendar"),
+    path("me/sessions/<int:session_id>/", student_views.my_session, name="my-session"),
     path("me/checkins/<int:session_id>/", student_views.my_checkin, name="my-checkin"),
     *router.urls,
 ]

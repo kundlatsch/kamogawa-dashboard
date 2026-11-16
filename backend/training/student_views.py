@@ -1,8 +1,7 @@
-"""Endpoints for students: their routine, upcoming classes and check-ins.
+"""Endpoints for students: their routine, calendar, class details and check-ins.
 
-A routine is only valid on its own day: students see today's drills, while
-upcoming sessions expose just the date, time and kind (so a sparring day can be
-announced without revealing the plan ahead of time).
+Published classes show the student's drills, also ahead of time. Unpublished classes (and
+regular weekdays without a session yet) only appear as "there will be a class" with its time.
 """
 from datetime import timedelta
 
@@ -20,7 +19,7 @@ from accounts.serializers import PublicUserSerializer
 from notifications.services import notify_injury_reported
 
 from .checkins import checkin_deadline, checkin_open
-from .models import Assignment, CheckIn, SessionBlock, TrainingSession
+from .models import Assignment, CheckIn, SessionBlock, TrainingSession, WeeklySchedule
 from .periodization import GymTimeline
 from .serializers import DrillSerializer, MyCheckInSerializer
 
@@ -69,12 +68,8 @@ def published_sessions(user):
     return TrainingSession.objects.filter(gym=user.gym, status=TrainingSession.Status.PUBLISHED)
 
 
-@api_view(["GET"])
-@permission_classes([IsGymMember])
-def my_routine(request):
-    """Today's published sessions with the drills that apply to the current student."""
-    today = timezone.localdate()
-    user = request.user
+def sessions_with_routine(user):
+    """Published sessions with the student's drills (own and broadcast) and their check-in."""
     mine = Q(is_broadcast=True) | Q(participants=user)
     assignments = (
         Assignment.objects.filter(mine)
@@ -84,21 +79,86 @@ def my_routine(request):
         # Blocks in class order; drills without a block (created before blocks existed) come last.
         .order_by(F("block__order").asc(nulls_last=True), "order", "id")
     )
-    sessions = published_sessions(user).filter(date=today).prefetch_related(
+    return published_sessions(user).prefetch_related(
         Prefetch("assignments", queryset=assignments, to_attr="my_assignments"),
         Prefetch("check_ins", queryset=CheckIn.objects.filter(student=user)),
     )
-    data = []
-    timeline = GymTimeline(user.gym)
+
+
+def session_detail(session, request, timeline) -> dict:
+    item = SessionSummarySerializer(session).data
+    item["objective"] = timeline.objective_for(session)
+    item["checkin"] = checkin_state(session, request.user)
+    item["routine"] = RoutineItemSerializer(session.my_assignments, many=True, context={"request": request}).data
+    return item
+
+
+@api_view(["GET"])
+@permission_classes([IsGymMember])
+def my_routine(request):
+    """Today's published sessions with the drills that apply to the current student."""
+    today = timezone.localdate()
+    timeline = GymTimeline(request.user.gym)
+    sessions = sessions_with_routine(request.user).filter(date=today)
+    return Response({"date": today, "sessions": [session_detail(s, request, timeline) for s in sessions]})
+
+
+@api_view(["GET"])
+@permission_classes([IsGymMember])
+def my_session(request, session_id):
+    """One published class with the student's drills, also ahead of time (Gustavo, 2026-11-16)."""
+    session = get_object_or_404(sessions_with_routine(request.user), pk=session_id)
+    return Response(session_detail(session, request, GymTimeline(request.user.gym)))
+
+
+CALENDAR_MAX_DAYS = 62
+
+
+@api_view(["GET"])
+@permission_classes([IsGymMember])
+def my_calendar(request):
+    """Classes between `?from=` and `?to=` for the student's calendar.
+
+    Published classes come with their id, kind and title (they open with their drills). Unpublished
+    classes, and regular weekdays that have no session yet, only say that there will be a class and
+    when: nothing about their content leaks before the coach publishes.
+    """
+    from .views import parse_date
+
+    today = timezone.localdate()
+    start = parse_date(request.query_params.get("from", today.isoformat()), "from")
+    end = parse_date(request.query_params.get("to", (today + timedelta(days=30)).isoformat()), "to")
+    end = min(end, start + timedelta(days=CALENDAR_MAX_DAYS))
+    gym = request.user.gym
+    schedule = WeeklySchedule.for_gym(gym)
+    sessions = (
+        TrainingSession.objects.filter(gym=gym, date__range=(start, end))
+        .prefetch_related(Prefetch("check_ins", queryset=CheckIn.objects.filter(student=request.user)))
+        .order_by("date", "start_time", "id")
+    )
+    days_with_sessions = set()
+    entries = []
     for session in sessions:
-        item = SessionSummarySerializer(session).data
-        item["objective"] = timeline.objective_for(session)
-        item["checkin"] = checkin_state(session, user)
-        item["routine"] = RoutineItemSerializer(
-            session.my_assignments, many=True, context={"request": request}
-        ).data
-        data.append(item)
-    return Response({"date": today, "sessions": data})
+        days_with_sessions.add(session.date)
+        if session.status == TrainingSession.Status.PUBLISHED:
+            entries.append(
+                {
+                    **SessionSummarySerializer(session).data,
+                    "published": True,
+                    "checkin": checkin_state(session, request.user),
+                }
+            )
+        elif session.date >= today:
+            entries.append({"id": None, "date": session.date, "start_time": session.start_time, "published": False})
+    day = max(start, today)
+    while day <= end:
+        if day.weekday() in schedule.training_weekdays and day not in days_with_sessions:
+            entries.append(
+                {"id": None, "date": day, "start_time": schedule.start_time_for(day.weekday()), "published": False}
+            )
+        day += timedelta(days=1)
+    entries.sort(key=lambda entry: (str(entry["date"]), str(entry["start_time"] or "")))
+    return Response(entries)
 
 
 @api_view(["GET"])

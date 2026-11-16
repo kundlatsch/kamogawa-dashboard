@@ -71,3 +71,44 @@ def test_coach_publishes_session(coach, api_as):
     response = api_as(coach).post(f"/api/sessions/{session.id}/publish/")
     assert response.json()["status"] == "PUBLISHED"
     assert response.json()["published_at"]
+
+
+def test_student_calendar_shows_planned_and_published_classes(api_as, make_user, gym):
+    from datetime import time, timedelta
+
+    from django.utils import timezone
+
+    from training.models import Assignment, Drill, WeeklySchedule
+
+    schedule = WeeklySchedule.for_gym(gym)
+    schedule.training_weekdays, schedule.weekday_times = [0, 1, 2, 3, 4, 5, 6], {}
+    schedule.save()
+    today = timezone.localdate()
+    published = TrainingSession.objects.create(
+        gym=gym, date=today + timedelta(days=2), start_time=time(19, 0), kind="SPARRING",
+        title="Sparring!", status=TrainingSession.Status.PUBLISHED,
+    )
+    draft = TrainingSession.objects.create(gym=gym, date=today + timedelta(days=3), title="Secret", kind="SPARRING")
+    Assignment.objects.create(session=published, drill=Drill.objects.create(gym=gym, name="Sombra"), is_broadcast=True)
+    ana = make_user("ana")
+    client = api_as(ana)
+    entries = client.get(f"/api/me/calendar/?from={today}&to={today + timedelta(days=6)}").json()
+    assert len(entries) == 7  # one class per day: published, unpublished and not yet created
+    by_date = {e["date"]: e for e in entries}
+    assert by_date[str(published.date)]["published"] is True and by_date[str(published.date)]["kind"] == "SPARRING"
+    hidden = by_date[str(draft.date)]
+    assert hidden == {"id": None, "date": str(draft.date), "start_time": None, "published": False}
+    detail = client.get(f"/api/me/sessions/{published.id}/").json()
+    assert [item["drill"]["name"] for item in detail["routine"]] == ["Sombra"]
+    assert client.get(f"/api/me/sessions/{draft.id}/").status_code == 404
+
+
+def test_student_calendar_is_isolated_between_gyms(api_as, make_user, other_gym):
+    from django.utils import timezone
+
+    rival = TrainingSession.objects.create(
+        gym=other_gym, date=timezone.localdate(), status=TrainingSession.Status.PUBLISHED, title="Rival"
+    )
+    client = api_as(make_user("ana"))
+    assert all(e.get("title") != "Rival" for e in client.get("/api/me/calendar/").json())
+    assert client.get(f"/api/me/sessions/{rival.id}/").status_code == 404
