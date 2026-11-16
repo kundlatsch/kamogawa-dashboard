@@ -410,3 +410,24 @@ uploads (Gustavo asked for avatars; stored in the `media-data` volume). Notes:
 9. Gamification backend: fighter classes, missions, XP events, levels;
    coach configuration UI.
 10. Gamification student UI: XP bar, level, class, missions.
+
+## 11. Interface simplification (2026-11-16)
+
+Requested by Gustavo plus the PM's audio feedback:
+
+- The board is now **Planejamento**: it shows only the next class (other days
+  open from the calendar via `?session=`), and only students who checked in
+  get columns; the coach can still add students to the attendance list.
+  Each column shows the fighter's class (style), strengths and weaknesses
+  (latest assessment scores), stance and limitations.
+- The calendar is interactive: clicking a day opens its class, converts it to
+  sparring (a marker only; the planned exercises stay) or creates an extra
+  class with the date already set.
+- XP and levels were dropped. Missions stay as weekly goals without XP; the
+  ranking sorts by attendance or completed missions. XP tables and gym XP
+  columns are kept (legacy, unused) so no data is lost.
+- Fighter classes use English names only, are editable, and take either one
+  of the bundled artworks or a custom uploaded image.
+- Settings are split into tabs (gym, classes, periodization, assessments,
+  fighters) behind a gear icon; UI copy says "exercício" for library items
+  and "treino" for a class.
