@@ -1,16 +1,84 @@
 {
   "valences": [
-    {"name": "Velocidade", "color": "#3a86ff"},
-    {"name": "Força", "color": "#d62828"},
-    {"name": "Resistência", "color": "#2a9d8f"},
-    {"name": "Potência", "color": "#f77f00"},
-    {"name": "Coordenação", "color": "#9b5de5"},
-    {"name": "Agilidade", "color": "#e9c46a"}
+    {
+      "name": "Velocidade",
+      "color": "#3a86ff"
+    },
+    {
+      "name": "Força",
+      "color": "#d62828"
+    },
+    {
+      "name": "Resistência",
+      "color": "#2a9d8f"
+    },
+    {
+      "name": "Potência",
+      "color": "#f77f00"
+    },
+    {
+      "name": "Coordenação",
+      "color": "#9b5de5"
+    },
+    {
+      "name": "Agilidade",
+      "color": "#e9c46a"
+    }
   ],
   "microcycle_phases": [
-    {"name": "Adaptação", "color": "#2a9d8f"},
-    {"name": "Desenvolvimento", "color": "#3a86ff"},
-    {"name": "Choque", "color": "#d62828"},
-    {"name": "Recuperação / avaliação", "color": "#e9c46a"}
+    {
+      "name": "Adaptação",
+      "color": "#2a9d8f"
+    },
+    {
+      "name": "Desenvolvimento",
+      "color": "#3a86ff"
+    },
+    {
+      "name": "Choque",
+      "color": "#d62828"
+    },
+    {
+      "name": "Recuperação / avaliação",
+      "color": "#e9c46a"
+    }
+  ],
+  "session_blocks": [
+    {
+      "name": "Mobilidade",
+      "color": "#2a9d8f",
+      "mode": "COLLECTIVE",
+      "start_offset_minutes": 0
+    },
+    {
+      "name": "Aquecimento geral",
+      "color": "#e9c46a",
+      "mode": "COLLECTIVE",
+      "start_offset_minutes": 10
+    },
+    {
+      "name": "Aquecimento específico",
+      "color": "#f77f00",
+      "mode": "INDIVIDUAL",
+      "start_offset_minutes": null
+    },
+    {
+      "name": "Escola de boxe",
+      "color": "#3a86ff",
+      "mode": "PAIRS",
+      "start_offset_minutes": null
+    },
+    {
+      "name": "Combate",
+      "color": "#d62828",
+      "mode": "PAIRS",
+      "start_offset_minutes": null
+    },
+    {
+      "name": "Resfriamento",
+      "color": "#9b5de5",
+      "mode": "COLLECTIVE",
+      "start_offset_minutes": null
+    }
   ]
 }

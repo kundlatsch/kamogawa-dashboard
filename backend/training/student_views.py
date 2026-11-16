@@ -6,7 +6,7 @@ announced without revealing the plan ahead of time).
 """
 from datetime import timedelta
 
-from django.db.models import Prefetch, Q
+from django.db.models import F, Prefetch, Q
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.decorators import api_view, permission_classes
@@ -16,20 +16,27 @@ from accounts.models import User
 from accounts.permissions import IsGymMember
 from accounts.serializers import PublicUserSerializer
 
-from .models import Assignment, TrainingSession
+from .models import Assignment, SessionBlock, TrainingSession
 from .periodization import GymTimeline
 from .serializers import DrillSerializer
 
 UPCOMING_DAYS = 30
 
 
+class RoutineBlockSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SessionBlock
+        fields = ["id", "name", "color", "mode", "start_offset_minutes", "order"]
+
+
 class RoutineItemSerializer(serializers.ModelSerializer):
     drill = DrillSerializer(read_only=True)
+    block = RoutineBlockSerializer(read_only=True)
     partners = serializers.SerializerMethodField()
 
     class Meta:
         model = Assignment
-        fields = ["id", "drill", "is_broadcast", "order", "notes", "rounds", "duration_minutes", "partners"]
+        fields = ["id", "drill", "block", "is_broadcast", "order", "notes", "rounds", "duration_minutes", "partners"]
 
     def get_partners(self, assignment):
         me = self.context["request"].user
@@ -58,9 +65,10 @@ def my_routine(request):
     assignments = (
         Assignment.objects.filter(mine)
         .distinct()
-        .select_related("drill")
+        .select_related("drill", "block")
         .prefetch_related(Prefetch("participants", queryset=User.objects.filter(is_active=True)))
-        .order_by("order", "id")
+        # Blocks in class order; drills without a block (created before blocks existed) come last.
+        .order_by(F("block__order").asc(nulls_last=True), "order", "id")
     )
     sessions = published_sessions(user).filter(date=today).prefetch_related(
         Prefetch("assignments", queryset=assignments, to_attr="my_assignments")

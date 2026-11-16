@@ -11,6 +11,7 @@ from .models import (
     Mesocycle,
     Microcycle,
     MicrocyclePhase,
+    SessionBlock,
     TrainingSession,
     Valence,
     WeeklySchedule,
@@ -119,6 +120,7 @@ class AssignmentSerializer(GymScopedSerializer):
     gym_scoped_fields = {
         "session": lambda gym: TrainingSession.objects.filter(gym=gym),
         "drill": lambda gym: Drill.objects.filter(gym=gym),
+        "block": lambda gym: SessionBlock.objects.filter(gym=gym),
         "participants": lambda gym: User.objects.filter(gym=gym, role=User.Role.STUDENT, is_active=True),
     }
 
@@ -134,6 +136,7 @@ class AssignmentSerializer(GymScopedSerializer):
             "drill_detail",
             "participants",
             "is_broadcast",
+            "block",
             "order",
             "notes",
             "rounds",
@@ -295,3 +298,11 @@ class MacrocycleSerializer(GymScopedSerializer):
                 }
             )
         return result
+
+
+class SessionBlockSerializer(NamedListSerializer):
+    start_offset_minutes = serializers.IntegerField(min_value=0, max_value=600, required=False, allow_null=True)
+
+    class Meta:
+        model = SessionBlock
+        fields = ["id", "name", "color", "mode", "start_offset_minutes", "order", "archived"]

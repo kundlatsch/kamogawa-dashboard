@@ -1,4 +1,4 @@
-"""Periodization API: coach-editable valences and phases, and the macro/meso/microcycle plan."""
+"""Periodization API: coach-editable valences, phases and class blocks, and the cycle plan."""
 from django.db import transaction
 from django.utils import timezone
 from rest_framework.decorators import action, api_view, permission_classes
@@ -7,13 +7,14 @@ from rest_framework.response import Response
 
 from accounts.permissions import IsCoach, IsCoachOrReadOnly, IsGymMember
 
-from .models import Macrocycle, Mesocycle, Microcycle, MicrocyclePhase, Valence
+from .models import Macrocycle, Mesocycle, Microcycle, MicrocyclePhase, SessionBlock, Valence
 from .periodization import GymTimeline, macrocycles_with_cycles
 from .serializers import (
     MacrocycleSerializer,
     MesocycleSerializer,
     MicrocyclePhaseSerializer,
     MicrocycleSerializer,
+    SessionBlockSerializer,
     ValenceSerializer,
 )
 from .views import GymScopedViewSet, parse_date
@@ -65,6 +66,13 @@ class ValenceViewSet(ArchivableListViewSet):
 class MicrocyclePhaseViewSet(ArchivableListViewSet):
     serializer_class = MicrocyclePhaseSerializer
     model = MicrocyclePhase
+
+
+class SessionBlockViewSet(ArchivableListViewSet):
+    """The parts of a class, in order (mobility, warm-ups, boxing school, combat, cool-down)."""
+
+    serializer_class = SessionBlockSerializer
+    model = SessionBlock
 
 
 class MacrocycleViewSet(GymScopedViewSet):

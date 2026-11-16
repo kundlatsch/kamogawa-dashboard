@@ -116,6 +116,10 @@ class Assignment(models.Model):
         settings.AUTH_USER_MODEL, blank=True, related_name="training_assignments"
     )
     is_broadcast = models.BooleanField(default=False)
+    # Which part of the class the drill belongs to; rows created before blocks existed have none.
+    block = models.ForeignKey(
+        "SessionBlock", null=True, blank=True, on_delete=models.SET_NULL, related_name="assignments"
+    )
     order = models.PositiveIntegerField(default=0)
     notes = models.TextField(blank=True)
     rounds = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -213,3 +217,32 @@ class Microcycle(models.Model):
 
     def __str__(self) -> str:
         return f"{self.mesocycle} · {self.order + 1}"
+
+
+class SessionBlock(models.Model):
+    """A part of every class (mobility, general warm-up, ...), in order. Coach-editable list.
+
+    `mode` tells how the block is usually run: everyone together at a fixed time (COLLECTIVE),
+    each student on their own (INDIVIDUAL), or in pairs (PAIRS).
+    """
+
+    class Mode(models.TextChoices):
+        COLLECTIVE = "COLLECTIVE", "Collective"
+        INDIVIDUAL = "INDIVIDUAL", "Individual"
+        PAIRS = "PAIRS", "Pairs"
+
+    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="session_blocks")
+    name = models.CharField(max_length=60)
+    color = models.CharField(max_length=7, default="#d62828", validators=[hex_color])
+    mode = models.CharField(max_length=16, choices=Mode.choices, default=Mode.COLLECTIVE)
+    # Minutes after the class starts; only meaningful for collective blocks with a fixed time.
+    start_offset_minutes = models.PositiveSmallIntegerField(null=True, blank=True)
+    order = models.PositiveIntegerField(default=0)
+    archived = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["order", "name"]
+        constraints = [models.UniqueConstraint(fields=["gym", "name"], name="unique_block_name_per_gym")]
+
+    def __str__(self) -> str:
+        return self.name

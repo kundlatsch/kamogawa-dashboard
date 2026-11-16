@@ -20,9 +20,9 @@ def seed_gym_defaults(gym, models: dict | None = None) -> None:
     models; by default the current ones are used.
     """
     if models is None:
-        from .models import MicrocyclePhase, Valence
+        from .models import MicrocyclePhase, SessionBlock, Valence
 
-        models = {"valences": Valence, "microcycle_phases": MicrocyclePhase}
+        models = {"valences": Valence, "microcycle_phases": MicrocyclePhase, "session_blocks": SessionBlock}
     defaults = load_defaults()
     for key, model in models.items():
         if model.objects.filter(gym_id=gym.id).exists():
