@@ -244,152 +244,154 @@ while building:
    account is created from `.env` on first boot. Admins and coaches share the
    coach module; only admins can manage coach accounts.
 
-## 10. Phase 10 — Periodization, assessments, check-in and gamification (proposed 2026-11-16)
+## 10. Phase 10 — Periodization, assessments, check-in and gamification (2026-11-16)
 
-Source: feedback from the project manager. This phase turns the drill board
-into a periodized training plan. Everything below is additive: existing
-sessions, drills and assignments keep working, and new tables arrive through
-migrations (the database holds real gym data, so nothing is wiped).
-Items marked **(open)** wait for confirmation before they are built.
+Source: feedback from the project manager plus Gustavo's additions. This
+phase turns the drill board into a periodized training plan. Everything is
+additive: existing sessions, drills and assignments keep working, and new
+tables arrive through migrations (the database holds real gym data, so
+nothing is wiped).
 
 ### 10.1 Requirements (summary)
 
-- **Coach** registers students, their assessments (stats), weekly focuses and
-  homework; builds the month's cycle and each class's workout; sees who
-  checked in, injury alerts and pair suggestions.
-- **Student** sees their stats, coach observations and the two focuses of the
-  week, the week's objective for group classes, homework, and checks in
-  before a deadline with an optional pain/injury report.
-- **Periodization** (added by Gustavo): three coach-configurable levels.
-  A **macrocycle** (the big cycle, e.g. a semester) holds an ordered list of
-  **mesocycles**; each mesocycle trains one valence (typically a month) and
-  holds an ordered list of **microcycles** (typically weeks) with a phase
-  (adaptation, development, shock, recovery/assessment) and an objective.
-  The coach sets durations and orders the valences by drag and drop; each
-  class inherits its microcycle's objective. Students see the whole plan
-  (which valence now, which next).
-- **Gamification** (added by Gustavo): students earn XP for attending classes;
-  the coach configures classes (levels) and missions that award XP.
-- **Profile** (added by Gustavo): each user marks whether they are left- or
-  right-handed and writes a free-text description of their limitations
-  (injuries, sparring or equipment restrictions) on their own profile.
+- **Coach** registers students, their assessments (stats), weekly focuses,
+  notes and homework; builds the cycles and each class's workout; sees who
+  checked in and injury alerts; confirms attendance.
+- **Student** sees their stats, coach notes and the two focuses of the week,
+  the current cycle and the week's objective, homework, XP, fighter class and
+  missions; checks in before a deadline with an optional pain/injury report.
+- **Periodization**: three coach-configurable levels. A **macrocycle** (the
+  big cycle, e.g. a semester) holds an ordered list of **mesocycles**; each
+  mesocycle trains one valence and holds an ordered list of **microcycles**
+  with a phase (adaptation, development, shock, recovery/assessment) and an
+  objective. The coach sets durations and orders valences by drag and drop;
+  each class inherits its microcycle's objective. Students see the plan.
 - **Class blocks**: mobility and general warm-up (collective, fixed time) →
   specific warm-up (individual, starts when each student finishes the general
-  one) → boxing school and combat (pairs built from check-ins) → cool-down.
+  one) → boxing school and combat (pairs) → cool-down.
+- **Gamification**: XP for attending classes and completing missions; levels
+  come from XP; coach-configurable fighter classes and missions.
+- **Profile**: each user marks left- or right-handed and describes their
+  limitations (injuries, sparring or equipment restrictions). *(Done.)*
 
 ### 10.2 Mapping onto the existing model
 
-| Feedback concept | Existing piece | Change |
+| Concept | Existing piece | Change |
 |---|---|---|
-| Class workout | `TrainingSession` + `Assignment` | Add a `block` to `Assignment`; the board groups cards by block |
+| Class workout | `TrainingSession` + `Assignment` | `Assignment.block`; the board groups cards by block |
 | Collective blocks | Broadcast assignment | Mobility, general warm-up and cool-down default to broadcast |
-| Individual specific warm-up | Solo assignment | Unchanged, placed in the specific warm-up block |
-| Pairs for school/combat | Pair assignment | Pairs can be created from a suggestion based on check-ins |
-| Big cycle | — | New `Macrocycle` with date range |
-| Valence block | — | New `Mesocycle` (ordered in a macrocycle, one `Valence`) |
-| Week phase/objective | — | New `Microcycle` (ordered in a mesocycle); sessions resolve it by date |
-| XP, classes, missions | — | New `XpEvent`, `RankClass`, `Mission`, `MissionCompletion` |
-| Handedness, limitations | `User` | New `handedness` and `limitations` fields |
-| Stats 1–5 | — | New `Metric` + `Assessment` (monthly) |
-| Weekly focuses, observations | — | New `WeeklyFocus`, `CoachNote` |
-| Homework | — | New `Homework` (per student or for everyone, per week) |
-| Check-in + pain | — | New `CheckIn` with optional pain report; gym deadline setting |
+| Individual specific warm-up | Solo assignment | Placed in the specific warm-up block |
+| Pairs for school/combat | Pair assignment | Built by the coach on the board (no automatic suggestions) |
+| Big cycle | — | `Macrocycle` with a start date |
+| Valence block | — | `Mesocycle` (ordered in a macrocycle, one `Valence`) |
+| Week phase/objective | — | `Microcycle` (ordered in a mesocycle); sessions resolve it by date |
+| Stats 1–5 | — | `Metric` + `Assessment` (monthly) |
+| Weekly focuses | — | `FocusOption` list (like drill categories) + `WeeklyFocus` |
+| Observations | — | `CoachNote` |
+| Homework | — | `Homework` (per student or everyone, per week) |
+| Check-in + pain | — | `CheckIn` with optional pain report; gym deadline setting |
 | Injury alerts | `Notification` | New kind `INJURY_REPORTED` for the gym's coaches |
+| XP, levels, classes, missions | — | `XpEvent`, `FighterClass`, `Mission`, `MissionCompletion` |
+| Handedness, limitations | `User` | `handedness`, `limitations` *(done)* |
 
 ### 10.3 New and changed models (all gym-scoped)
 
 ```
 Valence            gym, name, order, archived
-                   seeded per gym: speed, strength, endurance, power,
-                   coordination, agility (coach-editable list)
+                   seeded: speed, strength, endurance, power,
+                   coordination, agility
 Macrocycle         gym, name, start_date, notes
-Mesocycle          macrocycle, order, valence → Valence, weeks (default 4),
-                   name, notes
+Mesocycle          macrocycle, order, valence → Valence, name, notes
 MicrocyclePhase    gym, name, order        seeded: adaptation, development,
                                            shock, recovery/assessment
 Microcycle         mesocycle, order, phase → MicrocyclePhase, objective,
                    length_days (default 7)
-                   Dates are derived: a macrocycle starts on start_date and
-                   its mesocycles/microcycles follow in order, so reordering
-                   valences shifts the calendar automatically.
-TrainingSession    + objective_override (blank = inherit the week's objective)
+                   A new mesocycle starts with 4 microcycles (one per seeded
+                   phase); the coach can add, remove or resize them.
+TrainingSession    + objective_override (blank = inherit the microcycle's)
 SessionBlock       gym, name, order, mode = COLLECTIVE | INDIVIDUAL | PAIRS,
-                   default_start_offset_minutes (collective blocks only)
+                   start_offset_minutes (collective blocks only)
                    seeded: mobility, general warm-up (COLLECTIVE),
                    specific warm-up (INDIVIDUAL), boxing school, combat
                    (PAIRS), cool-down (COLLECTIVE)
-Assignment         + block → SessionBlock (nullable; existing rows stay
-                   "unassigned" until the coach moves them)
+Assignment         + block → SessionBlock (nullable; existing rows show as
+                   "no block" until the coach moves them)
 Metric             gym, name, group = PHYSICAL | TECHNICAL, order, archived
                    seeded: speed, strength, endurance, mobility (PHYSICAL);
                    guard, footwork, coordination, defense (TECHNICAL)
 Assessment         student, metric, period (first day of month), score 1–5,
                    notes             unique (student, metric, period)
-WeeklyFocus        student, week_start, position (1 | 2), text,
-                   metric → Metric (optional)
+FocusOption        gym, name, emoji, color, order, archived
+WeeklyFocus        student, week_start (Monday), position (1 | 2),
+                   focus → FocusOption, note
 CoachNote          student, author, body, visible_to_student, created_at
 Homework           gym, week_start, title, description, drill (optional),
                    participants M2M (empty + is_broadcast = everyone)
 CheckIn            session, student, created_at, has_pain,
-                   pain_location, pain_level 0–10, notes
+                   pain_location, pain_level 0–10, notes,
+                   attended (null until the coach confirms)
                    unique (session, student)
-Gym                + checkin_deadline_minutes (before session start)
-User               + handedness = LEFT | RIGHT | UNSPECIFIED (default),
-                   + limitations (text); editable by the user on their
-                   profile, visible to the gym's coaches
-RankClass          gym, name, emoji, color, min_xp, order
-                   (the student's class is the highest one they reach)
+Gym                + checkin_deadline_minutes (default 120)
+                   + attendance_xp (default 10), xp_per_level (default 100)
+User               + handedness = LEFT | RIGHT | UNSPECIFIED, limitations
+                   + fighter_class → FighterClass (nullable)
+FighterClass       gym, name, description, emoji, color, order, archived
+                   seeded: Out-Boxer, Swarmer (In-Fighter), Slugger
+                   (Brawler), Boxer-Puncher, Counterpuncher, Switch-hitter
 Mission            gym, title, description, xp_reward, active,
                    starts_on / ends_on (optional), repeatable
-MissionCompletion  mission, student, completed_at, approved_by
+MissionCompletion  mission, student, status = PENDING | APPROVED | REJECTED,
+                   created_at, reviewed_by, reviewed_at
 XpEvent            student, amount, reason = ATTENDANCE | MISSION | MANUAL,
-                   session / mission_completion (optional), created_at
+                   session / mission_completion (optional), note, created_at
                    (XP total is the sum of events, so it can be audited)
-Gym                + attendance_xp (XP per class attended)
 ```
 
 Valences and metrics stay separate lists, following the PM's suggestion that
-mobility and technique are assessed but are not a month's valence.
+mobility and technique are assessed but are not a cycle's valence.
+Seeded lists are created per gym by a data migration (existing gyms) and on
+gym creation; the coach edits them in Settings, like drill categories.
 
 ### 10.4 Rules
 
-- A session's week is the Monday-based week containing its date; its
-  mesocycle is the month of that Monday **(open: weeks that span two
-  months, and the fifth week)**.
+- Cycle dates are derived from the macrocycle's start date and the ordered
+  lengths of its microcycles, so reordering mesocycles shifts the calendar.
+  A session belongs to the microcycle whose date range contains its date;
+  sessions outside any macrocycle simply have no objective.
 - Students check in for a published session until
-  `start_time − checkin_deadline_minutes`; after that the check-in closes
-  **(open: deadline value and late check-ins)**.
+  `start_time − checkin_deadline_minutes`; after that check-in is closed.
+  The coach can add or remove check-ins at any time.
 - A check-in with `has_pain` notifies the gym's coaches and flags the student
   on the board; the coach decides whether they train.
-- Pair suggestions use only checked-in students without a pain flag
-  **(open: pairing criteria)**. Accepting a suggestion creates pair
-  assignments in the PAIRS blocks; the coach can still edit them by drag
-  and drop.
-- Attendance XP is granted once per (student, session) **(open: on
-  check-in, or only after the coach confirms attendance)**.
-- Pair suggestions can also mix or match handedness **(open)**.
+- No automatic pair suggestions: the coach builds pairs on the board, which
+  shows who checked in, their handedness and pain flags.
+- Attendance XP: after the class the coach confirms attendance (checked-in
+  students pre-marked as present); confirming grants `attendance_xp` once per
+  (student, session); un-confirming removes it.
+- Missions: the student marks a mission as done, the coach approves, and
+  approval grants its XP. The coach can also grant or remove XP manually.
+- Level = `1 + total_xp // xp_per_level`. The fighter class is set by the
+  coach on the student (a style, not a level).
 - Students see their own assessments (current month + history), notes marked
-  visible, this week's focuses, objective and homework. Today's routine rule
-  (decision 4) is unchanged.
+  visible, this week's focuses, objective and homework, the macrocycle plan,
+  XP, level, class and missions. Today's routine rule (decision 4) is
+  unchanged.
 
 ### 10.5 Delivery steps
 
-0. Profile: handedness and limitations (user edits, coach sees).
-1. Periodization backend: `Valence`, `Macrocycle`, `Mesocycle`,
-   `MicrocyclePhase`, `Microcycle`, date derivation, session objective
-   resolution, API + isolation tests.
-2. Cycle planner UI: macrocycle timeline where the coach drags valences into
-   order, sets durations, and each microcycle's phase and objective; a
-   read-only version for students.
-3. Session blocks: `SessionBlock` + `Assignment.block` migration; board
-   grouped into block lanes; collective blocks show their fixed time.
+0. Profile: handedness and limitations. *(Done.)*
+1. Periodization backend: valences, phases, macro/meso/microcycles, date
+   derivation, session objective resolution, API + isolation tests.
+2. Cycle planner UI (coach) + read-only plan for students.
+3. Session blocks: `SessionBlock` + `Assignment.block`; board grouped into
+   block lanes; collective blocks show their fixed time.
 4. Assessments backend + coach UI (student × metric grid, 1–5, per month).
-5. Weekly focuses, coach notes and homework (backend + coach UI).
+5. Focus options, weekly focuses, coach notes and homework.
 6. Check-in backend: deadline setting, pain report, coach notification.
 7. Student UI: week card (objective, focuses, homework), stats page, check-in
    form with pain fields.
-8. Coach check-in panel: confirmed list, injury alerts, pair suggestions
-   that create pair assignments.
-9. Gamification backend: `RankClass`, `Mission`, `MissionCompletion`,
-   `XpEvent`, attendance XP; coach configuration UI.
-10. Gamification student UI: XP bar, current class, missions.
+8. Coach check-in panel: confirmed list, injury alerts, attendance
+   confirmation.
+9. Gamification backend: fighter classes, missions, XP events, levels;
+   coach configuration UI.
+10. Gamification student UI: XP bar, level, class, missions.
