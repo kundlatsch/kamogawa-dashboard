@@ -219,6 +219,14 @@
     "loginFixed": "o usuário de login não muda",
     "saveDetails": "Salvar perfil",
     "detailsSaved": "Perfil atualizado!",
-    "detailsError": "Não foi possível salvar. Confira o nome e a cor."
+    "detailsError": "Não foi possível salvar. Confira o nome e a cor.",
+    "handedness": "Mão dominante",
+    "limitations": "Limitações",
+    "limitationsPlaceholder": "Lesões, restrições de sparring ou de equipamento que o treinador deve saber."
+  },
+  "handedness": {
+    "RIGHT": "Destro",
+    "LEFT": "Canhoto",
+    "UNSPECIFIED": "Não informado"
   }
 }

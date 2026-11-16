@@ -15,12 +15,16 @@ export interface Gym extends GymSummary {
   student_count: number;
 }
 
+export type Handedness = "UNSPECIFIED" | "RIGHT" | "LEFT";
+
 export interface User {
   id: number;
   username: string;
   display_name: string;
   avatar_emoji: string;
   color: string;
+  handedness: Handedness;
+  limitations: string;
   role: Role;
   gym: GymSummary | null;
   is_active: boolean;

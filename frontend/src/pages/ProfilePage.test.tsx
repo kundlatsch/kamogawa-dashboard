@@ -11,6 +11,8 @@ const user: User = {
   display_name: "Ana",
   avatar_emoji: "🥊",
   color: "#d62828",
+  handedness: "UNSPECIFIED",
+  limitations: "",
   role: "STUDENT",
   gym: { id: 1, name: "Chacão Boxing Team", slug: "chacao-boxing-team", color: "#d62828" },
   is_active: true,
@@ -28,13 +30,15 @@ function renderPage() {
 }
 
 describe("ProfilePage", () => {
-  it("saves the display name, emoji and color but never the login", async () => {
+  it("saves the display name, emoji, color, handedness and limitations but never the login", async () => {
     const patch = vi.spyOn(api, "patch").mockResolvedValue({ data: {} });
     renderPage();
 
     fireEvent.change(screen.getByLabelText("Nome exibido"), { target: { value: "Ana Pugilista" } });
     fireEvent.click(screen.getByRole("button", { name: "🐯" }));
     fireEvent.click(screen.getByRole("button", { name: "#3a86ff" }));
+    fireEvent.click(screen.getByRole("button", { name: "Canhoto" }));
+    fireEvent.change(screen.getByLabelText("Limitações"), { target: { value: " Sem sparring " } });
     fireEvent.click(screen.getByRole("button", { name: "Salvar perfil" }));
 
     await waitFor(() =>
@@ -42,6 +46,8 @@ describe("ProfilePage", () => {
         display_name: "Ana Pugilista",
         avatar_emoji: "🐯",
         color: "#3a86ff",
+        handedness: "LEFT",
+        limitations: "Sem sparring",
       }),
     );
     expect(refreshUser).toHaveBeenCalled();

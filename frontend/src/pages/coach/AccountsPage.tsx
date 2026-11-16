@@ -81,7 +81,15 @@ export default function AccountsPage({
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{account.display_name}</p>
-                <p className="truncate text-xs text-smoke">@{account.username}</p>
+                <p className="truncate text-xs text-smoke">
+                  @{account.username}
+                  {account.handedness !== "UNSPECIFIED" && ` · ${t(`handedness.${account.handedness}`)}`}
+                </p>
+                {account.limitations && (
+                  <p className="mt-1 line-clamp-2 text-xs text-belt" title={account.limitations}>
+                    ⚠ {account.limitations}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col gap-1">
                 <Button variant="ghost" className="!px-2 !py-1 text-xs" onClick={() => reset.mutate(account)}>

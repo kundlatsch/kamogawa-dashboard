@@ -4,11 +4,13 @@ import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../api/client";
+import type { Handedness } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
 import { ColorPicker, EmojiPicker, AVATAR_EMOJIS } from "../components/pickers";
 import { Button, Input, PageHeader, PasswordInput } from "../components/ui";
 
 const MIN_LENGTH = 8;
+const HANDEDNESS: Handedness[] = ["RIGHT", "LEFT", "UNSPECIFIED"];
 
 /** Every user (account admin, coach, student) sees their details and changes their password here. */
 export default function ProfilePage() {
@@ -94,10 +96,18 @@ function ProfileDetails() {
   const [displayName, setDisplayName] = useState(user?.display_name ?? "");
   const [emoji, setEmoji] = useState(user?.avatar_emoji ?? "🥊");
   const [color, setColor] = useState(user?.color ?? "#d62828");
+  const [handedness, setHandedness] = useState<Handedness>(user?.handedness ?? "UNSPECIFIED");
+  const [limitations, setLimitations] = useState(user?.limitations ?? "");
 
   const save = useMutation({
     mutationFn: async () =>
-      api.patch("/auth/me/", { display_name: displayName.trim(), avatar_emoji: emoji, color }),
+      api.patch("/auth/me/", {
+        display_name: displayName.trim(),
+        avatar_emoji: emoji,
+        color,
+        handedness,
+        limitations: limitations.trim(),
+      }),
     onSuccess: () => refreshUser(),
   });
 
@@ -137,6 +147,35 @@ function ProfileDetails() {
       />
       <EmojiPicker value={emoji} onChange={setEmoji} options={AVATAR_EMOJIS} label={t("profile.emoji")} />
       <ColorPicker value={color} onChange={setColor} label={t("profile.color")} />
+      <fieldset className="flex flex-col gap-1 text-sm">
+        <legend className="mb-1 text-smoke">{t("profile.handedness")}</legend>
+        <div className="flex gap-2">
+          {HANDEDNESS.map((option) => (
+            <button
+              key={option}
+              type="button"
+              aria-pressed={handedness === option}
+              onClick={() => setHandedness(option)}
+              className={`rounded-md border px-3 py-1.5 ${
+                handedness === option ? "border-glove bg-glove/20 text-chalk" : "border-rope text-smoke hover:text-chalk"
+              }`}
+            >
+              {t(`handedness.${option}`)}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <label className="flex flex-col gap-1 text-sm">
+        <span className="text-smoke">{t("profile.limitations")}</span>
+        <textarea
+          rows={3}
+          maxLength={1000}
+          value={limitations}
+          placeholder={t("profile.limitationsPlaceholder")}
+          onChange={(event) => setLimitations(event.target.value)}
+          className="rounded-md border border-rope bg-ring px-3 py-2 text-chalk outline-none focus:border-glove"
+        />
+      </label>
       <div className="flex items-center gap-3">
         <Button type="submit" disabled={save.isPending}>
           {t("profile.saveDetails")}
