@@ -1,4 +1,4 @@
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import mixins, status, viewsets
@@ -12,7 +12,8 @@ from accounts.models import User
 from accounts.permissions import IsCoach, IsGymMember
 from accounts.serializers import PublicUserSerializer
 from training.cycle_views import ArchivableListViewSet
-from training.models import CheckIn, TrainingSession
+from training.absences import week_start
+from training.models import CheckIn, WeeklyAbsence
 from training.views import GymScopedViewSet
 
 from .models import FighterClass, Mission, MissionCompletion
@@ -115,25 +116,41 @@ def ranking_rows(gym, include_pending: bool) -> list[dict]:
 
 
 def attendance_by_student(gym, students) -> dict[int, dict]:
-    """Classes attended and missed per student.
+    """Classes attended and absences per student.
 
-    Only classes where the coach took attendance (marked anyone as present or absent) count, and
-    only from the day the student joined: missing such a class without being marked present is
-    an absence, whether or not the student had checked in.
+    A check-in for a class up to today counts as attended unless the coach marked it as missed.
+    Absences are the weekly totals recorded every Sunday (committed classes minus attended, see
+    training/absences.py) plus classes the coach marked as missed in weeks not closed yet.
     """
-    taken = list(
-        TrainingSession.objects.filter(gym=gym, check_ins__attended__isnull=False).distinct().values_list("id", "date")
+    today = timezone.localdate()
+    ids = [student.id for student in students]
+    attended = dict(
+        CheckIn.objects.filter(student_id__in=ids, session__gym=gym, session__date__lte=today)
+        .exclude(attended=False)
+        .values("student")
+        .annotate(n=Count("id"))
+        .values_list("student", "n")
     )
-    present = set(
-        CheckIn.objects.filter(session__gym=gym, attended=True).values_list("student_id", "session_id")
+    recorded = dict(
+        WeeklyAbsence.objects.filter(student_id__in=ids)
+        .values("student")
+        .annotate(n=Sum("missed"))
+        .values_list("student", "n")
     )
-    result = {}
-    for student in students:
-        joined = timezone.localtime(student.date_joined).date()
-        counted = [session_id for session_id, day in taken if day >= joined]
-        attended = sum((student.id, session_id) in present for session_id in counted)
-        result[student.id] = {"attended": attended, "absences": len(counted) - attended}
-    return result
+    closed_weeks = set(WeeklyAbsence.objects.filter(student_id__in=ids).values_list("student", "week_start"))
+    open_misses: dict[int, int] = {}
+    for student_id, day in CheckIn.objects.filter(student_id__in=ids, attended=False).values_list(
+        "student", "session__date"
+    ):
+        if (student_id, week_start(day)) not in closed_weeks:
+            open_misses[student_id] = open_misses.get(student_id, 0) + 1
+    return {
+        student.id: {
+            "attended": attended.get(student.id, 0),
+            "absences": (recorded.get(student.id) or 0) + open_misses.get(student.id, 0),
+        }
+        for student in students
+    }
 
 
 def available_missions(user):

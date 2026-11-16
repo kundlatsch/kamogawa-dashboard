@@ -100,21 +100,22 @@ def test_gamification_is_isolated_between_gyms(coach, api_as, gym, other_gym, ma
 
 
 def test_leaderboard_counts_attendance_and_absences(coach, api_as, gym, make_user):
+    from training.absences import record_week, week_start
+
     ana, bia = make_user("ana"), make_user("bia")
-    User.objects.filter(pk__in=[ana.pk, bia.pk]).update(date_joined=timezone.now() - timedelta(days=30))
-    late = make_user("cris")  # joined today: earlier classes are not absences
-    today = timezone.localdate()
-    taken = [TrainingSession.objects.create(gym=gym, date=today - timedelta(days=d)) for d in (1, 2, 3)]
-    CheckIn.objects.create(session=taken[0], student=ana, attended=True)
-    CheckIn.objects.create(session=taken[1], student=ana, attended=True)
-    CheckIn.objects.create(session=taken[2], student=bia, attended=False)
-    CheckIn.objects.create(session=taken[0], student=bia, attended=True)
-    untaken = TrainingSession.objects.create(gym=gym, date=today - timedelta(days=4))
-    CheckIn.objects.create(session=untaken, student=bia)  # attendance never taken: not counted
+    User.objects.filter(pk__in=[ana.pk, bia.pk]).update(date_joined=timezone.now() - timedelta(days=60))
+    User.objects.filter(pk__in=[ana.pk, bia.pk]).update(weekly_classes=2)
+    last_monday = week_start(timezone.localdate()) - timedelta(days=7)
+    monday, wednesday = (TrainingSession.objects.create(gym=gym, date=last_monday + timedelta(days=d)) for d in (0, 2))
+    CheckIn.objects.create(session=monday, student=ana)
+    CheckIn.objects.create(session=wednesday, student=ana, attended=True)
+    CheckIn.objects.create(session=monday, student=bia, attended=False)  # checked in, did not come
+    record_week(last_monday)
+    this_week = TrainingSession.objects.create(gym=gym, date=week_start(timezone.localdate()))
+    CheckIn.objects.create(session=this_week, student=ana, attended=False)  # week not closed yet
     board = {row["student"]["display_name"]: row for row in api_as(coach).get("/api/leaderboard/").json()}
     assert (board["ana"]["attended"], board["ana"]["absences"]) == (2, 1)
-    assert (board["bia"]["attended"], board["bia"]["absences"]) == (1, 2)
-    assert (board[late.display_name]["attended"], board[late.display_name]["absences"]) == (0, 0)
+    assert (board["bia"]["attended"], board["bia"]["absences"]) == (0, 2)
 
 
 def test_coach_edits_a_class_and_uploads_custom_art(coach, api_as, gym, other_gym, settings, tmp_path):

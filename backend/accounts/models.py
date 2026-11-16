@@ -64,6 +64,8 @@ class User(AbstractUser):
     handedness = models.CharField(max_length=16, choices=Handedness.choices, default=Handedness.UNSPECIFIED)
     # Free text the user keeps up to date: injuries, sparring or equipment restrictions.
     limitations = models.TextField(blank=True, max_length=1000)
+    # How many classes a week the student committed to; blank = no weekly absence tracking.
+    weekly_classes = models.PositiveSmallIntegerField(null=True, blank=True)
     # Fighting style chosen by the coach (students cannot change it).
     fighter_class = models.ForeignKey(
         "gamification.FighterClass", null=True, blank=True, on_delete=models.SET_NULL, related_name="students"

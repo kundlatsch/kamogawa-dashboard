@@ -59,6 +59,7 @@ def avatar_url(user) -> str | None:
 class UserSerializer(serializers.ModelSerializer):
     gym = GymSummarySerializer(read_only=True)
     avatar_url = serializers.SerializerMethodField()
+    weekly_classes = serializers.IntegerField(min_value=0, max_value=14, required=False, allow_null=True)
 
     class Meta:
         model = User
@@ -71,6 +72,7 @@ class UserSerializer(serializers.ModelSerializer):
             "color",
             "handedness",
             "limitations",
+            "weekly_classes",
             "fighter_class",
             "role",
             "gym",
@@ -93,10 +95,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     display_name = serializers.CharField(max_length=80, allow_blank=False, trim_whitespace=True)
     color = serializers.RegexField(r"^#[0-9a-fA-F]{6}$", max_length=7)
+    weekly_classes = serializers.IntegerField(min_value=0, max_value=14, required=False, allow_null=True)
 
     class Meta:
         model = User
-        fields = ["display_name", "avatar_emoji", "color", "handedness", "limitations"]
+        fields = ["display_name", "avatar_emoji", "color", "handedness", "limitations", "weekly_classes"]
 
 
 class PublicUserSerializer(serializers.ModelSerializer):

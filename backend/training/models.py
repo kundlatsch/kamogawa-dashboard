@@ -283,3 +283,22 @@ class CheckIn(models.Model):
                 condition=models.Q(pain_level__isnull=True) | models.Q(pain_level__lte=10),
             ),
         ]
+
+
+class WeeklyAbsence(models.Model):
+    """Absences recorded for a student's week by the Sunday routine (see training/absences.py).
+
+    `missed` = classes the student committed to (`User.weekly_classes`) minus the classes they
+    checked in for and did not miss, and never less than the classes the coach marked as missed.
+    """
+
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="weekly_absences")
+    week_start = models.DateField()
+    expected = models.PositiveSmallIntegerField(null=True, blank=True)
+    present = models.PositiveSmallIntegerField(default=0)
+    missed = models.PositiveSmallIntegerField(default=0)
+    computed_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-week_start", "student"]
+        constraints = [models.UniqueConstraint(fields=["student", "week_start"], name="one_absence_record_per_week")]

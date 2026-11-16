@@ -10,6 +10,11 @@ services:
       - media-data:/app/media
     ports: !reset []
 
+  scheduler:
+    environment:
+      DJANGO_DEBUG: "false"
+    volumes: !reset []
+
   frontend:
     build:
       context: ./frontend

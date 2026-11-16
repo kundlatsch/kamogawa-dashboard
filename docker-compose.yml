@@ -36,6 +36,23 @@ services:
       db:
         condition: service_healthy
 
+  # Runs scheduled jobs (weekly absences every Sunday at 23:00) with the backend image.
+  scheduler:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-true}
+      POSTGRES_HOST: db
+    command: sh -c "python manage.py migrate --noinput && python -u manage.py run_scheduler"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
   frontend:
     build: ./frontend
     restart: unless-stopped
