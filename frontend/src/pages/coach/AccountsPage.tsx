@@ -7,6 +7,7 @@ import type { GeneratedPassword, User } from "../../api/types";
 import { AVATAR_EMOJIS } from "../../components/pickers";
 import { Button, Input, Modal, PageHeader } from "../../components/ui";
 import Avatar from "../../components/Avatar";
+import StudentLink from "../../components/StudentLink";
 
 /** Manages accounts of one role (students or coaches); passwords are always server-generated. */
 export default function AccountsPage({
@@ -79,7 +80,9 @@ export default function AccountsPage({
             >
               <Avatar person={account} size="lg" />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold">{account.display_name}</p>
+                <p className="truncate font-semibold">
+                  {kind === "students" ? <StudentLink id={account.id}>{account.display_name}</StudentLink> : account.display_name}
+                </p>
                 <p className="truncate text-xs text-smoke">
                   @{account.username}
                   {account.handedness !== "UNSPECIFIED" && ` · ${t(`handedness.${account.handedness}`)}`}

@@ -8,6 +8,7 @@ import type { CoachNote, Homework, User, WeeklyFocus } from "../../api/types";
 import Avatar from "../../components/Avatar";
 import { Button, Input, Modal, PageHeader } from "../../components/ui";
 import { addDays, formatDate, fromISODate, startOfWeek, toISODate } from "../../lib/dates";
+import StudentLink from "../../components/StudentLink";
 
 const field = "rounded-md border border-rope bg-ring px-2 py-1.5 text-sm text-chalk outline-none focus:border-glove";
 
@@ -68,9 +69,9 @@ function FocusTable({ week }: { week: string }) {
       <ul className="flex flex-col divide-y divide-rope">
         {students.map((student) => (
           <li key={student.id} className="flex flex-wrap items-center gap-2 py-2">
-            <span className="flex min-w-40 flex-1 items-center gap-2 font-medium">
+            <StudentLink id={student.id} className="flex min-w-40 flex-1 items-center gap-2 font-medium">
               <Avatar person={student} /> {student.display_name}
-            </span>
+            </StudentLink>
             {([1, 2] as const).map((position) => {
               const focus = current(student.id, position);
               const choices = focus && !options.some((o) => o.id === focus.focus) ? [focus.focus_detail, ...options] : options;

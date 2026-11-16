@@ -4,6 +4,7 @@ import type { Assignment, CheckIn, User } from "../../../api/types";
 import type { ColumnKey } from "../../../lib/board";
 import { Draggable, Droppable } from "./dnd";
 import Avatar from "../../../components/Avatar";
+import StudentLink from "../../../components/StudentLink";
 
 export default function BoardColumn({
   column,
@@ -54,7 +55,7 @@ export default function BoardColumn({
                 </span>
               </Draggable>
               <p className="min-w-0 flex-1 truncate font-semibold">
-                {student.display_name}
+                <StudentLink id={student.id}>{student.display_name}</StudentLink>
                 {checkIn && (
                   <span
                     className={`ml-1 text-xs ${checkIn.has_pain ? "text-blood" : "text-belt"}`}

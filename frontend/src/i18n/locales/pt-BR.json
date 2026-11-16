@@ -499,5 +499,14 @@
       "MISSION": "Missão: {{title}}",
       "MANUAL": "Bônus do treinador"
     }
+  },
+  "studentProfile": {
+    "notFound": "Aluno não encontrado.",
+    "editInWeek": "Editar na Semana",
+    "noFocuses": "Sem focos nesta semana.",
+    "editScores": "Avaliar",
+    "noScores": "Ainda sem avaliação.",
+    "addNote": "Nova observação na Semana",
+    "noXp": "Ainda sem XP."
   }
 }

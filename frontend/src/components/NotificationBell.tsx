@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 
 import { api } from "../api/client";
 import type { NotificationList } from "../api/types";
-import { formatDate } from "../lib/dates";
+import { useNavigate } from "react-router-dom";
+
+import { formatDate, todayISO } from "../lib/dates";
 
 export const useNotifications = () =>
   useQuery({
@@ -17,6 +19,7 @@ export default function NotificationBell() {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const { data } = useNotifications();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -65,7 +68,11 @@ export default function NotificationBell() {
               return (
                 <li
                   key={notification.id}
-                  className={`m-1 rounded-lg p-2 text-sm ${sparring || injury ? "border border-blood bg-blood/15" : "bg-ring"} ${
+                  onClick={() => {
+                    setOpen(false);
+                    if (session) navigate(notificationTarget(notification.kind, session.id, session.date));
+                  }}
+                  className={`m-1 cursor-pointer rounded-lg p-2 text-sm hover:ring-1 hover:ring-smoke ${sparring || injury ? "border border-blood bg-blood/15" : "bg-ring"} ${
                     notification.read_at ? "" : "font-semibold"
                   }`}
                 >
@@ -79,4 +86,10 @@ export default function NotificationBell() {
       )}
     </div>
   );
+}
+
+/** Coaches go to the class on the board; students to today's routine or their upcoming classes. */
+export function notificationTarget(kind: string, sessionId: number, date: string): string {
+  if (kind === "INJURY_REPORTED") return `/?session=${sessionId}`;
+  return date === todayISO() ? "/" : "/upcoming";
 }

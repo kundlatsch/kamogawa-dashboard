@@ -11,6 +11,7 @@ import { Button, Input, Modal, PageHeader } from "../../components/ui";
 import XpBar from "../../components/XpBar";
 import { sortLeaderboard } from "../../lib/ranking";
 import { formatDate } from "../../lib/dates";
+import StudentLink from "../../components/StudentLink";
 
 const field = "rounded-md border border-rope bg-ring px-2 py-1.5 text-sm text-chalk outline-none focus:border-glove";
 
@@ -79,7 +80,9 @@ function Leaderboard() {
               {fighterClass ? <FighterClassArt fighterClass={fighterClass} size="sm" /> : <span className="w-8" />}
               <div className="flex min-w-48 flex-1 flex-col gap-1">
                 <span className="flex items-center gap-2 font-semibold">
-                  <Avatar person={entry.student} /> {entry.student.display_name}
+                  <StudentLink id={entry.student.id}>
+                    <Avatar person={entry.student} /> {entry.student.display_name}
+                  </StudentLink>
                   {entry.pending_missions > 0 && (
                     <span className="rounded-full bg-glove px-1.5 text-xs" title={t("ranking.pending")}>
                       {entry.pending_missions}
@@ -190,7 +193,11 @@ function PendingCompletions() {
           return (
             <li key={completion.id} className="flex flex-wrap items-center gap-2 rounded-lg bg-ring p-3 text-sm">
               {student && <Avatar person={student} />}
-              <span className="font-semibold">{student?.display_name}</span>
+              {student && (
+                <StudentLink id={student.id} className="font-semibold">
+                  {student.display_name}
+                </StudentLink>
+              )}
               <span>
                 {completion.mission_detail.emoji} {completion.mission_detail.title}
               </span>

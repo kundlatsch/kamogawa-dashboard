@@ -9,6 +9,7 @@ import { useAuth } from "../../auth/AuthContext";
 import Avatar from "../../components/Avatar";
 import { PageHeader } from "../../components/ui";
 import { todayISO } from "../../lib/dates";
+import StudentLink from "../../components/StudentLink";
 
 const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
 
@@ -104,7 +105,9 @@ export default function AssessmentsPage() {
               {students.map((student) => (
                 <tr key={student.id} className="border-t border-rope">
                   <th scope="row" className="sticky left-0 z-10 bg-canvas p-2 text-left font-medium whitespace-nowrap">
-                    <Avatar person={student} /> {student.display_name}
+                    <StudentLink id={student.id}>
+                      <Avatar person={student} /> {student.display_name}
+                    </StudentLink>
                   </th>
                   {ordered.map((metric, index) => (
                     <td

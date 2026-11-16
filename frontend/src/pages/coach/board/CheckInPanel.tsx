@@ -6,6 +6,7 @@ import { api } from "../../../api/client";
 import type { CheckIn, TrainingSession, User } from "../../../api/types";
 import Avatar from "../../../components/Avatar";
 import { todayISO } from "../../../lib/dates";
+import StudentLink from "../../../components/StudentLink";
 
 /**
  * Who confirmed presence for the class, with pain alerts and limitations, so the coach can build
@@ -84,7 +85,9 @@ export default function CheckInPanel({
             >
               <div className="flex items-center gap-2">
                 <Avatar person={student} />
-                <span className="font-semibold">{student.display_name}</span>
+                <StudentLink id={student.id} className="font-semibold">
+                  {student.display_name}
+                </StudentLink>
                 {student.handedness !== "UNSPECIFIED" && (
                   <span className="rounded bg-rope px-1 text-[10px] font-bold uppercase" title={t(`handedness.${student.handedness}`)}>
                     {t(`handedness.${student.handedness}`)}

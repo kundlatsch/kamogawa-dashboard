@@ -19,6 +19,7 @@ import CalendarPage from "./pages/coach/CalendarPage";
 import AssessmentsPage from "./pages/coach/AssessmentsPage";
 import CyclesPage from "./pages/coach/CyclesPage";
 import RankingPage from "./pages/coach/RankingPage";
+import StudentProfilePage from "./pages/coach/StudentProfilePage";
 import WeekPage from "./pages/coach/WeekPage";
 import BoardPage from "./pages/coach/board/BoardPage";
 import DrillsPage from "./pages/coach/DrillsPage";
@@ -72,6 +73,7 @@ function AppRoutes() {
           <Route path="cycles" element={<CyclesPage />} />
           <Route path="drills" element={<DrillsPage />} />
           <Route path="students" element={<AccountsPage kind="students" />} />
+          <Route path="students/:studentId" element={<StudentProfilePage />} />
           <Route path="week" element={<WeekPage />} />
           <Route path="assessments" element={<AssessmentsPage />} />
           <Route path="ranking" element={<RankingPage />} />
