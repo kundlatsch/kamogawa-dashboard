@@ -218,7 +218,9 @@ while building:
   videos are YouTube links only).
 - Email/push notifications (in-app only).
 - Cloud deployment, HTTPS, backups.
-- Attendance tracking, progress metrics, payments.
+- Payments.
+- Attendance tracking and progress metrics beyond what phase 10 adds
+  (check-in and monthly assessments).
 
 ## 9. Confirmed decisions (2026-11-15)
 
@@ -241,3 +243,115 @@ while building:
    everything else), `COACH` (multiple coaches supported), `STUDENT`. An admin
    account is created from `.env` on first boot. Admins and coaches share the
    coach module; only admins can manage coach accounts.
+
+## 10. Phase 10 — Periodization, assessments and check-in (proposed 2026-11-16)
+
+Source: feedback from the project manager. This phase turns the drill board
+into a periodized training plan. Everything below is additive: existing
+sessions, drills and assignments keep working, and new tables arrive through
+migrations (the database holds real gym data, so nothing is wiped).
+Items marked **(open)** wait for confirmation before they are built.
+
+### 10.1 Requirements (summary)
+
+- **Coach** registers students, their assessments (stats), weekly focuses and
+  homework; builds the month's cycle and each class's workout; sees who
+  checked in, injury alerts and pair suggestions.
+- **Student** sees their stats, coach observations and the two focuses of the
+  week, the week's objective for group classes, homework, and checks in
+  before a deadline with an optional pain/injury report.
+- **Periodization**: a month is a mesocycle focused on one physical capacity;
+  each week is a microcycle with a phase (adaptation, development, shock,
+  recovery/assessment); each class inherits the week's objective.
+- **Class blocks**: mobility and general warm-up (collective, fixed time) →
+  specific warm-up (individual, starts when each student finishes the general
+  one) → boxing school and combat (pairs built from check-ins) → cool-down.
+
+### 10.2 Mapping onto the existing model
+
+| Feedback concept | Existing piece | Change |
+|---|---|---|
+| Class workout | `TrainingSession` + `Assignment` | Add a `block` to `Assignment`; the board groups cards by block |
+| Collective blocks | Broadcast assignment | Mobility, general warm-up and cool-down default to broadcast |
+| Individual specific warm-up | Solo assignment | Unchanged, placed in the specific warm-up block |
+| Pairs for school/combat | Pair assignment | Pairs can be created from a suggestion based on check-ins |
+| Month valence | — | New `Mesocycle` (month + `Valence`) |
+| Week phase/objective | — | New `Microcycle`; sessions resolve their week by date |
+| Stats 1–5 | — | New `Metric` + `Assessment` (monthly) |
+| Weekly focuses, observations | — | New `WeeklyFocus`, `CoachNote` |
+| Homework | — | New `Homework` (per student or for everyone, per week) |
+| Check-in + pain | — | New `CheckIn` with optional pain report; gym deadline setting |
+| Injury alerts | `Notification` | New kind `INJURY_REPORTED` for the gym's coaches |
+
+### 10.3 New and changed models (all gym-scoped)
+
+```
+Valence            gym, name, order, archived
+                   seeded per gym: speed, strength, endurance, power,
+                   coordination, agility (coach-editable list)
+Mesocycle          gym, year, month, valence → Valence, notes
+                   unique (gym, year, month)
+MicrocyclePhase    gym, name, order        seeded: adaptation, development,
+                                           shock, recovery/assessment
+Microcycle         mesocycle, week_start (Monday), phase → MicrocyclePhase,
+                   objective (text)        unique (mesocycle, week_start)
+TrainingSession    + objective_override (blank = inherit the week's objective)
+SessionBlock       gym, name, order, mode = COLLECTIVE | INDIVIDUAL | PAIRS,
+                   default_start_offset_minutes (collective blocks only)
+                   seeded: mobility, general warm-up (COLLECTIVE),
+                   specific warm-up (INDIVIDUAL), boxing school, combat
+                   (PAIRS), cool-down (COLLECTIVE)
+Assignment         + block → SessionBlock (nullable; existing rows stay
+                   "unassigned" until the coach moves them)
+Metric             gym, name, group = PHYSICAL | TECHNICAL, order, archived
+                   seeded: speed, strength, endurance, mobility (PHYSICAL);
+                   guard, footwork, coordination, defense (TECHNICAL)
+Assessment         student, metric, period (first day of month), score 1–5,
+                   notes             unique (student, metric, period)
+WeeklyFocus        student, week_start, position (1 | 2), text,
+                   metric → Metric (optional)
+CoachNote          student, author, body, visible_to_student, created_at
+Homework           gym, week_start, title, description, drill (optional),
+                   participants M2M (empty + is_broadcast = everyone)
+CheckIn            session, student, created_at, has_pain,
+                   pain_location, pain_level 0–10, notes
+                   unique (session, student)
+Gym                + checkin_deadline_minutes (before session start)
+```
+
+Valences and metrics stay separate lists, following the PM's suggestion that
+mobility and technique are assessed but are not a month's valence.
+
+### 10.4 Rules
+
+- A session's week is the Monday-based week containing its date; its
+  mesocycle is the month of that Monday **(open: weeks that span two
+  months, and the fifth week)**.
+- Students check in for a published session until
+  `start_time − checkin_deadline_minutes`; after that the check-in closes
+  **(open: deadline value and late check-ins)**.
+- A check-in with `has_pain` notifies the gym's coaches and flags the student
+  on the board; the coach decides whether they train.
+- Pair suggestions use only checked-in students without a pain flag
+  **(open: pairing criteria)**. Accepting a suggestion creates pair
+  assignments in the PAIRS blocks; the coach can still edit them by drag
+  and drop.
+- Students see their own assessments (current month + history), notes marked
+  visible, this week's focuses, objective and homework. Today's routine rule
+  (decision 4) is unchanged.
+
+### 10.5 Delivery steps
+
+1. Periodization backend: `Valence`, `Mesocycle`, `MicrocyclePhase`,
+   `Microcycle`, session objective resolution, API + isolation tests.
+2. Cycle planner UI: month view to pick the valence and set each week's
+   phase and objective.
+3. Session blocks: `SessionBlock` + `Assignment.block` migration; board
+   grouped into block lanes; collective blocks show their fixed time.
+4. Assessments backend + coach UI (student × metric grid, 1–5, per month).
+5. Weekly focuses, coach notes and homework (backend + coach UI).
+6. Check-in backend: deadline setting, pain report, coach notification.
+7. Student UI: week card (objective, focuses, homework), stats page, check-in
+   form with pain fields.
+8. Coach check-in panel: confirmed list, injury alerts, pair suggestions
+   that create pair assignments.
