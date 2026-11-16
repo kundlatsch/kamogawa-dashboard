@@ -381,6 +381,19 @@ gym creation; the coach edits them in Settings, like drill categories.
 
 ### 10.5 Delivery steps
 
+**Status (2026-11-16):** steps 0–10 are implemented, plus profile photo
+uploads (Gustavo asked for avatars; stored in the `media-data` volume). Notes:
+
+- No automatic pair suggestions (Gustavo's call); the coach builds pairs on
+  the board, which shows check-ins, pain alerts, handedness and limitations.
+- The board shows one class block at a time (tabs); new drills land in the
+  selected block. Drills created before blocks existed appear under "no block".
+- Mesocycles and blocks are reordered with arrow buttons (no new dependency).
+- Fighter classes carry an `art_key` pointing at bundled artwork; classes the
+  coach adds later show their emoji.
+- New apps: `progress` (assessments, focuses, notes, homework) and
+  `gamification` (fighter classes, missions, XP events).
+
 0. Profile: handedness and limitations. *(Done.)*
 1. Periodization backend: valences, phases, macro/meso/microcycles, date
    derivation, session objective resolution, API + isolation tests.

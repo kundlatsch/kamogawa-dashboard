@@ -32,8 +32,17 @@ See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
 ## Conventions
 
 - Backend: Django apps under `backend/` (`accounts`, `training`,
-  `notifications`). DRF viewsets + serializers; permissions enforce that only
-  the coach can write. Tests with pytest-django.
+  `notifications`, `progress` for assessments/focuses/notes/homework,
+  `gamification` for XP, missions and fighter classes). DRF viewsets +
+  serializers; permissions enforce that only the coach can write. Tests with
+  pytest-django.
+- Coach-editable starter lists (valences, phases, class blocks, metrics,
+  fighter classes) are seeded per gym from
+  `training/fixtures/gym_defaults_pt-BR.json` via `seed_gym_defaults` — on gym
+  creation (signals) and for existing gyms (data migrations). Never wipe data:
+  the database holds real gym data, so schema changes are additive migrations.
+- Profile photos are uploads in the `media-data` volume, served by Django at
+  `/media/`. Fighter class art is bundled in `frontend/src/assets/fighter-classes/`.
 - Frontend: `frontend/` — React + TypeScript + Vite, Tailwind for styling,
   `@dnd-kit` for drag and drop, TanStack Query for server state. Tests with Vitest.
 - Theme: boxing colors — black backgrounds, red accents, white text, gold
