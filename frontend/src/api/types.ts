@@ -6,6 +6,8 @@ export interface GymSummary {
   slug: string;
   /** Accent color of the student area. */
   color: string;
+  /** Monthly assessments are scored from 1 to this value. */
+  assessment_scale_max: number;
   /** Students check in until this many minutes before class (only sent to coaches). */
   checkin_deadline_minutes?: number;
   attendance_xp?: number;

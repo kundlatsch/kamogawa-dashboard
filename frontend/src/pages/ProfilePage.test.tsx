@@ -16,7 +16,7 @@ const user: User = {
   handedness: "UNSPECIFIED",
   limitations: "",
   role: "STUDENT",
-  gym: { id: 1, name: "Chacão Boxing Team", slug: "chacao-boxing-team", color: "#d62828" },
+  gym: { id: 1, name: "Chacão Boxing Team", slug: "chacao-boxing-team", color: "#d62828", assessment_scale_max: 5 },
   is_active: true,
 };
 

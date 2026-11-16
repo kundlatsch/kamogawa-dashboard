@@ -286,9 +286,10 @@ function CheckinSettings() {
   );
 }
 
-/** XP per attended class and XP needed per level. */
+/** XP per attended class, XP needed per level and the top of the monthly assessment scale. */
 function GamificationSettings() {
   const { t } = useTranslation();
+  const { refreshUser } = useAuth();
   const queryClient = useQueryClient();
   const { data: gym } = useQuery({
     queryKey: ["my-gym"],
@@ -296,14 +297,23 @@ function GamificationSettings() {
   });
   const [attendanceXp, setAttendanceXp] = useState("");
   const [perLevel, setPerLevel] = useState("");
+  const [scaleMax, setScaleMax] = useState("");
   useEffect(() => {
     if (gym?.attendance_xp !== undefined) setAttendanceXp(String(gym.attendance_xp));
     if (gym?.xp_per_level !== undefined) setPerLevel(String(gym.xp_per_level));
+    if (gym?.assessment_scale_max !== undefined) setScaleMax(String(gym.assessment_scale_max));
   }, [gym]);
   const save = useMutation({
     mutationFn: async () =>
-      api.patch("/my-gym/", { attendance_xp: Number(attendanceXp), xp_per_level: Number(perLevel) }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-gym"] }),
+      api.patch("/my-gym/", {
+        attendance_xp: Number(attendanceXp),
+        xp_per_level: Number(perLevel),
+        assessment_scale_max: Number(scaleMax),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-gym"] });
+      refreshUser();
+    },
   });
 
   return (
@@ -314,7 +324,7 @@ function GamificationSettings() {
         className="flex flex-wrap items-end gap-4"
         onSubmit={(event) => {
           event.preventDefault();
-          if (attendanceXp !== "" && Number(perLevel) >= 1) save.mutate();
+          if (attendanceXp !== "" && Number(perLevel) >= 1 && Number(scaleMax) >= 2) save.mutate();
         }}
       >
         <Input
@@ -332,6 +342,14 @@ function GamificationSettings() {
           max={10000}
           value={perLevel}
           onChange={(event) => setPerLevel(event.target.value)}
+        />
+        <Input
+          label={t("settings.assessmentScaleMax")}
+          type="number"
+          min={2}
+          max={10}
+          value={scaleMax}
+          onChange={(event) => setScaleMax(event.target.value)}
         />
         <Button type="submit" disabled={save.isPending}>
           {t("common.save")}

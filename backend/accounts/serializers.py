@@ -7,7 +7,7 @@ from .models import Gym, User
 class GymSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Gym
-        fields = ["id", "name", "slug", "color"]
+        fields = ["id", "name", "slug", "color", "assessment_scale_max"]
 
 
 class OwnGymSerializer(serializers.ModelSerializer):
@@ -16,10 +16,20 @@ class OwnGymSerializer(serializers.ModelSerializer):
     checkin_deadline_minutes = serializers.IntegerField(min_value=0, max_value=24 * 60, required=False)
     attendance_xp = serializers.IntegerField(min_value=0, max_value=1000, required=False)
     xp_per_level = serializers.IntegerField(min_value=1, max_value=10_000, required=False)
+    assessment_scale_max = serializers.IntegerField(min_value=2, max_value=10, required=False)
 
     class Meta:
         model = Gym
-        fields = ["id", "name", "slug", "color", "checkin_deadline_minutes", "attendance_xp", "xp_per_level"]
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "color",
+            "checkin_deadline_minutes",
+            "attendance_xp",
+            "xp_per_level",
+            "assessment_scale_max",
+        ]
         read_only_fields = ["id", "slug"]
 
 

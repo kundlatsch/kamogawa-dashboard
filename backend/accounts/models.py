@@ -22,6 +22,8 @@ class Gym(models.Model):
     # Gamification: XP for each class a student attends, and XP needed per level.
     attendance_xp = models.PositiveSmallIntegerField(default=10)
     xp_per_level = models.PositiveSmallIntegerField(default=100)
+    # Monthly assessments are scored from 1 to this value.
+    assessment_scale_max = models.PositiveSmallIntegerField(default=5)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

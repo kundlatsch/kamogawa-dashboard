@@ -4,15 +4,18 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
 import { useMetrics } from "../../api/hooks";
 import type { Assessment, MetricGroup, MyWeek } from "../../api/types";
+import { useAuth } from "../../auth/AuthContext";
 import { PageHeader } from "../../components/ui";
 import { formatDate } from "../../lib/dates";
 import { latestScores } from "../../lib/assessments";
 
 const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
 
-/** The student's latest score on each metric (1–5) and how it changed since the month before. */
+/** The student's latest score on each metric and how it changed since the month before. */
 export default function StatsPage() {
   const { t, i18n } = useTranslation();
+  const { user } = useAuth();
+  const scaleMax = user?.gym?.assessment_scale_max ?? 5;
   const { data: metrics = [] } = useMetrics();
   const { data: history, isLoading } = useQuery({
     queryKey: ["me", "assessments"],
@@ -58,10 +61,10 @@ export default function StatsPage() {
                             {delta > 0 ? `▲ ${t("stats.delta_up", { count: delta })}` : `▼ ${t("stats.delta_down", { count: delta })}`}
                           </span>
                         )}
-                        <span className="font-display text-2xl">{score}/5</span>
+                        <span className="font-display text-2xl">{score}/{scaleMax}</span>
                       </div>
-                      <div className="flex gap-1" role="meter" aria-valuemin={1} aria-valuemax={5} aria-valuenow={score} aria-label={metric.name}>
-                        {[1, 2, 3, 4, 5].map((step) => (
+                      <div className="flex gap-1" role="meter" aria-valuemin={1} aria-valuemax={scaleMax} aria-valuenow={score} aria-label={metric.name}>
+                        {Array.from({ length: Math.max(scaleMax, score) }, (_, i) => i + 1).map((step) => (
                           <span
                             key={step}
                             className="h-2.5 flex-1 rounded-full"

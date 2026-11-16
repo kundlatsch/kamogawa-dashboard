@@ -5,19 +5,21 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
 import { useMetrics, useStudents } from "../../api/hooks";
 import type { Assessment, Metric, MetricGroup, User } from "../../api/types";
+import { useAuth } from "../../auth/AuthContext";
 import Avatar from "../../components/Avatar";
 import { PageHeader } from "../../components/ui";
 import { todayISO } from "../../lib/dates";
 
 const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
-const SCORES = [1, 2, 3, 4, 5];
 
 /** "2026-11" → "2026-11-01"; the API stores a month as its first day. */
 const monthPeriod = (month: string) => `${month}-01`;
 
-/** Coach grid: one row per student, one column per metric, a 1–5 score per cell for the chosen month. */
+/** Coach grid: one row per student, one column per metric, a score per cell for the chosen month. */
 export default function AssessmentsPage() {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const scaleMax = user?.gym?.assessment_scale_max ?? 5;
   const queryClient = useQueryClient();
   const [month, setMonth] = useState(todayISO().slice(0, 7));
   const period = monthPeriod(month);
@@ -64,7 +66,7 @@ export default function AssessmentsPage() {
           </label>
         }
       />
-      <p className="-mt-4 text-sm text-smoke">{t("assessments.hint")}</p>
+      <p className="-mt-4 text-sm text-smoke">{t("assessments.hint", { max: scaleMax })}</p>
       {students.length === 0 ? (
         <p className="text-smoke">{t("assessments.noStudents")}</p>
       ) : (
@@ -112,6 +114,7 @@ export default function AssessmentsPage() {
                       }`}
                     >
                       <ScoreCell
+                        max={scaleMax}
                         student={student}
                         metric={metric}
                         value={scoreOf(student.id, metric.id)}
@@ -130,11 +133,13 @@ export default function AssessmentsPage() {
 }
 
 function ScoreCell({
+  max,
   student,
   metric,
   value,
   onChange,
 }: {
+  max: number;
   student: User;
   metric: Metric;
   value: number | null;
@@ -147,10 +152,10 @@ function ScoreCell({
       value={value ?? ""}
       onChange={(event) => onChange(event.target.value ? Number(event.target.value) : null)}
       className="w-14 rounded-md border border-rope bg-ring py-1 text-center font-semibold text-chalk"
-      style={value ? { backgroundColor: `${metric.color}${Math.round(value * 0.13 * 255).toString(16).padStart(2, "0")}` } : undefined}
+      style={value ? { backgroundColor: `${metric.color}${Math.round(Math.min(value / max, 1) * 0.65 * 255).toString(16).padStart(2, "0")}` } : undefined}
     >
       <option value="">{t("assessments.noScore")}</option>
-      {SCORES.map((score) => (
+      {Array.from({ length: Math.max(max, value ?? 0) }, (_, i) => i + 1).map((score) => (
         <option key={score} value={score}>
           {score}
         </option>

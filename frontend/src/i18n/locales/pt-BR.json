@@ -194,14 +194,15 @@
     "addFocus": "Adicionar foco",
     "checkinDeadline": "Prazo do check-in (minutos antes da aula)",
     "checkinDeadlineHint": "Depois desse prazo o aluno não consegue mais confirmar ou cancelar presença.",
-    "gamification": "Gamificação",
-    "gamificationHint": "Quanto XP cada presença confirmada vale e quanto XP é preciso para subir de nível.",
+    "gamification": "Pontuação e avaliações",
+    "gamificationHint": "Quanto XP cada presença confirmada vale, quanto XP é preciso para subir de nível e até quanto vai a nota da avaliação mensal.",
     "attendanceXp": "XP por aula frequentada",
     "xpPerLevel": "XP por nível",
     "fighterClasses": "Classes de lutador",
     "fighterClassesHint": "Estilos que você atribui a cada aluno no Ranking. As 6 classes padrão já vêm com arte.",
     "fighterClassName": "Nome da classe",
-    "addFighterClass": "Adicionar classe"
+    "addFighterClass": "Adicionar classe",
+    "assessmentScaleMax": "Nota máxima da avaliação (2 a 10)"
   },
   "calendar": {
     "previous": "Semanas anteriores",
@@ -359,7 +360,7 @@
   },
   "assessments": {
     "title": "Avaliações do mês",
-    "hint": "Dê uma nota de 1 a 5 para cada aluno em cada estatística. As notas são reavaliadas todo mês e o aluno vê a evolução.",
+    "hint": "Dê uma nota de 1 a {{max}} para cada aluno em cada estatística. As notas são reavaliadas todo mês e o aluno vê a evolução.",
     "month": "Mês",
     "student": "Aluno",
     "noScore": "–",

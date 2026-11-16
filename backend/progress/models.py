@@ -30,12 +30,15 @@ class Metric(models.Model):
 
 
 class Assessment(models.Model):
-    """A student's score on one metric for one month (`period` is the first day of the month)."""
+    """A student's score on one metric for one month (`period` is the first day of the month).
+
+    Scores go from 1 to the gym's `assessment_scale_max`; lowering the scale keeps older scores.
+    """
 
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="assessments")
     metric = models.ForeignKey(Metric, on_delete=models.CASCADE, related_name="assessments")
     period = models.DateField()
-    score = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    score = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     notes = models.TextField(blank=True)
     assessed_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
@@ -46,7 +49,7 @@ class Assessment(models.Model):
         ordering = ["period", "metric__order", "metric__name"]
         constraints = [
             models.UniqueConstraint(fields=["student", "metric", "period"], name="one_score_per_metric_month"),
-            models.CheckConstraint(name="score_between_1_and_5", condition=models.Q(score__gte=1, score__lte=5)),
+            models.CheckConstraint(name="score_at_least_1", condition=models.Q(score__gte=1)),
         ]
 
 
