@@ -74,6 +74,8 @@ export interface Drill {
 export interface WeeklySchedule {
   training_weekdays: number[];
   default_start_time: string;
+  /** Class time per weekday (Monday = "0"), "HH:MM"; missing days use default_start_time. */
+  weekday_times: Record<string, string>;
 }
 
 export type SessionKind = "REGULAR" | "EXTRA" | "SPARRING";

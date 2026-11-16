@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../api/client";
 import type { SessionKind, TrainingSession } from "../api/types";
 import { useSchedule } from "../api/hooks";
-import { formatDate, todayISO } from "../lib/dates";
+import { formatDate, fromISODate, pythonWeekday, todayISO } from "../lib/dates";
 import { Button, Input, Modal } from "./ui";
 
 /** Creates an extra or sparring session; with `fixedDate` (calendar day click) the date is already set. */
@@ -48,7 +48,9 @@ export default function SessionFormModal({
 
   const isSparring = kind === "SPARRING";
   // Defaults to the gym's usual class time until the coach changes it.
-  const time = startTime ?? schedule?.default_start_time.slice(0, 5) ?? "19:00";
+  const weekday = date ? String(pythonWeekday(fromISODate(date))) : "";
+  const time =
+    startTime ?? schedule?.weekday_times?.[weekday] ?? schedule?.default_start_time.slice(0, 5) ?? "19:00";
   return (
     <Modal title={isSparring ? t("sessions.newSparring") : t("sessions.newExtra")} onClose={onClose}>
       <form onSubmit={submit} className="flex flex-col gap-4">

@@ -159,18 +159,27 @@ function ScheduleSettings() {
   const { data: schedule } = useSchedule();
   const [weekdays, setWeekdays] = useState<number[]>([]);
   const [startTime, setStartTime] = useState("19:00");
+  const [times, setTimes] = useState<Record<string, string>>({});
   const names = weekdayNames(i18n.language);
 
   useEffect(() => {
     if (schedule) {
       setWeekdays(schedule.training_weekdays);
       setStartTime(schedule.default_start_time.slice(0, 5));
+      setTimes(schedule.weekday_times ?? {});
     }
   }, [schedule]);
 
   const save = useMutation({
     mutationFn: async () =>
-      api.put("/schedule/", { training_weekdays: weekdays, default_start_time: startTime }),
+      api.put("/schedule/", {
+        training_weekdays: weekdays,
+        default_start_time: startTime,
+        // Only keep times that differ from the default, for the days that have classes.
+        weekday_times: Object.fromEntries(
+          weekdays.map((day) => [String(day), times[String(day)]]).filter(([, value]) => value && value !== startTime),
+        ),
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedule"] });
       queryClient.invalidateQueries({ queryKey: ["sessions"] });
@@ -199,6 +208,19 @@ function ScheduleSettings() {
           </button>
         ))}
       </div>
+      {weekdays.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-3">
+          {weekdays.map((day) => (
+            <Input
+              key={day}
+              label={t("settings.timeFor", { day: names[day] })}
+              type="time"
+              value={times[String(day)] ?? startTime}
+              onChange={(event) => setTimes((current) => ({ ...current, [String(day)]: event.target.value }))}
+            />
+          ))}
+        </div>
+      )}
       <div className="flex flex-wrap items-end gap-4">
         <Input
           label={t("settings.startTime")}

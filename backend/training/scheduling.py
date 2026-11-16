@@ -27,10 +27,34 @@ def generate_regular_sessions(gym, start: date, end: date, created_by=None) -> l
                 TrainingSession(
                     gym=gym,
                     date=day,
-                    start_time=schedule.default_start_time,
+                    start_time=schedule.start_time_for(day.weekday()),
                     kind=TrainingSession.Kind.REGULAR,
                     created_by=created_by,
                 )
             )
         day += timedelta(days=1)
     return TrainingSession.objects.bulk_create(to_create)
+
+
+def apply_schedule_times(gym, from_day: date) -> int:
+    """After the coach changes class times, move untouched upcoming regular drafts to the new times.
+
+    Only regular, unpublished sessions without exercises are changed, so nothing the coach already
+    planned or announced moves. Returns how many sessions were updated.
+    """
+    schedule = WeeklySchedule.for_gym(gym)
+    updated = []
+    sessions = TrainingSession.objects.filter(
+        gym=gym,
+        date__gte=from_day,
+        kind=TrainingSession.Kind.REGULAR,
+        status=TrainingSession.Status.DRAFT,
+        assignments__isnull=True,
+    )
+    for session in sessions:
+        start = schedule.start_time_for(session.date.weekday())
+        if session.start_time != start:
+            session.start_time = start
+            updated.append(session)
+    TrainingSession.objects.bulk_update(updated, ["start_time"])
+    return len(updated)

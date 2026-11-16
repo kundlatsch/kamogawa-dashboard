@@ -12,7 +12,7 @@ from accounts.permissions import IsCoach, IsCoachOrReadOnly
 from notifications.services import notify_session_published
 
 from .models import Assignment, CheckIn, Drill, DrillCategory, TrainingSession, WeeklySchedule
-from .scheduling import generate_regular_sessions
+from .scheduling import apply_schedule_times, generate_regular_sessions
 from .serializers import (
     AssignmentSerializer,
     CheckInSerializer,
@@ -135,9 +135,10 @@ class AssignmentViewSet(GymScopedViewSet):
 def weekly_schedule(request):
     schedule = WeeklySchedule.for_gym(request.user.gym)
     if request.method == "PUT":
-        serializer = WeeklyScheduleSerializer(schedule, data=request.data)
+        serializer = WeeklyScheduleSerializer(schedule, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        apply_schedule_times(request.user.gym, timezone.localdate())
     return Response(WeeklyScheduleSerializer(schedule).data)
 
 

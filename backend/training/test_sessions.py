@@ -99,3 +99,43 @@ def test_convert_class_to_sparring_keeps_drills_and_alerts_students(api_as, make
     assert client.post(f"/api/sessions/{session.id}/convert/", {"kind": "REGULAR"}).json()["kind"] == "REGULAR"
     assert client.post(f"/api/sessions/{session.id}/convert/", {"kind": "PARTY"}).status_code == 400
     assert api_as(ana).post(f"/api/sessions/{session.id}/convert/", {"kind": "SPARRING"}).status_code == 403
+
+
+def test_each_weekday_can_have_its_own_class_time(coach, api_as, gym):
+    from datetime import time
+
+    from training.scheduling import generate_regular_sessions
+
+    client = api_as(coach)
+    response = client.put(
+        "/api/schedule/",
+        {"training_weekdays": [0, 2, 5], "default_start_time": "19:00", "weekday_times": {"5": "14:00", "2": ""}},
+        format="json",
+    )
+    assert response.status_code == 200 and response.json()["weekday_times"] == {"5": "14:00"}
+    sessions = generate_regular_sessions(gym, MONDAY, MONDAY.replace(day=21))
+    times = {s.date.weekday(): s.start_time for s in sessions}
+    assert times == {0: time(19, 0), 2: time(19, 0), 5: time(14, 0)}
+    bad = {"training_weekdays": [0], "default_start_time": "19:00", "weekday_times": {"9": "10:00"}}
+    assert client.put("/api/schedule/", bad, format="json").status_code == 400
+    bad["weekday_times"] = {"0": "25:99"}
+    assert client.put("/api/schedule/", bad, format="json").status_code == 400
+
+
+def test_changing_times_moves_only_untouched_upcoming_drafts(coach, api_as, gym):
+    from datetime import time, timedelta
+
+    from django.utils import timezone
+
+    from training.models import Assignment, Drill
+
+    today = timezone.localdate()
+    saturday = today + timedelta(days=(5 - today.weekday()) % 7 or 7)
+    untouched = TrainingSession.objects.create(gym=gym, date=saturday, start_time=time(19, 0))
+    planned = TrainingSession.objects.create(gym=gym, date=saturday + timedelta(days=7), start_time=time(19, 0))
+    Assignment.objects.create(session=planned, drill=Drill.objects.create(gym=gym, name="x"), is_broadcast=True)
+    api_as(coach).put("/api/schedule/", {"weekday_times": {"5": "14:00"}}, format="json")
+    untouched.refresh_from_db()
+    planned.refresh_from_db()
+    assert untouched.start_time == time(14, 0)
+    assert planned.start_time == time(19, 0)

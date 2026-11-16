@@ -159,8 +159,8 @@
   "settings": {
     "title": "Configurações",
     "schedule": "Dias de treino",
-    "scheduleHint": "Dias da semana em que os treinos regulares são criados automaticamente.",
-    "startTime": "Horário padrão",
+    "scheduleHint": "Dias da semana com treino e o horário de cada um. Os treinos regulares são criados automaticamente; treinos futuros ainda vazios mudam para o novo horário.",
+    "startTime": "Horário padrão (novos dias)",
     "saved": "Salvo!",
     "categories": "Categorias de exercício",
     "categoriesHint": "Use para organizar a biblioteca (aquecimento, técnica, condicionamento…).",
@@ -224,7 +224,8 @@
       "periodization": "Periodização",
       "assessments": "Avaliações",
       "fighters": "Lutadores"
-    }
+    },
+    "timeFor": "Horário de {{day}}"
   },
   "calendar": {
     "previous": "Semanas anteriores",

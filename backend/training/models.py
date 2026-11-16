@@ -62,7 +62,16 @@ class WeeklySchedule(models.Model):
     gym = models.OneToOneField("accounts.Gym", on_delete=models.CASCADE, related_name="weekly_schedule")
     training_weekdays = models.JSONField(default=default_weekdays)
     default_start_time = models.TimeField(default="19:00")
+    # Per-weekday class times, e.g. {"5": "14:00"}; weekdays without an entry use default_start_time.
+    weekday_times = models.JSONField(default=dict, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def start_time_for(self, weekday: int):
+        """Class time for a weekday (Monday=0), falling back to the default time."""
+        from datetime import time
+
+        value = self.weekday_times.get(str(weekday)) or self.default_start_time
+        return time.fromisoformat(value) if isinstance(value, str) else value
 
     @classmethod
     def for_gym(cls, gym) -> "WeeklySchedule":

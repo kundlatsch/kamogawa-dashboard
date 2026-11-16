@@ -48,12 +48,30 @@ class GymScopedSerializer(serializers.ModelSerializer):
 class WeeklyScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeeklySchedule
-        fields = ["training_weekdays", "default_start_time"]
+        fields = ["training_weekdays", "default_start_time", "weekday_times"]
 
     def validate_training_weekdays(self, value):
         if not isinstance(value, list) or any(not isinstance(d, int) or not 0 <= d <= 6 for d in value):
             raise serializers.ValidationError("Use a list of weekday numbers from 0 (Monday) to 6 (Sunday).")
         return sorted(set(value))
+
+    def validate_weekday_times(self, value):
+        """`{"0": "19:00", "5": "14:00"}`: weekday (Monday=0) to "HH:MM"; empty values are dropped."""
+        from datetime import time
+
+        if not isinstance(value, dict):
+            raise serializers.ValidationError('Use an object like {"5": "14:00"}.')
+        cleaned = {}
+        for key, raw in value.items():
+            if str(key) not in {str(d) for d in range(7)}:
+                raise serializers.ValidationError(f"Unknown weekday {key}.")
+            if not raw:
+                continue
+            try:
+                cleaned[str(key)] = time.fromisoformat(str(raw)).strftime("%H:%M")
+            except ValueError:
+                raise serializers.ValidationError(f"Use HH:MM for weekday {key}.")
+        return cleaned
 
 
 class TrainingSessionSerializer(serializers.ModelSerializer):
