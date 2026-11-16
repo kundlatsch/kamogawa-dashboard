@@ -17,6 +17,8 @@ class Gym(models.Model):
         validators=[RegexValidator(r"^#[0-9a-fA-F]{6}$", "Use a hex color like #d62828.")],
     )
     is_active = models.BooleanField(default=True)
+    # Students confirm presence until this many minutes before a class starts.
+    checkin_deadline_minutes = models.PositiveSmallIntegerField(default=120)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

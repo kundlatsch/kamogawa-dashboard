@@ -13,9 +13,11 @@ class GymSummarySerializer(serializers.ModelSerializer):
 class OwnGymSerializer(serializers.ModelSerializer):
     """What a coach may change about their own gym."""
 
+    checkin_deadline_minutes = serializers.IntegerField(min_value=0, max_value=24 * 60, required=False)
+
     class Meta:
         model = Gym
-        fields = ["id", "name", "slug", "color"]
+        fields = ["id", "name", "slug", "color", "checkin_deadline_minutes"]
         read_only_fields = ["id", "slug"]
 
 

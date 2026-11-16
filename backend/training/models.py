@@ -246,3 +246,31 @@ class SessionBlock(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class CheckIn(models.Model):
+    """A student confirming they will attend a class, optionally reporting pain or injury.
+
+    `attended` stays null until the coach confirms who actually came (used for attendance XP).
+    """
+
+    session = models.ForeignKey(TrainingSession, on_delete=models.CASCADE, related_name="check_ins")
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="check_ins")
+    has_pain = models.BooleanField(default=False)
+    pain_location = models.CharField(max_length=120, blank=True)
+    pain_level = models.PositiveSmallIntegerField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    added_by_coach = models.BooleanField(default=False)
+    attended = models.BooleanField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["session", "created_at", "id"]
+        constraints = [
+            models.UniqueConstraint(fields=["session", "student"], name="one_check_in_per_session"),
+            models.CheckConstraint(
+                name="pain_level_0_to_10",
+                condition=models.Q(pain_level__isnull=True) | models.Q(pain_level__lte=10),
+            ),
+        ]

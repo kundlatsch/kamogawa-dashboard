@@ -5,6 +5,7 @@ from accounts.models import User
 
 from .models import (
     Assignment,
+    CheckIn,
     Drill,
     DrillCategory,
     Macrocycle,
@@ -306,3 +307,56 @@ class SessionBlockSerializer(NamedListSerializer):
     class Meta:
         model = SessionBlock
         fields = ["id", "name", "color", "mode", "start_offset_minutes", "order", "archived"]
+
+
+class CheckInSerializer(GymScopedSerializer):
+    """Coach view of check-ins. Coaches may add or remove anyone at any time and confirm attendance."""
+
+    gym_scoped_fields = {
+        "session": lambda gym: TrainingSession.objects.filter(gym=gym),
+        "student": lambda gym: User.objects.filter(gym=gym, role=User.Role.STUDENT),
+    }
+    student = serializers.PrimaryKeyRelatedField(queryset=User.objects.none())
+    pain_level = serializers.IntegerField(min_value=0, max_value=10, required=False, allow_null=True)
+
+    class Meta:
+        model = CheckIn
+        fields = [
+            "id",
+            "session",
+            "student",
+            "has_pain",
+            "pain_location",
+            "pain_level",
+            "notes",
+            "added_by_coach",
+            "attended",
+            "created_at",
+        ]
+        read_only_fields = ["added_by_coach", "created_at"]
+        validators = []  # duplicates are answered with a clear message in validate()
+
+    def validate(self, attrs):
+        session = attrs.get("session", getattr(self.instance, "session", None))
+        student = attrs.get("student", getattr(self.instance, "student", None))
+        if self.instance and (session != self.instance.session or student != self.instance.student):
+            raise serializers.ValidationError("A check-in cannot move to another session or student.")
+        if not self.instance and CheckIn.objects.filter(session=session, student=student).exists():
+            raise serializers.ValidationError("This student is already checked in.")
+        return attrs
+
+
+class MyCheckInSerializer(serializers.ModelSerializer):
+    """What a student sends when checking in: an optional pain or injury report."""
+
+    pain_level = serializers.IntegerField(min_value=0, max_value=10, required=False, allow_null=True)
+
+    class Meta:
+        model = CheckIn
+        fields = ["id", "has_pain", "pain_location", "pain_level", "notes", "created_at"]
+        read_only_fields = ["created_at"]
+
+    def validate(self, attrs):
+        if not attrs.get("has_pain", False):
+            attrs.update(pain_location="", pain_level=None)
+        return attrs

@@ -11,10 +11,11 @@ from accounts.models import User
 from accounts.permissions import IsCoach, IsCoachOrReadOnly
 from notifications.services import notify_session_published
 
-from .models import Assignment, Drill, DrillCategory, TrainingSession, WeeklySchedule
+from .models import Assignment, CheckIn, Drill, DrillCategory, TrainingSession, WeeklySchedule
 from .scheduling import generate_regular_sessions
 from .serializers import (
     AssignmentSerializer,
+    CheckInSerializer,
     DrillCategorySerializer,
     DrillSerializer,
     TrainingSessionSerializer,
@@ -197,3 +198,18 @@ class TrainingSessionViewSet(GymScopedViewSet):
         return Response(
             TrainingSessionSerializer(created, many=True).data, status=status.HTTP_201_CREATED
         )
+
+
+class CheckInViewSet(GymScopedViewSet):
+    """Who is coming to a class (`?session=`), their pain reports, and attendance confirmation."""
+
+    serializer_class = CheckInSerializer
+
+    def get_queryset(self):
+        queryset = CheckIn.objects.filter(session__gym=self.gym)
+        if "session" in self.request.query_params:
+            queryset = queryset.filter(session_id=self.request.query_params["session"])
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(added_by_coach=True)

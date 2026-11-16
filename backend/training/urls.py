@@ -8,6 +8,7 @@ router.register("drill-categories", views.DrillCategoryViewSet, basename="drill-
 router.register("drills", views.DrillViewSet, basename="drill")
 router.register("sessions", views.TrainingSessionViewSet, basename="session")
 router.register("assignments", views.AssignmentViewSet, basename="assignment")
+router.register("checkins", views.CheckInViewSet, basename="checkin")
 router.register("valences", cycle_views.ValenceViewSet, basename="valence")
 router.register("microcycle-phases", cycle_views.MicrocyclePhaseViewSet, basename="microcycle-phase")
 router.register("session-blocks", cycle_views.SessionBlockViewSet, basename="session-block")
@@ -20,5 +21,6 @@ urlpatterns = [
     path("cycles/current/", cycle_views.current_cycle, name="current-cycle"),
     path("me/routine/", student_views.my_routine, name="my-routine"),
     path("me/upcoming/", student_views.my_upcoming, name="my-upcoming"),
+    path("me/checkins/<int:session_id>/", student_views.my_checkin, name="my-checkin"),
     *router.urls,
 ]

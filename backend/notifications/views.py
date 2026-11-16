@@ -3,6 +3,7 @@ from rest_framework import mixins, serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from accounts.serializers import PublicUserSerializer
 from training.student_views import SessionSummarySerializer
 
 from .models import Notification
@@ -12,17 +13,18 @@ PAGE_SIZE = 50
 
 class NotificationSerializer(serializers.ModelSerializer):
     session = SessionSummarySerializer(read_only=True)
+    subject = PublicUserSerializer(read_only=True)
 
     class Meta:
         model = Notification
-        fields = ["id", "kind", "session", "created_at", "read_at"]
+        fields = ["id", "kind", "session", "subject", "created_at", "read_at"]
 
 
 class NotificationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = NotificationSerializer
 
     def get_queryset(self):
-        return Notification.objects.filter(recipient=self.request.user).select_related("session")
+        return Notification.objects.filter(recipient=self.request.user).select_related("session", "subject")
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
