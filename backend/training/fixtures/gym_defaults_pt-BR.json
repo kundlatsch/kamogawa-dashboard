@@ -125,43 +125,43 @@
   ],
   "fighter_classes": [
     {
-      "name": "Boxeador de Longo Alcance",
-      "description": "Out-Boxer: luta de longe, com jab, movimentação e controle da distância.",
+      "name": "Out-Boxer",
+      "description": "Luta de longe, com jab, movimentação e controle da distância.",
       "emoji": "🏹",
       "color": "#3a86ff",
       "art_key": "out-boxer"
     },
     {
-      "name": "Enxameador",
-      "description": "In-Fighter / Swarmer: encurta a distância e pressiona com volume de golpes.",
+      "name": "Swarmer",
+      "description": "In-fighter: encurta a distância e pressiona com volume de golpes.",
       "emoji": "🐝",
       "color": "#d62828",
       "art_key": "swarmer"
     },
     {
-      "name": "Lutador",
-      "description": "Slugger / Brawler: aposta na força e em golpes pesados.",
+      "name": "Slugger",
+      "description": "Brawler: aposta na força e em golpes pesados, de curta distância.",
       "emoji": "💥",
       "color": "#f77f00",
       "art_key": "slugger"
     },
     {
-      "name": "Boxeador-Socador",
-      "description": "Boxer-Puncher: combina técnica e potência.",
+      "name": "Boxer-Puncher",
+      "description": "Combina técnica e potência, em média distância.",
       "emoji": "⚡",
       "color": "#9b5de5",
       "art_key": "boxer-puncher"
     },
     {
-      "name": "Contragolpeador",
-      "description": "Counterpuncher: espera o ataque e responde no contra-golpe.",
+      "name": "Counterpuncher",
+      "description": "Espera o ataque e responde no contragolpe.",
       "emoji": "🔄",
       "color": "#2a9d8f",
       "art_key": "counterpuncher"
     },
     {
-      "name": "Ambidestro",
-      "description": "Switch-hitter: troca de base e luta bem dos dois lados.",
+      "name": "Switch-Hitter",
+      "description": "Troca de base e luta bem dos dois lados.",
       "emoji": "🔀",
       "color": "#adb5bd",
       "art_key": "switch-hitter"

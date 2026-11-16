@@ -115,3 +115,39 @@ def test_leaderboard_counts_attendance_and_absences(coach, api_as, gym, make_use
     assert (board["ana"]["attended"], board["ana"]["absences"]) == (2, 1)
     assert (board["bia"]["attended"], board["bia"]["absences"]) == (1, 2)
     assert (board[late.display_name]["attended"], board[late.display_name]["absences"]) == (0, 0)
+
+
+def test_coach_edits_a_class_and_uploads_custom_art(coach, api_as, gym, other_gym, settings, tmp_path):
+    from io import BytesIO
+
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    from PIL import Image
+
+    settings.MEDIA_ROOT = tmp_path
+    client = api_as(coach)
+    created = client.post(
+        "/api/fighter-classes/", {"name": "Pressure Fighter", "art_key": "swarmer", "color": "#123456"}, format="json"
+    )
+    assert created.status_code == 201 and created.json()["art_key"] == "swarmer"
+    fc_id = created.json()["id"]
+    assert client.patch(f"/api/fighter-classes/{fc_id}/", {"art_key": "dragon"}, format="json").status_code == 400
+    assert client.patch(f"/api/fighter-classes/{fc_id}/", {"description": "Pressiona"}, format="json").status_code == 200
+    buffer = BytesIO()
+    Image.new("RGBA", (900, 900), (10, 20, 30, 0)).save(buffer, "PNG")
+    upload = SimpleUploadedFile("art.png", buffer.getvalue(), content_type="image/png")
+    response = client.post(f"/api/fighter-classes/{fc_id}/image/", {"image": upload}, format="multipart")
+    assert response.status_code == 200 and response.json()["image_url"].startswith("/media/fighter-classes/")
+    assert client.delete(f"/api/fighter-classes/{fc_id}/image/").json()["image_url"] is None
+    rival = FighterClass.objects.filter(gym=other_gym).first()
+    assert client.post(f"/api/fighter-classes/{rival.id}/image/", {"image": upload}, format="multipart").status_code == 404
+
+
+def test_default_classes_use_english_names(gym):
+    assert set(FighterClass.objects.filter(gym=gym).values_list("name", flat=True)) == {
+        "Out-Boxer",
+        "Swarmer",
+        "Slugger",
+        "Boxer-Puncher",
+        "Counterpuncher",
+        "Switch-Hitter",
+    }

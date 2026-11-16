@@ -1,4 +1,4 @@
-"""Profile photo processing: any common image becomes a small square WebP."""
+"""Image uploads: profile photos become small square WebPs; badges keep their shape."""
 import uuid
 from io import BytesIO
 
@@ -25,6 +25,22 @@ def process_avatar(upload) -> ContentFile:
     image = ImageOps.fit(image, (SIZE, SIZE), Image.LANCZOS)
     buffer = BytesIO()
     image.save(buffer, "WEBP", quality=85)
+    return ContentFile(buffer.getvalue(), name=f"{uuid.uuid4().hex}.webp")
+
+
+def process_badge(upload, max_size=(320, 400)) -> ContentFile:
+    """Artwork such as a fighter class badge: keeps proportions and transparency, at most 320x400."""
+    if upload.size > MAX_UPLOAD_BYTES:
+        raise InvalidImage("The image must be at most 5 MB.")
+    try:
+        image = Image.open(upload)
+        image.load()
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError):
+        raise InvalidImage("Upload a JPG, PNG or WebP image.")
+    image = ImageOps.exif_transpose(image).convert("RGBA")
+    image.thumbnail(max_size, Image.LANCZOS)
+    buffer = BytesIO()
+    image.save(buffer, "WEBP", quality=88)
     return ContentFile(buffer.getvalue(), name=f"{uuid.uuid4().hex}.webp")
 
 

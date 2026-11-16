@@ -7,7 +7,8 @@ from training.models import hex_color
 class FighterClass(models.Model):
     """A fighting style the coach assigns to a student (Out-Boxer, Swarmer, ...). Coach-editable list.
 
-    `art_key` points at artwork bundled with the frontend; classes without art show their emoji.
+    `art_key` points at artwork bundled with the frontend, `image` is a coach upload (it wins);
+    classes with neither show their emoji.
     """
 
     gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="fighter_classes")
@@ -16,6 +17,8 @@ class FighterClass(models.Model):
     emoji = models.CharField(max_length=16, default="🥊")
     color = models.CharField(max_length=7, default="#d62828", validators=[hex_color])
     art_key = models.CharField(max_length=40, blank=True)
+    # Custom artwork uploaded by the coach; takes precedence over `art_key`.
+    image = models.ImageField(upload_to="fighter-classes/", blank=True)
     order = models.PositiveIntegerField(default=0)
     archived = models.BooleanField(default=False)
 

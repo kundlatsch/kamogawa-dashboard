@@ -4,8 +4,10 @@ from django.utils import timezone
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
+from accounts.avatars import InvalidImage, process_badge
 from accounts.models import User
 from accounts.permissions import IsCoach, IsGymMember
 from accounts.serializers import PublicUserSerializer
@@ -21,6 +23,27 @@ from .services import review_completion
 class FighterClassViewSet(ArchivableListViewSet):
     serializer_class = FighterClassSerializer
     model = FighterClass
+
+    @action(detail=True, methods=["post", "delete"], parser_classes=[MultiPartParser])
+    def image(self, request, pk=None):
+        """Upload (multipart field `image`) or remove a custom picture for the class."""
+        fighter_class = self.get_object()
+        if request.method == "DELETE":
+            if fighter_class.image:
+                fighter_class.image.delete(save=True)
+        else:
+            upload = request.FILES.get("image")
+            if upload is None:
+                raise ValidationError({"image": "Send an image in the `image` field."})
+            try:
+                content = process_badge(upload)
+            except InvalidImage as error:
+                raise ValidationError({"image": str(error)})
+            old = fighter_class.image.name if fighter_class.image else None
+            fighter_class.image.save(content.name, content, save=True)
+            if old:
+                fighter_class.image.storage.delete(old)
+        return Response(self.get_serializer(fighter_class).data)
 
 
 class MissionViewSet(GymScopedViewSet):
