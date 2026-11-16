@@ -10,6 +10,7 @@ router.register("mission-completions", views.MissionCompletionViewSet, basename=
 
 urlpatterns = [
     path("leaderboard/", views.leaderboard, name="leaderboard"),
+    path("ranking/", views.ranking, name="ranking"),
     path("me/progress/", views.my_progress, name="my-progress"),
     path("me/missions/<int:mission_id>/complete/", views.complete_mission, name="complete-mission"),
     *router.urls,

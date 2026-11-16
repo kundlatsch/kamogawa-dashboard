@@ -151,3 +151,14 @@ def test_default_classes_use_english_names(gym):
         "Counterpuncher",
         "Switch-Hitter",
     }
+
+
+def test_students_see_a_read_only_ranking(coach, api_as, gym, other_gym, make_user):
+    ana = make_user("ana")
+    make_user("zed", gym=other_gym)
+    client = api_as(ana)
+    rows = client.get("/api/ranking/").json()
+    assert [row["student"]["display_name"] for row in rows] == ["ana"]
+    assert "pending_missions" not in rows[0] and {"attended", "absences", "missions_completed"} <= set(rows[0])
+    assert client.post("/api/ranking/").status_code == 405
+    assert client.get("/api/leaderboard/").status_code == 403

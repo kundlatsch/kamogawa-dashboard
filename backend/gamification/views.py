@@ -79,7 +79,17 @@ class MissionCompletionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 @permission_classes([IsCoach])
 def leaderboard(request):
     """Every active student with fighter class, attendance and missions (the UI sorts the ranking)."""
-    gym = request.user.gym
+    return Response(ranking_rows(request.user.gym, include_pending=True))
+
+
+@api_view(["GET"])
+@permission_classes([IsGymMember])
+def ranking(request):
+    """Read-only ranking for students: the same rows without the coach's review queue."""
+    return Response(ranking_rows(request.user.gym, include_pending=False))
+
+
+def ranking_rows(gym, include_pending: bool) -> list[dict]:
     statuses = MissionCompletion.Status
     students = (
         User.objects.filter(gym=gym, role=User.Role.STUDENT, is_active=True)
@@ -90,18 +100,18 @@ def leaderboard(request):
         .order_by("display_name")
     )
     attendance = attendance_by_student(gym, students)
-    return Response(
-        [
-            {
-                "student": PublicUserSerializer(student).data,
-                "fighter_class": student.fighter_class_id,
-                "pending_missions": student.pending,
-                "missions_completed": student.completed,
-                **attendance[student.id],
-            }
-            for student in students
-        ]
-    )
+    rows = []
+    for student in students:
+        row = {
+            "student": PublicUserSerializer(student).data,
+            "fighter_class": student.fighter_class_id,
+            "missions_completed": student.completed,
+            **attendance[student.id],
+        }
+        if include_pending:
+            row["pending_missions"] = student.pending
+        rows.append(row)
+    return rows
 
 
 def attendance_by_student(gym, students) -> dict[int, dict]:

@@ -529,5 +529,8 @@
     "published": "Próximos treinos publicados",
     "seeExercises": "ver exercícios",
     "notFound": "Treino não encontrado ou ainda não publicado."
+  },
+  "studentRanking": {
+    "you": "você"
   }
 }

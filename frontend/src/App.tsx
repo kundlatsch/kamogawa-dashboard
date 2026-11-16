@@ -13,6 +13,7 @@ import TodayPage from "./pages/student/TodayPage";
 import PlanPage from "./pages/student/PlanPage";
 import ProgressPage from "./pages/student/ProgressPage";
 import StatsPage from "./pages/student/StatsPage";
+import StudentRankingPage from "./pages/student/StudentRankingPage";
 import ClassPage from "./pages/student/ClassPage";
 import StudentCalendarPage from "./pages/student/StudentCalendarPage";
 import AccountsPage from "./pages/coach/AccountsPage";
@@ -91,6 +92,7 @@ function AppRoutes() {
     { to: "/plan", labelKey: "nav.plan" },
     { to: "/stats", labelKey: "nav.stats" },
     { to: "/progress", labelKey: "nav.progress" },
+    { to: "/ranking", labelKey: "nav.ranking" },
   ];
   return (
     <Routes>
@@ -101,6 +103,7 @@ function AppRoutes() {
         <Route path="plan" element={<PlanPage />} />
         <Route path="stats" element={<StatsPage />} />
         <Route path="progress" element={<ProgressPage />} />
+        <Route path="ranking" element={<StudentRankingPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

@@ -81,7 +81,7 @@ function Leaderboard() {
                   <StudentLink id={entry.student.id}>
                     <Avatar person={entry.student} /> {entry.student.display_name}
                   </StudentLink>
-                  {entry.pending_missions > 0 && (
+                  {(entry.pending_missions ?? 0) > 0 && (
                     <span className="rounded-full bg-glove px-1.5 text-xs" title={t("ranking.pending")}>
                       {entry.pending_missions}
                     </span>

@@ -302,7 +302,8 @@ export interface FighterClass extends NamedItem {
 export interface LeaderboardEntry {
   student: PublicUser;
   fighter_class: number | null;
-  pending_missions: number;
+  /** Only in the coach's view. */
+  pending_missions?: number;
   missions_completed: number;
   /** Classes with attendance taken where the student was marked present / not present. */
   attended: number;
