@@ -1,9 +1,10 @@
 from rest_framework import serializers
 
 from accounts.models import User
-from training.serializers import NamedListSerializer
+from training.models import Drill
+from training.serializers import DrillSerializer, GymScopedSerializer, NamedListSerializer
 
-from .models import Assessment, Metric
+from .models import Assessment, CoachNote, FocusOption, Homework, Metric, WeeklyFocus, week_start
 
 
 class MetricSerializer(NamedListSerializer):
@@ -39,3 +40,91 @@ class SetAssessmentSerializer(serializers.Serializer):
 
     def validate_period(self, value):
         return month_start(value)
+
+
+class FocusOptionSerializer(NamedListSerializer):
+    class Meta:
+        model = FocusOption
+        fields = ["id", "name", "color", "order", "archived"]
+
+
+class WeeklyFocusSerializer(serializers.ModelSerializer):
+    focus_detail = FocusOptionSerializer(source="focus", read_only=True)
+
+    class Meta:
+        model = WeeklyFocus
+        fields = ["id", "student", "week_start", "position", "focus", "focus_detail", "note"]
+
+
+class SetWeeklyFocusSerializer(serializers.Serializer):
+    """Upsert one of a student's two weekly focuses; `focus: null` clears that slot."""
+
+    student = serializers.PrimaryKeyRelatedField(queryset=User.objects.none())
+    week = serializers.DateField()
+    position = serializers.ChoiceField(choices=[1, 2])
+    focus = serializers.PrimaryKeyRelatedField(queryset=FocusOption.objects.none(), allow_null=True)
+    note = serializers.CharField(required=False, allow_blank=True, max_length=200, default="")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        gym = self.context["request"].user.gym
+        self.fields["student"].queryset = User.objects.filter(gym=gym, role=User.Role.STUDENT)
+        self.fields["focus"].queryset = FocusOption.objects.filter(gym=gym)
+
+    def validate_week(self, value):
+        return week_start(value)
+
+
+class CoachNoteSerializer(GymScopedSerializer):
+    gym_scoped_fields = {"student": lambda gym: User.objects.filter(gym=gym, role=User.Role.STUDENT)}
+    student = serializers.PrimaryKeyRelatedField(queryset=User.objects.none())
+    author_name = serializers.CharField(source="author.display_name", read_only=True, default="")
+
+    class Meta:
+        model = CoachNote
+        fields = ["id", "student", "body", "visible_to_student", "author_name", "created_at"]
+
+    def validate(self, attrs):
+        if self.instance and "student" in attrs and attrs["student"] != self.instance.student:
+            raise serializers.ValidationError({"student": "A note cannot move to another student."})
+        return attrs
+
+
+class HomeworkSerializer(GymScopedSerializer):
+    gym_scoped_fields = {
+        "drill": lambda gym: Drill.objects.filter(gym=gym),
+        "participants": lambda gym: User.objects.filter(gym=gym, role=User.Role.STUDENT, is_active=True),
+    }
+    participants = serializers.PrimaryKeyRelatedField(many=True, required=False, queryset=User.objects.none())
+    drill_detail = DrillSerializer(source="drill", read_only=True)
+
+    class Meta:
+        model = Homework
+        fields = [
+            "id",
+            "week_start",
+            "title",
+            "description",
+            "drill",
+            "drill_detail",
+            "is_broadcast",
+            "participants",
+            "created_at",
+        ]
+
+    def validate_week_start(self, value):
+        return week_start(value)
+
+    def validate(self, attrs):
+        is_broadcast = attrs.get("is_broadcast", getattr(self.instance, "is_broadcast", False))
+        if "participants" in attrs:
+            participants = attrs["participants"]
+        elif self.instance:
+            participants = list(self.instance.participants.all())
+        else:
+            participants = []
+        if is_broadcast and participants:
+            raise serializers.ValidationError("Homework for everyone cannot also list students.")
+        if not is_broadcast and not participants:
+            raise serializers.ValidationError("Pick at least one student or give it to everyone.")
+        return attrs
