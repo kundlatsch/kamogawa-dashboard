@@ -69,6 +69,16 @@ passwords are printed once):
 docker compose exec backend python manage.py seed_demo
 ```
 
+For local testing there is also a seed with fixed, known logins — coach
+`treinador`/`treinador` and students `aluno1`/`aluno1` … `aluno4`/`aluno4` —
+plus exercises and the next class already planned, published and with everyone
+checked in. It never changes accounts or classes that already exist, and the
+test suite runs it on every `pytest` run so it keeps working:
+
+```bash
+docker compose exec backend python manage.py seed_test
+```
+
 ## Running on the gym server (production profile)
 
 ```bash
