@@ -222,7 +222,11 @@
   "calendar": {
     "previous": "Semanas anteriores",
     "next": "Próximas semanas",
-    "today": "Hoje"
+    "today": "Hoje",
+    "openPlanning": "Abrir no planejamento",
+    "anotherExtra": "Treino extra neste dia",
+    "noClassPast": "Nenhum treino neste dia.",
+    "hint": "Clique num dia: abra o treino, transforme em sparring ou crie um treino extra."
   },
   "sessions": {
     "kind": {

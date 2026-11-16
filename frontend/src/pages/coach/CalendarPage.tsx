@@ -1,12 +1,14 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
+import { api } from "../../api/client";
 import { useSessions } from "../../api/hooks";
 import type { TrainingSession } from "../../api/types";
 import { KindBadge, StatusBadge } from "../../components/SessionBadge";
 import SessionFormModal from "../../components/SessionFormModal";
-import { Button, PageHeader } from "../../components/ui";
+import { Button, Modal, PageHeader } from "../../components/ui";
 import { addDays, formatDate, startOfWeek, toISODate, todayISO, weekdayNames } from "../../lib/dates";
 
 const WEEKS = 4;
@@ -16,6 +18,7 @@ export default function CalendarPage() {
   const navigate = useNavigate();
   const [weekOffset, setWeekOffset] = useState(0);
   const [creating, setCreating] = useState<"EXTRA" | "SPARRING" | null>(null);
+  const [openDay, setOpenDay] = useState<string | null>(null);
 
   const firstDay = useMemo(() => addDays(startOfWeek(new Date()), weekOffset * 7), [weekOffset]);
   const days = useMemo(() => Array.from({ length: WEEKS * 7 }, (_, i) => toISODate(addDays(firstDay, i))), [firstDay]);
@@ -47,6 +50,7 @@ export default function CalendarPage() {
         }
       />
 
+      <p className="-mt-4 mb-4 text-sm text-smoke">{t("calendar.hint")}</p>
       <div className="mb-3 flex items-center gap-2">
         <Button variant="ghost" onClick={() => setWeekOffset((w) => w - WEEKS)} aria-label={t("calendar.previous")}>
           ‹
@@ -73,7 +77,12 @@ export default function CalendarPage() {
           {days.map((day) => (
             <div
               key={day}
-              className={`min-h-24 bg-canvas p-1.5 ${day < today ? "opacity-50" : ""} ${
+              role="button"
+              tabIndex={0}
+              aria-label={formatDate(day, i18n.language, { weekday: "long", day: "numeric", month: "long" })}
+              onClick={() => setOpenDay(day)}
+              onKeyDown={(event) => (event.key === "Enter" || event.key === " ") && setOpenDay(day)}
+              className={`min-h-24 cursor-pointer bg-canvas p-1.5 hover:bg-ring ${day < today ? "opacity-50" : ""} ${
                 day === today ? "ring-2 ring-glove ring-inset" : ""
               }`}
             >
@@ -82,7 +91,10 @@ export default function CalendarPage() {
                 {(byDate.get(day) ?? []).map((session) => (
                   <button
                     key={session.id}
-                    onClick={() => navigate(`/?session=${session.id}`)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setOpenDay(day);
+                    }}
                     className={`flex flex-col items-start gap-1 rounded-md border p-1.5 text-left text-xs hover:border-chalk ${
                       session.kind === "SPARRING" ? "border-blood bg-blood/15" : "border-rope bg-ring"
                     }`}
@@ -102,6 +114,15 @@ export default function CalendarPage() {
         </div>
       </div>
 
+      {openDay && (
+        <DayModal
+          day={openDay}
+          sessions={byDate.get(openDay) ?? []}
+          onClose={() => setOpenDay(null)}
+          onOpenSession={(session) => navigate(`/?session=${session.id}`)}
+        />
+      )}
+
       {creating && (
         <SessionFormModal
           kind={creating}
@@ -110,5 +131,90 @@ export default function CalendarPage() {
         />
       )}
     </section>
+  );
+}
+
+/**
+ * A calendar day: open its class in Planejamento or mark it as sparring (the coach's exercises stay),
+ * or, on a free day, create an extra class with the date already set.
+ */
+function DayModal({
+  day,
+  sessions,
+  onClose,
+  onOpenSession,
+}: {
+  day: string;
+  sessions: TrainingSession[];
+  onClose: () => void;
+  onOpenSession: (session: TrainingSession) => void;
+}) {
+  const { t, i18n } = useTranslation();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [creating, setCreating] = useState(false);
+  const convert = useMutation({
+    mutationFn: async ({ session, kind }: { session: TrainingSession; kind: "SPARRING" | "REGULAR" }) =>
+      api.post(`/sessions/${session.id}/convert/`, { kind }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["sessions"] }),
+  });
+  const title = formatDate(day, i18n.language, { weekday: "long", day: "numeric", month: "long" });
+  const canCreate = day >= todayISO();
+
+  if (creating || (sessions.length === 0 && canCreate)) {
+    return (
+      <SessionFormModal
+        kind="EXTRA"
+        fixedDate={day}
+        onClose={onClose}
+        onCreated={(session) => navigate(`/?session=${session.id}`)}
+      />
+    );
+  }
+
+  return (
+    <Modal title={title} onClose={onClose}>
+      <div className="flex flex-col gap-3">
+        {sessions.length === 0 && <p className="text-sm text-smoke">{t("calendar.noClassPast")}</p>}
+        {sessions.map((session) => {
+          const sparring = session.kind === "SPARRING";
+          return (
+            <div
+              key={session.id}
+              className={`flex flex-col gap-2 rounded-lg border p-3 ${sparring ? "border-blood bg-blood/15" : "border-rope bg-ring"}`}
+            >
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <KindBadge kind={session.kind} />
+                <StatusBadge status={session.status} />
+                <span className="font-semibold">{session.start_time?.slice(0, 5)}</span>
+                {session.title && <span>{session.title}</span>}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => onOpenSession(session)}>{t("calendar.openPlanning")}</Button>
+                <Button
+                  variant={sparring ? "ghost" : "danger"}
+                  disabled={convert.isPending}
+                  onClick={() => {
+                    const question = sparring
+                      ? t("board.confirmRegular")
+                      : session.status === "PUBLISHED"
+                        ? t("board.confirmSparringPublished")
+                        : t("board.confirmSparring");
+                    if (window.confirm(question)) convert.mutate({ session, kind: sparring ? "REGULAR" : "SPARRING" });
+                  }}
+                >
+                  {sparring ? t("board.toRegular") : `🥊 ${t("board.toSparring")}`}
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+        {canCreate && sessions.length > 0 && (
+          <Button variant="ghost" onClick={() => setCreating(true)}>
+            + {t("calendar.anotherExtra")}
+          </Button>
+        )}
+      </div>
+    </Modal>
   );
 }
