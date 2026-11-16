@@ -8,7 +8,7 @@ import { useSessions } from "../../api/hooks";
 import type { TrainingSession } from "../../api/types";
 import { KindBadge, StatusBadge } from "../../components/SessionBadge";
 import SessionFormModal from "../../components/SessionFormModal";
-import { Button, Modal, PageHeader } from "../../components/ui";
+import { Button, Input, Modal, PageHeader } from "../../components/ui";
 import { addDays, formatDate, startOfWeek, toISODate, todayISO, weekdayNames } from "../../lib/dates";
 
 const WEEKS = 4;
@@ -96,16 +96,21 @@ export default function CalendarPage() {
                       setOpenDay(day);
                     }}
                     className={`flex flex-col items-start gap-1 rounded-md border p-1.5 text-left text-xs hover:border-chalk ${
-                      session.kind === "SPARRING" ? "border-blood bg-blood/15" : "border-rope bg-ring"
+                      session.status === "CANCELLED"
+                        ? "border-rope bg-ring opacity-60"
+                        : session.kind === "SPARRING"
+                          ? "border-blood bg-blood/15"
+                          : "border-rope bg-ring"
                     }`}
                   >
                     <div className="flex flex-wrap gap-1">
                       <KindBadge kind={session.kind} />
                       <StatusBadge status={session.status} />
                     </div>
-                    <span className="font-medium">
+                    <span className={`font-medium ${session.status === "CANCELLED" ? "line-through" : ""}`}>
                       {session.start_time?.slice(0, 5)} {session.title}
                     </span>
+                    {session.cancel_reason && <span className="text-[10px] text-smoke">{session.cancel_reason}</span>}
                   </button>
                 ))}
               </div>
@@ -158,6 +163,20 @@ function DayModal({
       api.post(`/sessions/${session.id}/convert/`, { kind }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["sessions"] }),
   });
+  const [cancelling, setCancelling] = useState<TrainingSession | null>(null);
+  const [reason, setReason] = useState("");
+  const cancel = useMutation({
+    mutationFn: async (session: TrainingSession) => api.post(`/sessions/${session.id}/cancel/`, { reason: reason.trim() }),
+    onSuccess: () => {
+      setCancelling(null);
+      setReason("");
+      queryClient.invalidateQueries({ queryKey: ["sessions"] });
+    },
+  });
+  const restore = useMutation({
+    mutationFn: async (session: TrainingSession) => api.post(`/sessions/${session.id}/restore/`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["sessions"] }),
+  });
   const title = formatDate(day, i18n.language, { weekday: "long", day: "numeric", month: "long" });
   const canCreate = day >= todayISO();
 
@@ -178,6 +197,22 @@ function DayModal({
         {sessions.length === 0 && <p className="text-sm text-smoke">{t("calendar.noClassPast")}</p>}
         {sessions.map((session) => {
           const sparring = session.kind === "SPARRING";
+          if (session.status === "CANCELLED") {
+            return (
+              <div key={session.id} className="flex flex-col gap-2 rounded-lg border border-rope bg-ring p-3 text-sm">
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusBadge status={session.status} />
+                  <span className="font-semibold line-through">{session.start_time?.slice(0, 5)}</span>
+                  <span className="text-smoke">{session.cancel_reason}</span>
+                </div>
+                <div>
+                  <Button variant="ghost" disabled={restore.isPending} onClick={() => restore.mutate(session)}>
+                    {t("calendar.restore")}
+                  </Button>
+                </div>
+              </div>
+            );
+          }
           return (
             <div
               key={session.id}
@@ -205,7 +240,38 @@ function DayModal({
                 >
                   {sparring ? t("board.toRegular") : `🥊 ${t("board.toSparring")}`}
                 </Button>
+                <Button variant="ghost" onClick={() => setCancelling(session)}>
+                  {t("calendar.cancelClass")}
+                </Button>
               </div>
+              {cancelling?.id === session.id && (
+                <form
+                  className="flex flex-col gap-2 border-t border-rope pt-2"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    if (reason.trim()) cancel.mutate(session);
+                  }}
+                >
+                  <Input
+                    label={t("calendar.cancelReason")}
+                    placeholder={t("calendar.cancelReasonPlaceholder")}
+                    value={reason}
+                    maxLength={200}
+                    autoFocus
+                    onChange={(event) => setReason(event.target.value)}
+                    required
+                  />
+                  <p className="text-xs text-smoke">{t("calendar.cancelHint")}</p>
+                  <div className="flex gap-2">
+                    <Button type="submit" variant="danger" disabled={cancel.isPending || !reason.trim()}>
+                      {t("calendar.confirmCancel")}
+                    </Button>
+                    <Button type="button" variant="ghost" onClick={() => setCancelling(null)}>
+                      {t("common.cancel")}
+                    </Button>
+                  </div>
+                </form>
+              )}
             </div>
           );
         })}

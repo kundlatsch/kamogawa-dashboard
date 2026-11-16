@@ -149,7 +149,8 @@
     "kind": {
       "SESSION_PUBLISHED": "Seu treino de {{date}} está disponível.",
       "SPARRING": "Sparring marcado para {{date}}! Traga luvas, bucal e protetor.",
-      "INJURY_REPORTED": "{{name}} relatou dor ou lesão no check-in de {{date}}."
+      "INJURY_REPORTED": "{{name}} relatou dor ou lesão no check-in de {{date}}.",
+      "SESSION_CANCELLED": "O treino de {{date}} foi cancelado."
     }
   },
   "sparring": {
@@ -236,7 +237,13 @@
     "openPlanning": "Abrir no planejamento",
     "anotherExtra": "Treino extra neste dia",
     "noClassPast": "Nenhum treino neste dia.",
-    "hint": "Clique num dia: abra o treino, transforme em sparring ou crie um treino extra."
+    "hint": "Clique num dia: abra o treino, transforme em sparring ou crie um treino extra.",
+    "cancelClass": "Cancelar treino",
+    "cancelReason": "Motivo",
+    "cancelReasonPlaceholder": "Ex.: feriado, viagem do treinador",
+    "cancelHint": "Os alunos recebem um aviso e o check-in fecha. Os exercícios montados ficam guardados.",
+    "confirmCancel": "Cancelar este treino",
+    "restore": "Desfazer cancelamento"
   },
   "sessions": {
     "kind": {
@@ -246,7 +253,8 @@
     },
     "status": {
       "DRAFT": "Rascunho",
-      "PUBLISHED": "Publicado"
+      "PUBLISHED": "Publicado",
+      "CANCELLED": "Cancelado"
     },
     "newExtra": "Treino extra",
     "newSparring": "Novo treino de sparring",
@@ -528,14 +536,17 @@
     "empty": "Sem classe nem avaliação ainda."
   },
   "studentCalendar": {
-    "hint": "Todos os dias de treino aparecem aqui. Quando o treinador publica um treino, ele fica clicável com os exercícios.",
+    "hint": "Todos os dias de treino aparecem aqui e você pode confirmar presença em qualquer um. Quando o treinador publica um treino, ele fica clicável com os exercícios.",
     "planned": "Vai ter treino; o treinador ainda não publicou os detalhes.",
     "class": "Treino",
     "legendPublished": "Treino publicado (clique para ver)",
     "legendPlanned": "Treino previsto, ainda sem detalhes",
     "published": "Próximos treinos publicados",
     "seeExercises": "ver exercícios",
-    "notFound": "Treino não encontrado ou ainda não publicado."
+    "notFound": "Treino não encontrado ou ainda não publicado.",
+    "upcoming": "Próximos treinos",
+    "cancelled": "Cancelado",
+    "notPublishedYet": "detalhes quando o treinador publicar"
   },
   "studentRanking": {
     "you": "você"

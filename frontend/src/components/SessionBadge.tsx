@@ -23,7 +23,11 @@ export function StatusBadge({ status }: { status: SessionStatus }) {
   return (
     <span
       className={`rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase ${
-        status === "PUBLISHED" ? "border border-belt text-belt" : "border border-smoke text-smoke"
+        status === "PUBLISHED"
+          ? "border border-belt text-belt"
+          : status === "CANCELLED"
+            ? "border border-glove text-glove line-through"
+            : "border border-smoke text-smoke"
       }`}
     >
       {t(`sessions.status.${status}`)}

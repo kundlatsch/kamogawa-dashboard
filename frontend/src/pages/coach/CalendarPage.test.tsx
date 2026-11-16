@@ -20,6 +20,7 @@ const session: TrainingSession = {
   published_at: null,
   objective_override: "",
   objective: "",
+  cancel_reason: "",
 };
 
 function renderPage() {
@@ -61,5 +62,17 @@ describe("CalendarPage", () => {
     await waitFor(() =>
       expect(post).toHaveBeenCalledWith("/sessions/", expect.objectContaining({ date: inTwoDays, start_time: "18:30", kind: "EXTRA" })),
     );
+  });
+});
+
+describe("CalendarPage cancellation", () => {
+  it("cancels a class with a reason", async () => {
+    const post = vi.spyOn(api, "post").mockResolvedValue({ data: {} });
+    renderPage();
+    fireEvent.click(await screen.findByRole("button", { name: dayLabel(tomorrow) }));
+    fireEvent.click(await screen.findByRole("button", { name: "Cancelar treino" }));
+    fireEvent.change(screen.getByLabelText("Motivo"), { target: { value: "Feriado" } });
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar este treino" }));
+    await waitFor(() => expect(post).toHaveBeenCalledWith("/sessions/3/cancel/", { reason: "Feriado" }));
   });
 });

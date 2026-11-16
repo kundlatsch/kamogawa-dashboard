@@ -48,10 +48,11 @@ export default function BoardPage() {
   const [blockChoice, setBlockChoice] = useState<number | "none" | null>(null);
 
   const today = todayISO();
-  const nextDate = sessions.find((s) => s.date >= today)?.date;
+  const nextDate = sessions.find((s) => s.date >= today && s.status !== "CANCELLED")?.date;
   const requestedId = Number(params.get("session")) || null;
   // Planejamento works on the next class; other days are opened from the calendar (?session=).
-  const session = sessions.find((s) => s.id === requestedId) ?? sessions.find((s) => s.date >= today);
+  const upcoming = sessions.filter((s) => s.date >= today && s.status !== "CANCELLED");
+  const session = sessions.find((s) => s.id === requestedId) ?? upcoming[0];
 
   useEffect(() => {
     if (session && session.id !== requestedId) setParams({ session: String(session.id) }, { replace: true });

@@ -65,6 +65,7 @@ export default function NotificationBell() {
                 : "";
               const sparring = notification.kind === "SPARRING";
               const injury = notification.kind === "INJURY_REPORTED";
+              const cancelled = notification.kind === "SESSION_CANCELLED";
               return (
                 <li
                   key={notification.id}
@@ -76,7 +77,7 @@ export default function NotificationBell() {
                     notification.read_at ? "" : "font-semibold"
                   }`}
                 >
-                  {sparring ? "🥊 " : injury ? "🤕 " : "📋 "}
+                  {sparring ? "🥊 " : injury ? "🤕 " : cancelled ? "🚫 " : "📋 "}
                   {t(`notifications.kind.${notification.kind}`, { date, name: notification.subject?.display_name })}
                 </li>
               );
@@ -91,5 +92,6 @@ export default function NotificationBell() {
 /** Coaches go to the class on Planejamento; students to today's routine or the class page. */
 export function notificationTarget(kind: string, sessionId: number, date: string): string {
   if (kind === "INJURY_REPORTED") return `/?session=${sessionId}`;
+  if (kind === "SESSION_CANCELLED") return "/upcoming";
   return date === todayISO() ? "/" : `/class/${sessionId}`;
 }

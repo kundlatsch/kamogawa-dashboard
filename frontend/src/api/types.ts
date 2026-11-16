@@ -82,7 +82,7 @@ export interface WeeklySchedule {
 }
 
 export type SessionKind = "REGULAR" | "EXTRA" | "SPARRING";
-export type SessionStatus = "DRAFT" | "PUBLISHED";
+export type SessionStatus = "DRAFT" | "PUBLISHED" | "CANCELLED";
 
 export interface TrainingSession {
   id: number;
@@ -97,6 +97,8 @@ export interface TrainingSession {
   objective_override: string;
   /** Resolved objective (override or the microcycle's). */
   objective: string;
+  /** Why the class was cancelled (holiday, trip...). */
+  cancel_reason: string;
 }
 
 export interface Assignment {
@@ -164,11 +166,13 @@ export type UpcomingSession = SessionSummary & { checkin: CheckInState };
 export interface MyRoutine {
   date: string;
   sessions: (SessionSummary & { objective: string; checkin: CheckInState; routine: RoutineItem[] })[];
+  /** Today's classes not published yet: only time and check-in. */
+  drafts?: { id: number; date: string; start_time: string | null; checkin: CheckInState }[];
 }
 
 export interface AppNotification {
   id: number;
-  kind: "SESSION_PUBLISHED" | "SPARRING" | "INJURY_REPORTED";
+  kind: "SESSION_PUBLISHED" | "SPARRING" | "INJURY_REPORTED" | "SESSION_CANCELLED";
   session: SessionSummary | null;
   /** Who the notification is about (e.g. the student who reported pain). */
   subject: PublicUser | null;
@@ -354,4 +358,6 @@ export interface CalendarEntry {
   title?: string;
   notes?: string;
   checkin?: CheckInState;
+  cancelled?: boolean;
+  cancel_reason?: string;
 }

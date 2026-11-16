@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
 import type { MyRoutine } from "../../api/types";
+import CheckInButton from "../../components/CheckInButton";
 import SessionRoutineView from "../../components/SessionRoutineView";
 import SparringBanner from "../../components/SparringBanner";
 import WeekCard from "../../components/WeekCard";
@@ -33,7 +34,16 @@ export default function TodayPage() {
       <WeekCard />
 
       {isLoading && <p className="text-smoke">{t("common.loading")}</p>}
-      {data && data.sessions.length === 0 && (
+      {data?.drafts?.map((draft) => (
+        <div key={draft.id} className="flex flex-col gap-2 rounded-xl bg-canvas p-3">
+          <p className="font-semibold">
+            {t("studentCalendar.class")} {draft.start_time?.slice(0, 5)}
+            <span className="ml-2 text-xs font-normal text-smoke">{t("studentCalendar.notPublishedYet")}</span>
+          </p>
+          <CheckInButton sessionId={draft.id} state={draft.checkin} />
+        </div>
+      ))}
+      {data && data.sessions.length === 0 && !data.drafts?.length && (
         <div className="rounded-xl border border-rope bg-canvas p-8 text-center">
           <p className="text-5xl" aria-hidden>
             😴
