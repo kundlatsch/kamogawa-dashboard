@@ -37,31 +37,13 @@ def session_today(gym):
     return TrainingSession.objects.create(gym=gym, date=timezone.localdate(), status=TrainingSession.Status.PUBLISHED)
 
 
-def test_confirmed_attendance_grants_xp_once_and_undo_removes_it(coach, api_as, gym, make_user):
+def test_attendance_no_longer_creates_xp(coach, api_as, gym, make_user):
     ana = make_user("ana")
-    session = session_today(gym)
-    check_in = CheckIn.objects.create(session=session, student=ana)
-    client = api_as(coach)
-    client.patch(f"/api/checkins/{check_in.id}/", {"attended": True}, format="json")
-    client.patch(f"/api/checkins/{check_in.id}/", {"attended": True}, format="json")
-    assert list(XpEvent.objects.values_list("amount", flat=True)) == [10]
-    client.patch(f"/api/checkins/{check_in.id}/", {"attended": False}, format="json")
+    check_in = CheckIn.objects.create(session=session_today(gym), student=ana)
+    api_as(coach).patch(f"/api/checkins/{check_in.id}/", {"attended": True}, format="json")
     assert not XpEvent.objects.exists()
-    client.patch(f"/api/checkins/{check_in.id}/", {"attended": True}, format="json")
-    client.delete(f"/api/checkins/{check_in.id}/")
-    assert not XpEvent.objects.exists()
-
-
-def test_levels_follow_the_gym_settings(coach, api_as, gym, make_user):
-    ana = make_user("ana")
-    api_as(coach).patch("/api/my-gym/", {"attendance_xp": 30, "xp_per_level": 50})
-    for days in range(3):
-        session = TrainingSession.objects.create(gym=gym, date=timezone.localdate() - timedelta(days=days))
-        CheckIn.objects.create(session=session, student=ana, attended=True)
     progress = api_as(ana).get("/api/me/progress/").json()
-    assert (progress["xp"], progress["level"], progress["level_xp"]) == (90, 2, 40)
-    board = api_as(coach).get("/api/leaderboard/").json()
-    assert board[0]["student"]["id"] == ana.id and board[0]["xp"] == 90
+    assert "xp" not in progress and "events" not in progress
 
 
 def test_mission_flow_complete_approve_and_repeat(coach, api_as, gym, make_user):
@@ -75,10 +57,11 @@ def test_mission_flow_complete_approve_and_repeat(coach, api_as, gym, make_user)
     assert coach_client.get("/api/leaderboard/").json()[0]["pending_missions"] == 1
     coach_client.post(f"/api/mission-completions/{pending[0]['id']}/approve/")
     progress = student.get("/api/me/progress/").json()
-    assert progress["xp"] == 25
     assert progress["missions"][0]["times_completed"] == 1 and progress["missions"][0]["can_complete"] is True
+    assert coach_client.get("/api/leaderboard/").json()[0]["missions_completed"] == 1
+    assert not XpEvent.objects.exists()  # missions are goals: no XP
     coach_client.post(f"/api/mission-completions/{pending[0]['id']}/reject/")
-    assert student.get("/api/me/progress/").json()["xp"] == 0
+    assert student.get("/api/me/progress/").json()["missions"][0]["times_completed"] == 0
 
 
 def test_one_time_missions_and_inactive_ones(coach, api_as, gym, make_user):
@@ -96,22 +79,9 @@ def test_one_time_missions_and_inactive_ones(coach, api_as, gym, make_user):
     assert api_as(coach).post(f"/api/me/missions/{once.id}/complete/").status_code == 403
 
 
-def test_manual_xp_can_be_granted_and_removed(coach, api_as, make_user, gym):
-    ana = make_user("ana")
-    client = api_as(coach)
-    event = client.post("/api/xp-events/", {"student": ana.id, "amount": 15, "note": "Ajudou na limpeza"}).json()
-    assert event["reason"] == "MANUAL"
-    assert client.post("/api/xp-events/", {"student": ana.id, "amount": 0}).status_code == 400
-    assert client.delete(f"/api/xp-events/{event['id']}/").status_code == 204
-    session = session_today(gym)
-    CheckIn.objects.create(session=session, student=ana, attended=True)
-    attendance = XpEvent.objects.get()
-    assert client.delete(f"/api/xp-events/{attendance.id}/").status_code == 400
-
-
 def test_students_cannot_use_coach_endpoints(api_as, make_user):
     client = api_as(make_user("ana"))
-    for url in ["/api/leaderboard/", "/api/missions/", "/api/mission-completions/", "/api/xp-events/"]:
+    for url in ["/api/leaderboard/", "/api/missions/", "/api/mission-completions/"]:
         assert client.get(url).status_code == 403, url
     assert client.get("/api/fighter-classes/").status_code == 200
 
@@ -120,15 +90,11 @@ def test_gamification_is_isolated_between_gyms(coach, api_as, gym, other_gym, ma
     rival = make_user("zed", gym=other_gym)
     rival_mission = Mission.objects.create(gym=other_gym, title="Rival")
     completion = MissionCompletion.objects.create(mission=rival_mission, student=rival)
-    rival_event = XpEvent.objects.create(student=rival, amount=50, reason=XpEvent.Reason.MANUAL)
     client = api_as(coach)
     assert client.get("/api/missions/").json() == []
     assert client.get("/api/mission-completions/").json() == []
-    assert client.get("/api/xp-events/").json() == []
     assert client.get("/api/leaderboard/").json() == []
     assert client.post(f"/api/mission-completions/{completion.id}/approve/").status_code == 404
-    assert client.delete(f"/api/xp-events/{rival_event.id}/").status_code == 404
-    assert client.post("/api/xp-events/", {"student": rival.id, "amount": 5}).status_code == 400
     ana = make_user("ana")
     assert api_as(ana).post(f"/api/me/missions/{rival_mission.id}/complete/").status_code == 404
 

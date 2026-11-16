@@ -21,7 +21,7 @@ export default function SettingsPage() {
       <GymSettings />
       <ScheduleSettings />
       <CheckinSettings />
-      <GamificationSettings />
+      <AssessmentScaleSettings />
       <NamedListSettings
         path="/fighter-classes/"
         title={t("settings.fighterClasses")}
@@ -286,8 +286,8 @@ function CheckinSettings() {
   );
 }
 
-/** XP per attended class, XP needed per level and the top of the monthly assessment scale. */
-function GamificationSettings() {
+/** The top of the monthly assessment scale. */
+function AssessmentScaleSettings() {
   const { t } = useTranslation();
   const { refreshUser } = useAuth();
   const queryClient = useQueryClient();
@@ -295,21 +295,13 @@ function GamificationSettings() {
     queryKey: ["my-gym"],
     queryFn: async () => (await api.get<GymSummary>("/my-gym/")).data,
   });
-  const [attendanceXp, setAttendanceXp] = useState("");
-  const [perLevel, setPerLevel] = useState("");
   const [scaleMax, setScaleMax] = useState("");
   useEffect(() => {
-    if (gym?.attendance_xp !== undefined) setAttendanceXp(String(gym.attendance_xp));
-    if (gym?.xp_per_level !== undefined) setPerLevel(String(gym.xp_per_level));
     if (gym?.assessment_scale_max !== undefined) setScaleMax(String(gym.assessment_scale_max));
   }, [gym]);
   const save = useMutation({
     mutationFn: async () =>
-      api.patch("/my-gym/", {
-        attendance_xp: Number(attendanceXp),
-        xp_per_level: Number(perLevel),
-        assessment_scale_max: Number(scaleMax),
-      }),
+      api.patch("/my-gym/", { assessment_scale_max: Number(scaleMax) }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-gym"] });
       refreshUser();
@@ -318,31 +310,15 @@ function GamificationSettings() {
 
   return (
     <div className="rounded-xl border border-rope bg-canvas p-5">
-      <h2 className="mb-1 font-display text-2xl tracking-wide uppercase">{t("settings.gamification")}</h2>
-      <p className="mb-4 text-sm text-smoke">{t("settings.gamificationHint")}</p>
+      <h2 className="mb-1 font-display text-2xl tracking-wide uppercase">{t("settings.assessmentScale")}</h2>
+      <p className="mb-4 text-sm text-smoke">{t("settings.assessmentScaleHint")}</p>
       <form
         className="flex flex-wrap items-end gap-4"
         onSubmit={(event) => {
           event.preventDefault();
-          if (attendanceXp !== "" && Number(perLevel) >= 1 && Number(scaleMax) >= 2) save.mutate();
+          if (Number(scaleMax) >= 2) save.mutate();
         }}
       >
-        <Input
-          label={t("settings.attendanceXp")}
-          type="number"
-          min={0}
-          max={1000}
-          value={attendanceXp}
-          onChange={(event) => setAttendanceXp(event.target.value)}
-        />
-        <Input
-          label={t("settings.xpPerLevel")}
-          type="number"
-          min={1}
-          max={10000}
-          value={perLevel}
-          onChange={(event) => setPerLevel(event.target.value)}
-        />
         <Input
           label={t("settings.assessmentScaleMax")}
           type="number"

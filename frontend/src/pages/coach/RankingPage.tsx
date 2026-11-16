@@ -4,18 +4,17 @@ import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
 import { useFighterClasses } from "../../api/hooks";
-import type { LeaderboardEntry, Mission, MissionCompletion, PublicUser } from "../../api/types";
+import type { LeaderboardEntry, Mission, MissionCompletion } from "../../api/types";
 import Avatar from "../../components/Avatar";
 import FighterClassArt from "../../components/FighterClassArt";
-import { Button, Input, Modal, PageHeader } from "../../components/ui";
-import XpBar from "../../components/XpBar";
-import { sortLeaderboard } from "../../lib/ranking";
+import { Button, Input, PageHeader } from "../../components/ui";
+import { sortLeaderboard, type RankingOrder } from "../../lib/ranking";
 import { formatDate } from "../../lib/dates";
 import StudentLink from "../../components/StudentLink";
 
 const field = "rounded-md border border-rope bg-ring px-2 py-1.5 text-sm text-chalk outline-none focus:border-glove";
 
-/** Coach gamification hub: ranking with fighter classes, mission approvals and the mission list. */
+/** Coach hub for ranking (attendance, missions), fighter classes and missions (weekly goals). */
 export default function RankingPage() {
   const { t } = useTranslation();
   return (
@@ -32,14 +31,13 @@ export default function RankingPage() {
 function Leaderboard() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const [order, setOrder] = useState<"xp" | "attendance">("xp");
+  const [order, setOrder] = useState<RankingOrder>("attendance");
   const { data = [], isLoading, isError } = useQuery({
     queryKey: ["leaderboard"],
     queryFn: async () => (await api.get<LeaderboardEntry[]>("/leaderboard/")).data,
   });
   const entries = sortLeaderboard(data, order);
   const { data: classes = [] } = useFighterClasses();
-  const [giving, setGiving] = useState<PublicUser | null>(null);
   const setClass = useMutation({
     mutationFn: async ({ student, fighterClass }: { student: number; fighterClass: number | null }) =>
       api.patch(`/students/${student}/`, { fighter_class: fighterClass }),
@@ -52,7 +50,7 @@ function Leaderboard() {
   return (
     <div className="rounded-xl border border-rope bg-canvas p-5">
       <div role="tablist" className="mb-3 flex gap-2">
-        {(["xp", "attendance"] as const).map((key) => (
+        {(["attendance", "missions"] as const).map((key) => (
           <button
             key={key}
             role="tab"
@@ -89,12 +87,15 @@ function Leaderboard() {
                     </span>
                   )}
                 </span>
-                <XpBar level={entry} compact />
                 <span className="text-xs text-smoke">
                   <span className={order === "attendance" ? "font-semibold text-belt" : ""}>
                     ✓ {t("ranking.attended", { count: entry.attended })}
                   </span>{" "}
-                  · <span className={entry.absences > 0 ? "text-glove" : ""}>✗ {t("ranking.absences", { count: entry.absences })}</span>
+                  · <span className={entry.absences > 0 ? "text-glove" : ""}>✗ {t("ranking.absences", { count: entry.absences })}</span>{" "}
+                  ·{" "}
+                  <span className={order === "missions" ? "font-semibold text-belt" : ""}>
+                    🎯 {t("ranking.missionsCompleted", { count: entry.missions_completed })}
+                  </span>
                 </span>
               </div>
               <select
@@ -112,52 +113,11 @@ function Leaderboard() {
                   </option>
                 ))}
               </select>
-              <Button variant="ghost" className="!px-2 !py-1 text-xs" onClick={() => setGiving(entry.student)}>
-                {t("ranking.giveXp")}
-              </Button>
             </li>
           );
         })}
       </ol>
-      {giving && <ManualXpModal student={giving} onClose={() => setGiving(null)} />}
     </div>
-  );
-}
-
-function ManualXpModal({ student, onClose }: { student: PublicUser; onClose: () => void }) {
-  const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const [amount, setAmount] = useState("10");
-  const [note, setNote] = useState("");
-  const grant = useMutation({
-    mutationFn: async () => api.post("/xp-events/", { student: student.id, amount: Number(amount), note: note.trim() }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
-      onClose();
-    },
-  });
-  return (
-    <Modal title={t("ranking.giveXpTitle", { name: student.display_name })} onClose={onClose}>
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (Number(amount)) grant.mutate();
-        }}
-      >
-        <Input label={t("ranking.amount")} type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
-        <Input label={t("ranking.reason")} value={note} maxLength={200} onChange={(e) => setNote(e.target.value)} />
-        {grant.isError && <p className="text-sm text-glove">{t("cycles.saveError")}</p>}
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="ghost" onClick={onClose}>
-            {t("common.cancel")}
-          </Button>
-          <Button type="submit" disabled={grant.isPending || !Number(amount)}>
-            {t("ranking.grant")}
-          </Button>
-        </div>
-      </form>
-    </Modal>
   );
 }
 
@@ -201,7 +161,6 @@ function PendingCompletions() {
               <span>
                 {completion.mission_detail.emoji} {completion.mission_detail.title}
               </span>
-              <span className="text-belt">+{completion.mission_detail.xp_reward} XP</span>
               {completion.note && <span className="w-full text-smoke">💬 {completion.note}</span>}
               <span className="flex-1" />
               <Button className="!py-1" onClick={() => review.mutate({ id: completion.id, approve: true })}>
@@ -227,7 +186,6 @@ function Missions() {
   });
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [xp, setXp] = useState("20");
   const [startsOn, setStartsOn] = useState("");
   const [endsOn, setEndsOn] = useState("");
   const [repeatable, setRepeatable] = useState(false);
@@ -237,7 +195,6 @@ function Missions() {
       api.post("/missions/", {
         title: title.trim(),
         description,
-        xp_reward: Number(xp),
         starts_on: startsOn || null,
         ends_on: endsOn || null,
         repeatable,
@@ -286,7 +243,6 @@ function Missions() {
                   .join(" · ")}
               </p>
             </div>
-            <span className="font-semibold text-belt">+{mission.xp_reward} XP</span>
             <Button variant="ghost" className="!px-2 !py-1 text-xs" onClick={() => toggle.mutate(mission)}>
               {mission.active ? t("ranking.pause") : t("ranking.activate")}
             </Button>
@@ -309,8 +265,7 @@ function Missions() {
           <span className="text-smoke">{t("ranking.missionDescription")}</span>
           <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} className={field} />
         </label>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <Input label={t("ranking.xpReward")} type="number" min={0} value={xp} onChange={(e) => setXp(e.target.value)} />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Input label={t("ranking.startsOn")} type="date" value={startsOn} onChange={(e) => setStartsOn(e.target.value)} />
           <Input label={t("ranking.endsOn")} type="date" value={endsOn} onChange={(e) => setEndsOn(e.target.value)} />
         </div>

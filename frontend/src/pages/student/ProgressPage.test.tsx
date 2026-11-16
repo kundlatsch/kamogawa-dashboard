@@ -6,11 +6,6 @@ import type { MyProgress } from "../../api/types";
 import ProgressPage from "./ProgressPage";
 
 const progress: MyProgress = {
-  xp: 130,
-  level: 2,
-  level_xp: 30,
-  xp_per_level: 100,
-  attendance_xp: 10,
   fighter_class: {
     id: 1,
     name: "Contragolpeador",
@@ -21,7 +16,6 @@ const progress: MyProgress = {
     order: 4,
     archived: false,
   },
-  events: [],
   missions: [
     {
       id: 9,
@@ -42,7 +36,7 @@ const progress: MyProgress = {
 };
 
 describe("ProgressPage", () => {
-  it("shows the class, level and lets the student complete a mission", async () => {
+  it("shows the class and lets the student complete a mission", async () => {
     vi.spyOn(api, "get").mockResolvedValue({ data: progress });
     const post = vi.spyOn(api, "post").mockResolvedValue({ data: {} });
     render(
@@ -52,8 +46,7 @@ describe("ProgressPage", () => {
     );
     expect(await screen.findByRole("heading", { name: "Contragolpeador" })).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Contragolpeador" })).toBeInTheDocument();
-    expect(screen.getByText("Nível 2")).toBeInTheDocument();
-    expect(screen.getByText(/70 XP para o nível 3/)).toBeInTheDocument();
+    expect(screen.queryByText(/XP/)).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Concluí!" }));
     await waitFor(() => expect(post).toHaveBeenCalledWith("/me/missions/9/complete/"));
   });

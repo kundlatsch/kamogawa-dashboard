@@ -10,8 +10,6 @@ export interface GymSummary {
   assessment_scale_max: number;
   /** Students check in until this many minutes before class (only sent to coaches). */
   checkin_deadline_minutes?: number;
-  attendance_xp?: number;
-  xp_per_level?: number;
 }
 
 export interface Gym extends GymSummary {
@@ -297,18 +295,11 @@ export interface FighterClass extends NamedItem {
   art_key: string;
 }
 
-export interface Level {
-  xp: number;
-  level: number;
-  /** XP earned inside the current level. */
-  level_xp: number;
-  xp_per_level: number;
-}
-
-export interface LeaderboardEntry extends Level {
+export interface LeaderboardEntry {
   student: PublicUser;
   fighter_class: number | null;
   pending_missions: number;
+  missions_completed: number;
   /** Classes with attendance taken where the student was marked present / not present. */
   attended: number;
   absences: number;
@@ -340,20 +331,7 @@ export interface MissionCompletion {
   reviewed_at: string | null;
 }
 
-export interface XpEvent {
-  id: number;
-  student: number;
-  amount: number;
-  reason: "ATTENDANCE" | "MISSION" | "MANUAL";
-  note: string;
-  mission_title: string;
-  session_date: string | null;
-  created_at: string;
-}
-
-export interface MyProgress extends Level {
-  attendance_xp: number;
+export interface MyProgress {
   fighter_class: FighterClass | null;
-  events: XpEvent[];
   missions: (Mission & { status: CompletionStatus | null; times_completed: number; can_complete: boolean })[];
 }

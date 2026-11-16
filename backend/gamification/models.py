@@ -71,7 +71,7 @@ class MissionCompletion(models.Model):
 
 
 class XpEvent(models.Model):
-    """One XP gain or loss. A student's XP is the sum of their events, so every point is auditable."""
+    """Legacy: XP gains from before XP was dropped (2026-11-16). Kept so no data is lost; nothing writes it."""
 
     class Reason(models.TextChoices):
         ATTENDANCE = "ATTENDANCE", "Attended a class"

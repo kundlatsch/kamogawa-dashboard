@@ -40,7 +40,7 @@
     "stats": "Estatísticas",
     "week": "Semana",
     "ranking": "Ranking",
-    "progress": "Evolução"
+    "progress": "Missões"
   },
   "drills": {
     "title": "Biblioteca de exercícios",
@@ -202,15 +202,13 @@
     "addFocus": "Adicionar foco",
     "checkinDeadline": "Prazo do check-in (minutos antes da aula)",
     "checkinDeadlineHint": "Depois desse prazo o aluno não consegue mais confirmar ou cancelar presença.",
-    "gamification": "Pontuação e avaliações",
-    "gamificationHint": "Quanto XP cada presença confirmada vale, quanto XP é preciso para subir de nível e até quanto vai a nota da avaliação mensal.",
-    "attendanceXp": "XP por aula frequentada",
-    "xpPerLevel": "XP por nível",
     "fighterClasses": "Classes de lutador",
     "fighterClassesHint": "Estilos que você atribui a cada aluno no Ranking. As 6 classes padrão já vêm com arte.",
     "fighterClassName": "Nome da classe",
     "addFighterClass": "Adicionar classe",
-    "assessmentScaleMax": "Nota máxima da avaliação (2 a 10)"
+    "assessmentScaleMax": "Nota máxima da avaliação (2 a 10)",
+    "assessmentScale": "Escala da avaliação",
+    "assessmentScaleHint": "Até quanto vai a nota da avaliação mensal de cada estatística."
   },
   "calendar": {
     "previous": "Semanas anteriores",
@@ -436,20 +434,13 @@
     "notCheckedIn": "Você não confirmou presença."
   },
   "ranking": {
-    "title": "Ranking e gamificação",
-    "hint": "XP vem das presenças que você confirma no quadro, das missões aprovadas e de bônus manuais. Presenças e faltas contam as aulas em que você marcou quem veio.",
+    "title": "Ranking e missões",
+    "hint": "Presenças e faltas contam as aulas em que você marcou quem veio. Missões são objetivos que você passa para os alunos perseguirem.",
     "position": "#",
     "student": "Aluno",
     "class": "Classe",
     "noClass": "Sem classe",
     "classFor": "Classe de {{name}}",
-    "level": "Nível {{level}}",
-    "xp": "{{xp}} XP",
-    "giveXp": "± XP",
-    "giveXpTitle": "XP manual para {{name}}",
-    "amount": "Quantidade (use negativo para tirar)",
-    "reason": "Motivo",
-    "grant": "Lançar",
     "pending": "Missões para aprovar",
     "noPending": "Nenhuma missão esperando aprovação.",
     "approve": "Aprovar",
@@ -459,7 +450,6 @@
     "newMission": "Nova missão",
     "missionTitle": "Missão",
     "missionDescription": "Descrição",
-    "xpReward": "XP de recompensa",
     "startsOn": "Começa em",
     "endsOn": "Termina em",
     "repeatable": "Pode ser repetida",
@@ -470,22 +460,21 @@
     "addMission": "Criar missão",
     "empty": "Nenhum aluno ainda.",
     "by": {
-      "xp": "Por XP",
-      "attendance": "Por presença"
+      "attendance": "Por presença",
+      "missions": "Por missões"
     },
     "attended_one": "{{count}} presença",
     "attended_other": "{{count}} presenças",
     "absences_one": "{{count}} falta",
     "absences_other": "{{count}} faltas",
-    "loadError": "Não foi possível carregar o ranking. Recarregue a página."
+    "loadError": "Não foi possível carregar o ranking. Recarregue a página.",
+    "missionsCompleted_one": "{{count}} missão concluída",
+    "missionsCompleted_other": "{{count}} missões concluídas"
   },
   "progress": {
-    "title": "Minha evolução",
-    "level": "Nível {{level}}",
-    "toNext": "{{left}} XP para o nível {{next}}",
+    "title": "Meu lutador",
     "noClass": "O treinador ainda não definiu sua classe de lutador.",
     "yourClass": "Sua classe",
-    "attendanceHint": "Cada aula frequentada vale {{xp}} XP.",
     "missions": "Missões",
     "noMissions": "Nenhuma missão disponível agora.",
     "complete": "Concluí!",
@@ -494,14 +483,7 @@
     "rejected": "Não aprovada",
     "timesCompleted_one": "Feita {{count}} vez",
     "timesCompleted_other": "Feita {{count}} vezes",
-    "until": "até {{date}}",
-    "history": "Últimos XP",
-    "noHistory": "Seus pontos aparecem aqui depois da primeira aula confirmada.",
-    "reason": {
-      "ATTENDANCE": "Aula de {{date}}",
-      "MISSION": "Missão: {{title}}",
-      "MANUAL": "Bônus do treinador"
-    }
+    "until": "até {{date}}"
   },
   "studentProfile": {
     "notFound": "Aluno não encontrado.",

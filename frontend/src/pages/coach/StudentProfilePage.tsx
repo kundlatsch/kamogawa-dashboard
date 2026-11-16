@@ -4,11 +4,10 @@ import { Link, useParams } from "react-router-dom";
 
 import { api } from "../../api/client";
 import { useFighterClasses, useMetrics } from "../../api/hooks";
-import type { Assessment, CoachNote, LeaderboardEntry, User, WeeklyFocus, XpEvent } from "../../api/types";
+import type { Assessment, CoachNote, LeaderboardEntry, User, WeeklyFocus } from "../../api/types";
 import { useAuth } from "../../auth/AuthContext";
 import Avatar from "../../components/Avatar";
 import FighterClassArt from "../../components/FighterClassArt";
-import XpBar from "../../components/XpBar";
 import { latestScores } from "../../lib/assessments";
 import { formatDate, startOfWeek, toISODate } from "../../lib/dates";
 
@@ -43,10 +42,6 @@ export default function StudentProfilePage() {
     queryKey: ["weekly-focuses", week],
     queryFn: async () => (await api.get<WeeklyFocus[]>("/weekly-focuses/", { params: { week } })).data,
   });
-  const { data: events = [] } = useQuery({
-    queryKey: ["xp-events", id],
-    queryFn: async () => (await api.get<XpEvent[]>("/xp-events/", { params: { student: id } })).data,
-  });
   const { data: classes = [] } = useFighterClasses();
   const { data: metrics = [] } = useMetrics();
 
@@ -76,7 +71,6 @@ export default function StudentProfilePage() {
           {student.limitations && <p className="text-sm text-belt">⚠ {student.limitations}</p>}
           {entry && (
             <>
-              <XpBar level={entry} compact />
               <p className="text-xs text-smoke">
                 ✓ {t("ranking.attended", { count: entry.attended })} ·{" "}
                 <span className={entry.absences ? "text-glove" : ""}>✗ {t("ranking.absences", { count: entry.absences })}</span>
@@ -170,27 +164,6 @@ export default function StudentProfilePage() {
         </ul>
       </div>
 
-      <div className={card}>
-        <h2 className={heading}>{t("progress.history")}</h2>
-        {events.length === 0 && <p className="text-sm text-smoke">{t("studentProfile.noXp")}</p>}
-        <ul className="flex flex-col gap-1 text-sm">
-          {events.slice(0, 20).map((event) => (
-            <li key={event.id} className="flex items-center gap-2">
-              <span className={`w-16 font-semibold ${event.amount >= 0 ? "text-belt" : "text-glove"}`}>
-                {event.amount > 0 ? `+${event.amount}` : event.amount} XP
-              </span>
-              <span className="flex-1">
-                {t(`progress.reason.${event.reason}`, {
-                  date: event.session_date ? short(event.session_date) : "",
-                  title: event.mission_title,
-                })}
-                {event.note && ` · ${event.note}`}
-              </span>
-              <span className="text-xs text-smoke">{short(event.created_at)}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
     </section>
   );
 }

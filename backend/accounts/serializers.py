@@ -14,8 +14,6 @@ class OwnGymSerializer(serializers.ModelSerializer):
     """What a coach may change about their own gym."""
 
     checkin_deadline_minutes = serializers.IntegerField(min_value=0, max_value=24 * 60, required=False)
-    attendance_xp = serializers.IntegerField(min_value=0, max_value=1000, required=False)
-    xp_per_level = serializers.IntegerField(min_value=1, max_value=10_000, required=False)
     assessment_scale_max = serializers.IntegerField(min_value=2, max_value=10, required=False)
 
     class Meta:
@@ -26,8 +24,6 @@ class OwnGymSerializer(serializers.ModelSerializer):
             "slug",
             "color",
             "checkin_deadline_minutes",
-            "attendance_xp",
-            "xp_per_level",
             "assessment_scale_max",
         ]
         read_only_fields = ["id", "slug"]

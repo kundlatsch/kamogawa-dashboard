@@ -19,7 +19,7 @@ class Gym(models.Model):
     is_active = models.BooleanField(default=True)
     # Students confirm presence until this many minutes before a class starts.
     checkin_deadline_minutes = models.PositiveSmallIntegerField(default=120)
-    # Gamification: XP for each class a student attends, and XP needed per level.
+    # Legacy XP settings (XP was dropped on 2026-11-16); kept so existing data is untouched.
     attendance_xp = models.PositiveSmallIntegerField(default=10)
     xp_per_level = models.PositiveSmallIntegerField(default=100)
     # Monthly assessments are scored from 1 to this value.

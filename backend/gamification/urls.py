@@ -7,7 +7,6 @@ router = DefaultRouter()
 router.register("fighter-classes", views.FighterClassViewSet, basename="fighter-class")
 router.register("missions", views.MissionViewSet, basename="mission")
 router.register("mission-completions", views.MissionCompletionViewSet, basename="mission-completion")
-router.register("xp-events", views.XpEventViewSet, basename="xp-event")
 
 urlpatterns = [
     path("leaderboard/", views.leaderboard, name="leaderboard"),

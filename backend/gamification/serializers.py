@@ -1,9 +1,8 @@
 from rest_framework import serializers
 
-from accounts.models import User
-from training.serializers import GymScopedSerializer, NamedListSerializer
+from training.serializers import NamedListSerializer
 
-from .models import FighterClass, Mission, MissionCompletion, XpEvent
+from .models import FighterClass, Mission, MissionCompletion
 
 
 class FighterClassSerializer(NamedListSerializer):
@@ -45,23 +44,3 @@ class MissionCompletionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MissionCompletion
         fields = ["id", "mission", "mission_detail", "student", "status", "note", "created_at", "reviewed_at"]
-
-
-class XpEventSerializer(GymScopedSerializer):
-    """XP history; coaches create MANUAL events (positive or negative)."""
-
-    gym_scoped_fields = {"student": lambda gym: User.objects.filter(gym=gym, role=User.Role.STUDENT)}
-    student = serializers.PrimaryKeyRelatedField(queryset=User.objects.none())
-    amount = serializers.IntegerField(min_value=-10_000, max_value=10_000)
-    mission_title = serializers.CharField(source="mission_completion.mission.title", read_only=True, default="")
-    session_date = serializers.DateField(source="session.date", read_only=True, default=None)
-
-    class Meta:
-        model = XpEvent
-        fields = ["id", "student", "amount", "reason", "note", "mission_title", "session_date", "created_at"]
-        read_only_fields = ["reason", "created_at"]
-
-    def validate_amount(self, value):
-        if value == 0:
-            raise serializers.ValidationError("Use a positive or negative amount.")
-        return value

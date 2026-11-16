@@ -1,5 +1,4 @@
-from django.db.models import Count, Q, Sum
-from django.db.models.functions import Coalesce
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import mixins, status, viewsets
@@ -14,14 +13,9 @@ from training.cycle_views import ArchivableListViewSet
 from training.models import CheckIn, TrainingSession
 from training.views import GymScopedViewSet
 
-from .models import FighterClass, Mission, MissionCompletion, XpEvent
-from .serializers import (
-    FighterClassSerializer,
-    MissionCompletionSerializer,
-    MissionSerializer,
-    XpEventSerializer,
-)
-from .services import level_for, review_completion, total_xp
+from .models import FighterClass, Mission, MissionCompletion
+from .serializers import FighterClassSerializer, MissionCompletionSerializer, MissionSerializer
+from .services import review_completion
 
 
 class FighterClassViewSet(ArchivableListViewSet):
@@ -37,7 +31,7 @@ class MissionViewSet(GymScopedViewSet):
 
 
 class MissionCompletionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """Coach review queue (`?status=PENDING`); approving grants the mission's XP."""
+    """Coach review queue (`?status=PENDING`) of missions students say they completed."""
 
     serializer_class = MissionCompletionSerializer
     permission_classes = [IsCoach]
@@ -58,47 +52,19 @@ class MissionCompletionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return Response(self.get_serializer(review_completion(self.get_object(), request.user, False)).data)
 
 
-class XpEventViewSet(
-    mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
-):
-    """XP history (`?student=`); coaches grant or remove XP by hand. Only manual events can be deleted."""
-
-    serializer_class = XpEventSerializer
-    permission_classes = [IsCoach]
-
-    def get_queryset(self):
-        queryset = XpEvent.objects.filter(student__gym=self.request.user.gym).select_related(
-            "session", "mission_completion__mission"
-        )
-        if "student" in self.request.query_params:
-            queryset = queryset.filter(student_id=self.request.query_params["student"])
-        return queryset
-
-    def perform_create(self, serializer):
-        serializer.save(reason=XpEvent.Reason.MANUAL, created_by=self.request.user)
-
-    def perform_destroy(self, instance):
-        if instance.reason != XpEvent.Reason.MANUAL:
-            raise ValidationError("Attendance and mission XP follow attendance and mission reviews.")
-        instance.delete()
-
-
 @api_view(["GET"])
 @permission_classes([IsCoach])
 def leaderboard(request):
-    """Every active student with XP, level, fighter class and attendance, highest XP first."""
+    """Every active student with fighter class, attendance and missions (the UI sorts the ranking)."""
     gym = request.user.gym
-    pending = Q(mission_completions__status=MissionCompletion.Status.PENDING)
+    statuses = MissionCompletion.Status
     students = (
         User.objects.filter(gym=gym, role=User.Role.STUDENT, is_active=True)
-        .annotate(xp=Coalesce(Sum("xp_events__amount"), 0))
-        .order_by("-xp", "display_name")
-    )
-    # Counted separately: joining both relations in one query would multiply the XP sum.
-    pending_counts = dict(
-        User.objects.filter(gym=gym, role=User.Role.STUDENT)
-        .annotate(pending=Count("mission_completions", filter=pending))
-        .values_list("id", "pending")
+        .annotate(
+            pending=Count("mission_completions", filter=Q(mission_completions__status=statuses.PENDING)),
+            completed=Count("mission_completions", filter=Q(mission_completions__status=statuses.APPROVED)),
+        )
+        .order_by("display_name")
     )
     attendance = attendance_by_student(gym, students)
     return Response(
@@ -106,9 +72,9 @@ def leaderboard(request):
             {
                 "student": PublicUserSerializer(student).data,
                 "fighter_class": student.fighter_class_id,
-                "pending_missions": pending_counts.get(student.id, 0),
+                "pending_missions": student.pending,
+                "missions_completed": student.completed,
                 **attendance[student.id],
-                **level_for(student.xp, gym.xp_per_level),
             }
             for student in students
         ]
@@ -147,7 +113,7 @@ def available_missions(user):
 @api_view(["GET"])
 @permission_classes([IsGymMember])
 def my_progress(request):
-    """The student's XP, level, fighter class, recent XP events and available missions."""
+    """The student's fighter class and the missions (weekly goals) they can work on."""
     user = request.user
     completions = list(MissionCompletion.objects.filter(student=user))
     missions = []
@@ -163,13 +129,9 @@ def my_progress(request):
                 "can_complete": can_complete,
             }
         )
-    events = user.xp_events.select_related("session", "mission_completion__mission")[:20]
     return Response(
         {
-            **level_for(total_xp(user), user.gym.xp_per_level),
-            "attendance_xp": user.gym.attendance_xp,
             "fighter_class": FighterClassSerializer(user.fighter_class).data if user.fighter_class else None,
-            "events": XpEventSerializer(events, many=True, context={"request": request}).data,
             "missions": missions,
         }
     )
