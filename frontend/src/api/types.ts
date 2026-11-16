@@ -293,6 +293,8 @@ export interface FighterClass extends NamedItem {
   emoji: string;
   /** Key of the artwork bundled with the frontend (see lib/fighterArt.ts); blank = emoji only. */
   art_key: string;
+  /** Custom image uploaded by the coach; shown instead of the bundled art. */
+  image_url: string | null;
 }
 
 export interface LeaderboardEntry {

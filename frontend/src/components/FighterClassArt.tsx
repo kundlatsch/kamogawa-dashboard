@@ -3,9 +3,9 @@ import { fighterArt } from "../lib/fighterArt";
 
 const sizes = { sm: "h-10 w-8 text-2xl", md: "h-24 w-20 text-5xl", lg: "h-56 w-44 text-8xl" };
 
-/** A fighter class portrait: its bundled artwork, or its emoji for classes without art. */
+/** A fighter class portrait: the coach's uploaded image, its bundled artwork, or its emoji. */
 export default function FighterClassArt({ fighterClass, size = "md" }: { fighterClass: FighterClass; size?: keyof typeof sizes }) {
-  const art = fighterArt(fighterClass.art_key);
+  const art = fighterClass.image_url ?? fighterArt(fighterClass.art_key);
   if (art) {
     return <img src={art} alt={fighterClass.name} className={`${sizes[size]} shrink-0 object-contain drop-shadow-lg`} />;
   }

@@ -8,6 +8,7 @@ import { Wordmark } from "../../components/AppShell";
 import { useCategories, useSchedule } from "../../api/hooks";
 import type { DrillCategory, GymSummary } from "../../api/types";
 import BlockSettings from "../../components/BlockSettings";
+import FighterClassSettings from "../../components/FighterClassSettings";
 import NamedListSettings from "../../components/NamedListSettings";
 import { ColorPicker } from "../../components/pickers";
 import { Button, Input, PageHeader } from "../../components/ui";
@@ -22,13 +23,7 @@ export default function SettingsPage() {
       <ScheduleSettings />
       <CheckinSettings />
       <AssessmentScaleSettings />
-      <NamedListSettings
-        path="/fighter-classes/"
-        title={t("settings.fighterClasses")}
-        hint={t("settings.fighterClassesHint")}
-        nameLabel={t("settings.fighterClassName")}
-        addLabel={t("settings.addFighterClass")}
-      />
+      <FighterClassSettings />
       <BlockSettings />
       <CategorySettings />
       <NamedListSettings

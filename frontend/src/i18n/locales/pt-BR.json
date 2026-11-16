@@ -203,12 +203,21 @@
     "checkinDeadline": "Prazo do check-in (minutos antes da aula)",
     "checkinDeadlineHint": "Depois desse prazo o aluno não consegue mais confirmar ou cancelar presença.",
     "fighterClasses": "Classes de lutador",
-    "fighterClassesHint": "Estilos que você atribui a cada aluno no Ranking. As 6 classes padrão já vêm com arte.",
+    "fighterClassesHint": "Estilos de luta que você atribui a cada aluno. Clique numa classe para editar.",
     "fighterClassName": "Nome da classe",
     "addFighterClass": "Adicionar classe",
     "assessmentScaleMax": "Nota máxima da avaliação (2 a 10)",
     "assessmentScale": "Escala da avaliação",
-    "assessmentScaleHint": "Até quanto vai a nota da avaliação mensal de cada estatística."
+    "assessmentScaleHint": "Até quanto vai a nota da avaliação mensal de cada estatística.",
+    "editFighterClass": "Editar classe",
+    "fighterClassDescription": "Descrição (estilo, distância preferida…)",
+    "fighterClassArt": "Arte da classe",
+    "emojiOnly": "Só emoji",
+    "uploadClassImage": "Enviar imagem própria",
+    "removeClassImage": "remover imagem própria",
+    "classImageHint": "A imagem enviada aparece no lugar da arte escolhida. JPG, PNG ou WebP até 5 MB; PNG transparente fica melhor.",
+    "fighterClassEmoji": "Emoji (usado quando não há arte)",
+    "confirmArchiveClass": "Excluir a classe {{name}}? Alunos com essa classe ficam sem classe."
   },
   "calendar": {
     "previous": "Semanas anteriores",

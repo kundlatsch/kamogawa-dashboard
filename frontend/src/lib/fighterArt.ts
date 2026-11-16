@@ -15,4 +15,6 @@ const ART: Record<string, string> = {
   "switch-hitter": switchHitter,
 };
 
+export const ART_KEYS = Object.keys(ART);
+
 export const fighterArt = (key: string): string | null => ART[key] ?? null;

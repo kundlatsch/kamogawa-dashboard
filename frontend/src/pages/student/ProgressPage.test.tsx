@@ -13,6 +13,7 @@ const progress: MyProgress = {
     emoji: "🔄",
     color: "#2a9d8f",
     art_key: "counterpuncher",
+    image_url: null,
     order: 4,
     archived: false,
   },
