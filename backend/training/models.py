@@ -88,6 +88,8 @@ class TrainingSession(models.Model):
     class Status(models.TextChoices):
         DRAFT = "DRAFT", "Draft"
         PUBLISHED = "PUBLISHED", "Published"
+        # The class will not happen (holiday, trip...); kept so the schedule does not recreate it.
+        CANCELLED = "CANCELLED", "Cancelled"
 
     gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="training_sessions")
     date = models.DateField(db_index=True)
@@ -99,6 +101,9 @@ class TrainingSession(models.Model):
     objective_override = models.TextField(blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
     published_at = models.DateTimeField(null=True, blank=True)
+    cancel_reason = models.CharField(max_length=200, blank=True)
+    # Status before cancelling, restored when the class is put back.
+    status_before_cancel = models.CharField(max_length=16, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )

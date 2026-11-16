@@ -21,6 +21,7 @@ from notifications.services import notify_injury_reported
 from .checkins import checkin_deadline, checkin_open
 from .models import Assignment, CheckIn, SessionBlock, TrainingSession, WeeklySchedule
 from .periodization import GymTimeline
+from .scheduling import generate_regular_sessions
 from .serializers import DrillSerializer, MyCheckInSerializer
 
 UPCOMING_DAYS = 30
@@ -100,7 +101,20 @@ def my_routine(request):
     today = timezone.localdate()
     timeline = GymTimeline(request.user.gym)
     sessions = sessions_with_routine(request.user).filter(date=today)
-    return Response({"date": today, "sessions": [session_detail(s, request, timeline) for s in sessions]})
+    drafts = TrainingSession.objects.filter(
+        gym=request.user.gym, date=today, status=TrainingSession.Status.DRAFT
+    ).prefetch_related(Prefetch("check_ins", queryset=CheckIn.objects.filter(student=request.user)))
+    return Response(
+        {
+            "date": today,
+            "sessions": [session_detail(s, request, timeline) for s in sessions],
+            # Not published yet: the student can check in, nothing else is shown.
+            "drafts": [
+                {"id": d.id, "date": d.date, "start_time": d.start_time, "checkin": checkin_state(d, request.user)}
+                for d in drafts
+            ],
+        }
+    )
 
 
 @api_view(["GET"])
@@ -119,9 +133,10 @@ CALENDAR_MAX_DAYS = 62
 def my_calendar(request):
     """Classes between `?from=` and `?to=` for the student's calendar.
 
-    Published classes come with their id, kind and title (they open with their drills). Unpublished
-    classes, and regular weekdays that have no session yet, only say that there will be a class and
-    when: nothing about their content leaks before the coach publishes.
+    Published classes come with their id, kind and title (they open with their drills). Draft
+    classes (regular weekdays are created on the fly) carry only their time and the student's
+    check-in, so nothing about their content leaks before the coach publishes. Cancelled classes
+    show their reason.
     """
     from .views import parse_date
 
@@ -131,6 +146,8 @@ def my_calendar(request):
     end = min(end, start + timedelta(days=CALENDAR_MAX_DAYS))
     gym = request.user.gym
     schedule = WeeklySchedule.for_gym(gym)
+    # Regular classes exist ahead of time so students can check in before the coach plans them.
+    generate_regular_sessions(gym, max(start, today), end)
     sessions = (
         TrainingSession.objects.filter(gym=gym, date__range=(start, end))
         .prefetch_related(Prefetch("check_ins", queryset=CheckIn.objects.filter(student=request.user)))
@@ -148,8 +165,28 @@ def my_calendar(request):
                     "checkin": checkin_state(session, request.user),
                 }
             )
+        elif session.status == TrainingSession.Status.CANCELLED:
+            entries.append(
+                {
+                    "id": session.id,
+                    "date": session.date,
+                    "start_time": session.start_time,
+                    "published": False,
+                    "cancelled": True,
+                    "cancel_reason": session.cancel_reason,
+                }
+            )
         elif session.date >= today:
-            entries.append({"id": None, "date": session.date, "start_time": session.start_time, "published": False})
+            # A draft: students may check in, but nothing about its content is shown.
+            entries.append(
+                {
+                    "id": session.id,
+                    "date": session.date,
+                    "start_time": session.start_time,
+                    "published": False,
+                    "checkin": checkin_state(session, request.user),
+                }
+            )
     day = max(start, today)
     while day <= end:
         if day.weekday() in schedule.training_weekdays and day not in days_with_sessions:
@@ -179,13 +216,14 @@ def my_upcoming(request):
 @api_view(["PUT", "DELETE"])
 @permission_classes([IsGymMember])
 def my_checkin(request, session_id):
-    """Check in for a published class (PUT, with an optional pain report) or cancel it (DELETE).
+    """Check in for a class (PUT, with an optional pain report) or cancel it (DELETE).
 
-    Both are only possible until the gym's deadline; after that only the coach can change it.
+    Any class of the gym that is not cancelled, published or still a draft, until the gym's
+    deadline; after that only the coach can change it.
     """
     if request.user.role != User.Role.STUDENT:
         return Response(status=status.HTTP_403_FORBIDDEN)
-    session = get_object_or_404(published_sessions(request.user), pk=session_id)
+    session = get_object_or_404(TrainingSession.objects.filter(gym=request.user.gym), pk=session_id)
     if not checkin_open(session):
         raise ValidationError({"detail": "Check-in for this class is closed."})
     existing = CheckIn.objects.filter(session=session, student=request.user).first()

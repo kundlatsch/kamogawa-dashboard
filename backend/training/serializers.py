@@ -90,8 +90,9 @@ class TrainingSessionSerializer(serializers.ModelSerializer):
             "published_at",
             "objective_override",
             "objective",
+            "cancel_reason",
         ]
-        read_only_fields = ["status", "published_at"]
+        read_only_fields = ["status", "published_at", "cancel_reason"]
 
     def get_objective(self, session) -> str:
         """The override, or the objective of the microcycle containing the session's date."""

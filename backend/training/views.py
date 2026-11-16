@@ -9,7 +9,8 @@ from rest_framework.response import Response
 
 from accounts.models import User
 from accounts.permissions import IsCoach, IsCoachOrReadOnly
-from notifications.services import notify_session_published
+from notifications.models import Notification
+from notifications.services import notify_session_cancelled, notify_session_published
 
 from .models import Assignment, CheckIn, Drill, DrillCategory, TrainingSession, WeeklySchedule
 from .scheduling import apply_schedule_times, generate_regular_sessions
@@ -173,6 +174,34 @@ class TrainingSessionViewSet(GymScopedViewSet):
         session = self.get_object()
         session.status = TrainingSession.Status.DRAFT
         session.save(update_fields=["status"])
+        return Response(self.get_serializer(session).data)
+
+    @action(detail=True, methods=["post"])
+    def cancel(self, request, pk=None):
+        """Cancel a class with a reason (holiday, trip...): check-in closes and students are told."""
+        session = self.get_object()
+        reason = str(request.data.get("reason", "")).strip()[:200]
+        if not reason:
+            raise ValidationError({"reason": "Say why the class is cancelled."})
+        if session.status != TrainingSession.Status.CANCELLED:
+            session.status_before_cancel = session.status
+            session.status = TrainingSession.Status.CANCELLED
+        session.cancel_reason = reason
+        session.save(update_fields=["status", "status_before_cancel", "cancel_reason"])
+        Notification.objects.filter(session=session, kind=Notification.Kind.SESSION_CANCELLED).delete()
+        notify_session_cancelled(session)
+        return Response(self.get_serializer(session).data)
+
+    @action(detail=True, methods=["post"])
+    def restore(self, request, pk=None):
+        """Undo a cancellation: the class goes back to draft or published, as it was."""
+        session = self.get_object()
+        if session.status == TrainingSession.Status.CANCELLED:
+            session.status = session.status_before_cancel or TrainingSession.Status.DRAFT
+            session.status_before_cancel = ""
+            session.cancel_reason = ""
+            session.save(update_fields=["status", "status_before_cancel", "cancel_reason"])
+            Notification.objects.filter(session=session, kind=Notification.Kind.SESSION_CANCELLED).delete()
         return Response(self.get_serializer(session).data)
 
     @action(detail=True, methods=["post"], url_path="convert")

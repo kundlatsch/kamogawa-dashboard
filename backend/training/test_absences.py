@@ -74,3 +74,12 @@ def test_student_and_coach_set_weekly_classes(coach, api_as, make_user):
     assert response.json()["weekly_classes"] == 2
     assert api_as(ana).patch("/api/auth/me/", {"weekly_classes": -1}, format="json").status_code == 400
     assert api_as(ana).patch("/api/auth/me/", {"weekly_classes": None}, format="json").json()["weekly_classes"] is None
+
+
+def test_cancelled_classes_lower_the_weekly_commitment(gym, make_user):
+    ana = old_student(make_user, "ana", 2)
+    TrainingSession.objects.create(gym=gym, date=MONDAY, status=TrainingSession.Status.CANCELLED)
+    TrainingSession.objects.create(gym=gym, date=MONDAY + timedelta(days=2), status=TrainingSession.Status.CANCELLED)
+    TrainingSession.objects.create(gym=gym, date=MONDAY + timedelta(days=5))  # the only class left
+    record_week(MONDAY)
+    assert WeeklyAbsence.objects.get(student=ana).missed == 1

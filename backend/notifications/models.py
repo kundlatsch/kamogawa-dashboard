@@ -9,6 +9,7 @@ class Notification(models.Model):
         SESSION_PUBLISHED = "SESSION_PUBLISHED", "Session published"
         SPARRING = "SPARRING", "Sparring announced"
         INJURY_REPORTED = "INJURY_REPORTED", "Pain or injury reported at check-in"
+        SESSION_CANCELLED = "SESSION_CANCELLED", "Class cancelled"
 
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notifications"

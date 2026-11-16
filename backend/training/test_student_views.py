@@ -97,7 +97,8 @@ def test_student_calendar_shows_planned_and_published_classes(api_as, make_user,
     by_date = {e["date"]: e for e in entries}
     assert by_date[str(published.date)]["published"] is True and by_date[str(published.date)]["kind"] == "SPARRING"
     hidden = by_date[str(draft.date)]
-    assert hidden == {"id": None, "date": str(draft.date), "start_time": None, "published": False}
+    assert set(hidden) == {"id", "date", "start_time", "published", "checkin"}  # no title, kind or drills
+    assert hidden["id"] == draft.id and hidden["published"] is False and hidden["checkin"]["open"] is True
     detail = client.get(f"/api/me/sessions/{published.id}/").json()
     assert [item["drill"]["name"] for item in detail["routine"]] == ["Sombra"]
     assert client.get(f"/api/me/sessions/{draft.id}/").status_code == 404

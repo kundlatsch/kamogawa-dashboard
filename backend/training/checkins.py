@@ -1,4 +1,5 @@
-"""Check-in timing: students confirm presence until `checkin_deadline_minutes` before class."""
+"""Check-in timing: students confirm presence for any class that is not cancelled (also drafts
+and future regular classes) until `checkin_deadline_minutes` before it starts."""
 from datetime import datetime, time, timedelta
 
 from django.utils import timezone
@@ -19,6 +20,7 @@ def checkin_deadline(session: TrainingSession) -> datetime:
 
 
 def checkin_open(session: TrainingSession, now: datetime | None = None) -> bool:
-    if session.status != TrainingSession.Status.PUBLISHED:
+    """Any class that is not cancelled, published or not, until the deadline (Gustavo, 2026-11-16)."""
+    if session.status == TrainingSession.Status.CANCELLED:
         return False
     return (now or timezone.now()) < checkin_deadline(session)

@@ -39,3 +39,13 @@ def notify_injury_reported(check_in) -> int:
         ignore_conflicts=True,
     )
     return len(created)
+
+
+def notify_session_cancelled(session) -> int:
+    """Tell every active student of the gym that a class will not happen."""
+    students = User.objects.filter(gym=session.gym, role=User.Role.STUDENT, is_active=True)
+    created = Notification.objects.bulk_create(
+        [Notification(recipient=student, kind=Notification.Kind.SESSION_CANCELLED, session=session) for student in students],
+        ignore_conflicts=True,
+    )
+    return len(created)
