@@ -22,10 +22,10 @@ def test_coach_sets_updates_and_clears_a_monthly_score(coach, api_as, gym, make_
     assert not Assessment.objects.exists()
 
 
-def test_scores_must_be_between_1_and_5_by_default(coach, api_as, gym, make_user):
+def test_scores_must_be_between_1_and_10_by_default(coach, api_as, gym, make_user):
     student = make_user("ana")
     metric = Metric.objects.filter(gym=gym).first()
-    for score in (0, 6):
+    for score in (0, 11):
         payload = {"student": student.id, "metric": metric.id, "period": "2026-11-01", "score": score}
         assert api_as(coach).post("/api/assessments/set/", payload).status_code == 400
 
@@ -34,12 +34,14 @@ def test_coach_changes_the_scale_maximum(coach, api_as, gym, make_user):
     student = make_user("ana")
     metric = Metric.objects.filter(gym=gym).first()
     client = api_as(coach)
-    assert client.patch("/api/my-gym/", {"assessment_scale_max": 10}).json()["assessment_scale_max"] == 10
-    assert client.patch("/api/my-gym/", {"assessment_scale_max": 1}).status_code == 400
-    payload = {"student": student.id, "metric": metric.id, "period": "2026-11-01", "score": 9}
+    scale = client.patch("/api/my-gym/", {"assessment_scale_min": 0, "assessment_scale_max": 5}).json()
+    assert (scale["assessment_scale_min"], scale["assessment_scale_max"]) == (0, 5)
+    assert client.patch("/api/my-gym/", {"assessment_scale_min": 5}).status_code == 400  # min must stay below max
+    payload = {"student": student.id, "metric": metric.id, "period": "2026-11-01", "score": 0}
     assert client.post("/api/assessments/set/", payload).status_code == 200
-    assert client.post("/api/assessments/set/", {**payload, "score": 11}).status_code == 400
-    assert api_as(student).get("/api/auth/me/").json()["gym"]["assessment_scale_max"] == 10
+    assert client.post("/api/assessments/set/", {**payload, "score": 6}).status_code == 400
+    gym_view = api_as(student).get("/api/auth/me/").json()["gym"]
+    assert (gym_view["assessment_scale_min"], gym_view["assessment_scale_max"]) == (0, 5)
 
 
 def test_student_sees_only_own_history_and_cannot_score(coach, api_as, gym, make_user):

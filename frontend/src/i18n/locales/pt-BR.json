@@ -206,9 +206,9 @@
     "fighterClassesHint": "Estilos de luta que você atribui a cada aluno. Clique numa classe para editar.",
     "fighterClassName": "Nome da classe",
     "addFighterClass": "Adicionar classe",
-    "assessmentScaleMax": "Nota máxima da avaliação (2 a 10)",
+    "assessmentScaleMax": "Nota máxima",
     "assessmentScale": "Escala da avaliação",
-    "assessmentScaleHint": "Até quanto vai a nota da avaliação mensal de cada estatística.",
+    "assessmentScaleHint": "De quanto a quanto vai a nota da avaliação mensal de cada estatística. O padrão é de 1 a 10.",
     "editFighterClass": "Editar classe",
     "fighterClassDescription": "Descrição (estilo, distância preferida…)",
     "fighterClassArt": "Arte da classe",
@@ -225,7 +225,9 @@
       "assessments": "Avaliações",
       "fighters": "Lutadores"
     },
-    "timeFor": "Horário de {{day}}"
+    "timeFor": "Horário de {{day}}",
+    "assessmentScaleMin": "Nota mínima",
+    "scaleInvalid": "A nota máxima precisa ser maior que a mínima."
   },
   "calendar": {
     "previous": "Semanas anteriores",
@@ -387,7 +389,7 @@
   },
   "assessments": {
     "title": "Avaliações do mês",
-    "hint": "Dê uma nota de 1 a {{max}} para cada aluno em cada estatística. As notas são reavaliadas todo mês e o aluno vê a evolução.",
+    "hint": "Dê uma nota de {{min}} a {{max}} para cada aluno em cada estatística. As notas são reavaliadas todo mês e o aluno vê a evolução.",
     "month": "Mês",
     "student": "Aluno",
     "noScore": "–",

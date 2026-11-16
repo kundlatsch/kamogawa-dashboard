@@ -22,8 +22,9 @@ class Gym(models.Model):
     # Legacy XP settings (XP was dropped on 2026-11-16); kept so existing data is untouched.
     attendance_xp = models.PositiveSmallIntegerField(default=10)
     xp_per_level = models.PositiveSmallIntegerField(default=100)
-    # Monthly assessments are scored from 1 to this value.
-    assessment_scale_max = models.PositiveSmallIntegerField(default=5)
+    # Monthly assessments are scored from assessment_scale_min to assessment_scale_max.
+    assessment_scale_min = models.PositiveSmallIntegerField(default=1)
+    assessment_scale_max = models.PositiveSmallIntegerField(default=10)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

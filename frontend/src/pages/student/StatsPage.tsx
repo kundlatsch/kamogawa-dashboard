@@ -8,6 +8,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { PageHeader } from "../../components/ui";
 import { formatDate } from "../../lib/dates";
 import { latestScores } from "../../lib/assessments";
+import { scaleOf, scaleSteps } from "../../lib/scale";
 
 const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
 
@@ -15,7 +16,7 @@ const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
 export default function StatsPage() {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
-  const scaleMax = user?.gym?.assessment_scale_max ?? 5;
+  const scale = scaleOf(user?.gym);
   const { data: metrics = [] } = useMetrics();
   const { data: history, isLoading } = useQuery({
     queryKey: ["me", "assessments"],
@@ -61,10 +62,10 @@ export default function StatsPage() {
                             {delta > 0 ? `▲ ${t("stats.delta_up", { count: delta })}` : `▼ ${t("stats.delta_down", { count: delta })}`}
                           </span>
                         )}
-                        <span className="font-display text-2xl">{score}/{scaleMax}</span>
+                        <span className="font-display text-2xl">{score}/{scale.max}</span>
                       </div>
-                      <div className="flex gap-1" role="meter" aria-valuemin={1} aria-valuemax={scaleMax} aria-valuenow={score} aria-label={metric.name}>
-                        {Array.from({ length: Math.max(scaleMax, score) }, (_, i) => i + 1).map((step) => (
+                      <div className="flex gap-1" role="meter" aria-valuemin={scale.min} aria-valuemax={scale.max} aria-valuenow={score} aria-label={metric.name}>
+                        {scaleSteps(1, scale.max, score).map((step) => (
                           <span
                             key={step}
                             className="h-2.5 flex-1 rounded-full"

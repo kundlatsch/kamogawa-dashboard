@@ -7,14 +7,15 @@ from .models import Gym, User
 class GymSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Gym
-        fields = ["id", "name", "slug", "color", "assessment_scale_max"]
+        fields = ["id", "name", "slug", "color", "assessment_scale_min", "assessment_scale_max"]
 
 
 class OwnGymSerializer(serializers.ModelSerializer):
     """What a coach may change about their own gym."""
 
     checkin_deadline_minutes = serializers.IntegerField(min_value=0, max_value=24 * 60, required=False)
-    assessment_scale_max = serializers.IntegerField(min_value=2, max_value=10, required=False)
+    assessment_scale_min = serializers.IntegerField(min_value=0, max_value=99, required=False)
+    assessment_scale_max = serializers.IntegerField(min_value=1, max_value=100, required=False)
 
     class Meta:
         model = Gym
@@ -24,9 +25,17 @@ class OwnGymSerializer(serializers.ModelSerializer):
             "slug",
             "color",
             "checkin_deadline_minutes",
+            "assessment_scale_min",
             "assessment_scale_max",
         ]
         read_only_fields = ["id", "slug"]
+
+    def validate(self, attrs):
+        low = attrs.get("assessment_scale_min", getattr(self.instance, "assessment_scale_min", 1))
+        high = attrs.get("assessment_scale_max", getattr(self.instance, "assessment_scale_max", 10))
+        if low >= high:
+            raise serializers.ValidationError({"assessment_scale_max": "The maximum must be above the minimum."})
+        return attrs
 
 
 class ChangePasswordSerializer(serializers.Serializer):

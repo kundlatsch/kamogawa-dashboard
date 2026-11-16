@@ -29,7 +29,7 @@ class SetAssessmentSerializer(serializers.Serializer):
     student = serializers.PrimaryKeyRelatedField(queryset=User.objects.none())
     metric = serializers.PrimaryKeyRelatedField(queryset=Metric.objects.none())
     period = serializers.DateField()
-    score = serializers.IntegerField(min_value=1, allow_null=True)
+    score = serializers.IntegerField(min_value=0, allow_null=True)
     notes = serializers.CharField(required=False, allow_blank=True, default="")
 
     def __init__(self, *args, **kwargs):
@@ -42,9 +42,10 @@ class SetAssessmentSerializer(serializers.Serializer):
         return month_start(value)
 
     def validate_score(self, value):
-        top = self.context["request"].user.gym.assessment_scale_max
-        if value is not None and value > top:
-            raise serializers.ValidationError(f"Scores go from 1 to {top}.")
+        gym = self.context["request"].user.gym
+        low, high = gym.assessment_scale_min, gym.assessment_scale_max
+        if value is not None and not low <= value <= high:
+            raise serializers.ValidationError(f"Scores go from {low} to {high}.")
         return value
 
 

@@ -345,7 +345,7 @@ function CheckinSettings() {
   );
 }
 
-/** The top of the monthly assessment scale. */
+/** The range of the monthly assessment scale (default 1 to 10). */
 function AssessmentScaleSettings() {
   const { t } = useTranslation();
   const { refreshUser } = useAuth();
@@ -354,13 +354,16 @@ function AssessmentScaleSettings() {
     queryKey: ["my-gym"],
     queryFn: async () => (await api.get<GymSummary>("/my-gym/")).data,
   });
+  const [scaleMin, setScaleMin] = useState("");
   const [scaleMax, setScaleMax] = useState("");
   useEffect(() => {
+    if (gym?.assessment_scale_min !== undefined) setScaleMin(String(gym.assessment_scale_min));
     if (gym?.assessment_scale_max !== undefined) setScaleMax(String(gym.assessment_scale_max));
   }, [gym]);
+  const valid = scaleMin !== "" && scaleMax !== "" && Number(scaleMin) >= 0 && Number(scaleMin) < Number(scaleMax);
   const save = useMutation({
     mutationFn: async () =>
-      api.patch("/my-gym/", { assessment_scale_max: Number(scaleMax) }),
+      api.patch("/my-gym/", { assessment_scale_min: Number(scaleMin), assessment_scale_max: Number(scaleMax) }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-gym"] });
       refreshUser();
@@ -375,22 +378,33 @@ function AssessmentScaleSettings() {
         className="flex flex-wrap items-end gap-4"
         onSubmit={(event) => {
           event.preventDefault();
-          if (Number(scaleMax) >= 2) save.mutate();
+          if (valid) save.mutate();
         }}
       >
         <Input
+          label={t("settings.assessmentScaleMin")}
+          type="number"
+          min={0}
+          max={99}
+          value={scaleMin}
+          onChange={(event) => setScaleMin(event.target.value)}
+        />
+        <Input
           label={t("settings.assessmentScaleMax")}
           type="number"
-          min={2}
-          max={10}
+          min={1}
+          max={100}
           value={scaleMax}
           onChange={(event) => setScaleMax(event.target.value)}
         />
-        <Button type="submit" disabled={save.isPending}>
+        <Button type="submit" disabled={save.isPending || !valid}>
           {t("common.save")}
         </Button>
         {save.isSuccess && <span className="text-sm text-belt">{t("settings.saved")}</span>}
         {save.isError && <span className="text-sm text-glove">{t("cycles.saveError")}</span>}
+        {!valid && scaleMin !== "" && scaleMax !== "" && (
+          <span className="text-sm text-glove">{t("settings.scaleInvalid")}</span>
+        )}
       </form>
     </div>
   );

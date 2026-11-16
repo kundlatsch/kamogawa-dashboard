@@ -9,6 +9,7 @@ import { useAuth } from "../../auth/AuthContext";
 import Avatar from "../../components/Avatar";
 import { PageHeader } from "../../components/ui";
 import { todayISO } from "../../lib/dates";
+import { scaleOf, scaleSteps } from "../../lib/scale";
 import StudentLink from "../../components/StudentLink";
 
 const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
@@ -20,7 +21,7 @@ const monthPeriod = (month: string) => `${month}-01`;
 export default function AssessmentsPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const scaleMax = user?.gym?.assessment_scale_max ?? 5;
+  const scale = scaleOf(user?.gym);
   const queryClient = useQueryClient();
   const [month, setMonth] = useState(todayISO().slice(0, 7));
   const period = monthPeriod(month);
@@ -67,7 +68,7 @@ export default function AssessmentsPage() {
           </label>
         }
       />
-      <p className="-mt-4 text-sm text-smoke">{t("assessments.hint", { max: scaleMax })}</p>
+      <p className="-mt-4 text-sm text-smoke">{t("assessments.hint", scale)}</p>
       {students.length === 0 ? (
         <p className="text-smoke">{t("assessments.noStudents")}</p>
       ) : (
@@ -117,7 +118,8 @@ export default function AssessmentsPage() {
                       }`}
                     >
                       <ScoreCell
-                        max={scaleMax}
+                        min={scale.min}
+                        max={scale.max}
                         student={student}
                         metric={metric}
                         value={scoreOf(student.id, metric.id)}
@@ -136,12 +138,14 @@ export default function AssessmentsPage() {
 }
 
 function ScoreCell({
+  min,
   max,
   student,
   metric,
   value,
   onChange,
 }: {
+  min: number;
   max: number;
   student: User;
   metric: Metric;
@@ -155,10 +159,10 @@ function ScoreCell({
       value={value ?? ""}
       onChange={(event) => onChange(event.target.value ? Number(event.target.value) : null)}
       className="w-14 rounded-md border border-rope bg-ring py-1 text-center font-semibold text-chalk"
-      style={value ? { backgroundColor: `${metric.color}${Math.round(Math.min(value / max, 1) * 0.65 * 255).toString(16).padStart(2, "0")}` } : undefined}
+      style={value !== null ? { backgroundColor: `${metric.color}${Math.round(Math.min(Math.max((value - min + 1) / (max - min + 1), 0.1), 1) * 0.65 * 255).toString(16).padStart(2, "0")}` } : undefined}
     >
       <option value="">{t("assessments.noScore")}</option>
-      {Array.from({ length: Math.max(max, value ?? 0) }, (_, i) => i + 1).map((score) => (
+      {scaleSteps(min, max, value).map((score) => (
         <option key={score} value={score}>
           {score}
         </option>

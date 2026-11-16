@@ -9,6 +9,7 @@ import { useAuth } from "../../auth/AuthContext";
 import Avatar from "../../components/Avatar";
 import FighterClassArt from "../../components/FighterClassArt";
 import { latestScores } from "../../lib/assessments";
+import { scaleOf } from "../../lib/scale";
 import { formatDate, startOfWeek, toISODate } from "../../lib/dates";
 
 const card = "rounded-xl border border-rope bg-canvas p-5";
@@ -20,7 +21,7 @@ export default function StudentProfilePage() {
   const { user: coach } = useAuth();
   const id = Number(useParams().studentId);
   const week = toISODate(startOfWeek(new Date()));
-  const scaleMax = coach?.gym?.assessment_scale_max ?? 5;
+  const scaleMax = scaleOf(coach?.gym).max;
 
   const { data: student, isError } = useQuery({
     queryKey: ["/students/", id],
