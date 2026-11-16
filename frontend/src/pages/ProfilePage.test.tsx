@@ -11,6 +11,7 @@ const user: User = {
   display_name: "Ana",
   avatar_emoji: "🥊",
   avatar_url: null,
+  fighter_class: null,
   color: "#d62828",
   handedness: "UNSPECIFIED",
   limitations: "",

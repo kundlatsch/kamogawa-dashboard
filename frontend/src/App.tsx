@@ -11,12 +11,14 @@ import GymDetailPage from "./pages/admin/GymDetailPage";
 import GymsPage from "./pages/admin/GymsPage";
 import TodayPage from "./pages/student/TodayPage";
 import PlanPage from "./pages/student/PlanPage";
+import ProgressPage from "./pages/student/ProgressPage";
 import StatsPage from "./pages/student/StatsPage";
 import UpcomingPage from "./pages/student/UpcomingPage";
 import AccountsPage from "./pages/coach/AccountsPage";
 import CalendarPage from "./pages/coach/CalendarPage";
 import AssessmentsPage from "./pages/coach/AssessmentsPage";
 import CyclesPage from "./pages/coach/CyclesPage";
+import RankingPage from "./pages/coach/RankingPage";
 import WeekPage from "./pages/coach/WeekPage";
 import BoardPage from "./pages/coach/board/BoardPage";
 import DrillsPage from "./pages/coach/DrillsPage";
@@ -59,6 +61,7 @@ function AppRoutes() {
       { to: "/students", labelKey: "nav.students" },
       { to: "/week", labelKey: "nav.week" },
       { to: "/assessments", labelKey: "nav.assessments" },
+      { to: "/ranking", labelKey: "nav.ranking" },
       { to: "/settings", labelKey: "nav.settings" },
     ];
     return (
@@ -71,6 +74,7 @@ function AppRoutes() {
           <Route path="students" element={<AccountsPage kind="students" />} />
           <Route path="week" element={<WeekPage />} />
           <Route path="assessments" element={<AssessmentsPage />} />
+          <Route path="ranking" element={<RankingPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -84,6 +88,7 @@ function AppRoutes() {
     { to: "/upcoming", labelKey: "nav.upcoming" },
     { to: "/plan", labelKey: "nav.plan" },
     { to: "/stats", labelKey: "nav.stats" },
+    { to: "/progress", labelKey: "nav.progress" },
   ];
   return (
     <Routes>
@@ -92,6 +97,7 @@ function AppRoutes() {
         <Route path="upcoming" element={<UpcomingPage />} />
         <Route path="plan" element={<PlanPage />} />
         <Route path="stats" element={<StatsPage />} />
+        <Route path="progress" element={<ProgressPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

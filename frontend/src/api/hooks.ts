@@ -6,6 +6,7 @@ import type {
   CurrentCycle,
   Drill,
   DrillCategory,
+  FighterClass,
   Macrocycle,
   Metric,
   NamedItem,
@@ -63,3 +64,9 @@ export const useSessionBlocks = () =>
 
 export const useMetrics = () =>
   useQuery({ queryKey: ["/metrics/"], queryFn: async () => (await api.get<Metric[]>("/metrics/")).data });
+
+export const useFighterClasses = () =>
+  useQuery({
+    queryKey: ["/fighter-classes/"],
+    queryFn: async () => (await api.get<FighterClass[]>("/fighter-classes/")).data,
+  });

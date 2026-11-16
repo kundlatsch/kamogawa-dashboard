@@ -8,6 +8,8 @@ export interface GymSummary {
   color: string;
   /** Students check in until this many minutes before class (only sent to coaches). */
   checkin_deadline_minutes?: number;
+  attendance_xp?: number;
+  xp_per_level?: number;
 }
 
 export interface Gym extends GymSummary {
@@ -28,6 +30,8 @@ export interface User {
   color: string;
   handedness: Handedness;
   limitations: string;
+  /** Coach-assigned fighting style (id of a FighterClass). */
+  fighter_class: number | null;
   role: Role;
   gym: GymSummary | null;
   is_active: boolean;
@@ -282,4 +286,69 @@ export interface MyWeek {
   focuses: WeeklyFocus[];
   homework: Omit<Homework, "participants">[];
   notes: CoachNote[];
+}
+
+export interface FighterClass extends NamedItem {
+  description: string;
+  emoji: string;
+  /** Key of the artwork bundled with the frontend (see lib/fighterArt.ts); blank = emoji only. */
+  art_key: string;
+}
+
+export interface Level {
+  xp: number;
+  level: number;
+  /** XP earned inside the current level. */
+  level_xp: number;
+  xp_per_level: number;
+}
+
+export interface LeaderboardEntry extends Level {
+  student: PublicUser;
+  fighter_class: number | null;
+  pending_missions: number;
+}
+
+export interface Mission {
+  id: number;
+  title: string;
+  description: string;
+  emoji: string;
+  xp_reward: number;
+  active: boolean;
+  starts_on: string | null;
+  ends_on: string | null;
+  repeatable: boolean;
+  created_at: string;
+}
+
+export type CompletionStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface MissionCompletion {
+  id: number;
+  mission: number;
+  mission_detail: Mission;
+  student: number;
+  status: CompletionStatus;
+  note: string;
+  created_at: string;
+  reviewed_at: string | null;
+}
+
+export interface XpEvent {
+  id: number;
+  student: number;
+  amount: number;
+  reason: "ATTENDANCE" | "MISSION" | "MANUAL";
+  note: string;
+  mission_title: string;
+  session_date: string | null;
+  created_at: string;
+}
+
+export interface MyProgress extends Level {
+  attendance_xp: number;
+  fighter_class: FighterClass | null;
+  events: XpEvent[];
+  missions: (Mission & { status: CompletionStatus | null; times_completed: number; can_complete: boolean })[];
 }

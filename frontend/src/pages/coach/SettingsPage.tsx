@@ -21,6 +21,14 @@ export default function SettingsPage() {
       <GymSettings />
       <ScheduleSettings />
       <CheckinSettings />
+      <GamificationSettings />
+      <NamedListSettings
+        path="/fighter-classes/"
+        title={t("settings.fighterClasses")}
+        hint={t("settings.fighterClassesHint")}
+        nameLabel={t("settings.fighterClassName")}
+        addLabel={t("settings.addFighterClass")}
+      />
       <BlockSettings />
       <CategorySettings />
       <NamedListSettings
@@ -267,6 +275,63 @@ function CheckinSettings() {
           step={15}
           value={minutes}
           onChange={(event) => setMinutes(event.target.value)}
+        />
+        <Button type="submit" disabled={save.isPending}>
+          {t("common.save")}
+        </Button>
+        {save.isSuccess && <span className="text-sm text-belt">{t("settings.saved")}</span>}
+        {save.isError && <span className="text-sm text-glove">{t("cycles.saveError")}</span>}
+      </form>
+    </div>
+  );
+}
+
+/** XP per attended class and XP needed per level. */
+function GamificationSettings() {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const { data: gym } = useQuery({
+    queryKey: ["my-gym"],
+    queryFn: async () => (await api.get<GymSummary>("/my-gym/")).data,
+  });
+  const [attendanceXp, setAttendanceXp] = useState("");
+  const [perLevel, setPerLevel] = useState("");
+  useEffect(() => {
+    if (gym?.attendance_xp !== undefined) setAttendanceXp(String(gym.attendance_xp));
+    if (gym?.xp_per_level !== undefined) setPerLevel(String(gym.xp_per_level));
+  }, [gym]);
+  const save = useMutation({
+    mutationFn: async () =>
+      api.patch("/my-gym/", { attendance_xp: Number(attendanceXp), xp_per_level: Number(perLevel) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-gym"] }),
+  });
+
+  return (
+    <div className="rounded-xl border border-rope bg-canvas p-5">
+      <h2 className="mb-1 font-display text-2xl tracking-wide uppercase">{t("settings.gamification")}</h2>
+      <p className="mb-4 text-sm text-smoke">{t("settings.gamificationHint")}</p>
+      <form
+        className="flex flex-wrap items-end gap-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (attendanceXp !== "" && Number(perLevel) >= 1) save.mutate();
+        }}
+      >
+        <Input
+          label={t("settings.attendanceXp")}
+          type="number"
+          min={0}
+          max={1000}
+          value={attendanceXp}
+          onChange={(event) => setAttendanceXp(event.target.value)}
+        />
+        <Input
+          label={t("settings.xpPerLevel")}
+          type="number"
+          min={1}
+          max={10000}
+          value={perLevel}
+          onChange={(event) => setPerLevel(event.target.value)}
         />
         <Button type="submit" disabled={save.isPending}>
           {t("common.save")}
