@@ -335,7 +335,9 @@ Gym                + checkin_deadline_minutes (default 120)
                    + attendance_xp (default 10), xp_per_level (default 100)
 User               + handedness = LEFT | RIGHT | UNSPECIFIED, limitations
                    + fighter_class → FighterClass (nullable)
-FighterClass       gym, name, description, emoji, color, order, archived
+FighterClass       gym, name, description, emoji, color, order, archived,
+                   image (Gustavo's own art per class, added later; the
+                   emoji is the fallback — no generated art)
                    seeded: Out-Boxer, Swarmer (In-Fighter), Slugger
                    (Brawler), Boxer-Puncher, Counterpuncher, Switch-hitter
 Mission            gym, title, description, xp_reward, active,
@@ -371,7 +373,7 @@ gym creation; the coach edits them in Settings, like drill categories.
 - Missions: the student marks a mission as done, the coach approves, and
   approval grants its XP. The coach can also grant or remove XP manually.
 - Level = `1 + total_xp // xp_per_level`. The fighter class is set by the
-  coach on the student (a style, not a level).
+  coach on the student (a style, not a level; confirmed by Gustavo).
 - Students see their own assessments (current month + history), notes marked
   visible, this week's focuses, objective and homework, the macrocycle plan,
   XP, level, class and missions. Today's routine rule (decision 4) is
