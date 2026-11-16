@@ -309,6 +309,9 @@ export interface LeaderboardEntry extends Level {
   student: PublicUser;
   fighter_class: number | null;
   pending_missions: number;
+  /** Classes with attendance taken where the student was marked present / not present. */
+  attended: number;
+  absences: number;
 }
 
 export interface Mission {

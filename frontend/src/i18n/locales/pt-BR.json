@@ -429,7 +429,7 @@
   },
   "ranking": {
     "title": "Ranking e gamificação",
-    "hint": "XP vem das presenças que você confirma no quadro, das missões aprovadas e de bônus manuais.",
+    "hint": "XP vem das presenças que você confirma no quadro, das missões aprovadas e de bônus manuais. Presenças e faltas contam as aulas em que você marcou quem veio.",
     "position": "#",
     "student": "Aluno",
     "class": "Classe",
@@ -460,7 +460,16 @@
     "pause": "Pausar",
     "activate": "Ativar",
     "addMission": "Criar missão",
-    "empty": "Nenhum aluno ainda."
+    "empty": "Nenhum aluno ainda.",
+    "by": {
+      "xp": "Por XP",
+      "attendance": "Por presença"
+    },
+    "attended_one": "{{count}} presença",
+    "attended_other": "{{count}} presenças",
+    "absences_one": "{{count}} falta",
+    "absences_other": "{{count}} faltas",
+    "loadError": "Não foi possível carregar o ranking. Recarregue a página."
   },
   "progress": {
     "title": "Minha evolução",

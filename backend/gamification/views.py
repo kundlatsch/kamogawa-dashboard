@@ -11,6 +11,7 @@ from accounts.models import User
 from accounts.permissions import IsCoach, IsGymMember
 from accounts.serializers import PublicUserSerializer
 from training.cycle_views import ArchivableListViewSet
+from training.models import CheckIn, TrainingSession
 from training.views import GymScopedViewSet
 
 from .models import FighterClass, Mission, MissionCompletion, XpEvent
@@ -85,7 +86,7 @@ class XpEventViewSet(
 @api_view(["GET"])
 @permission_classes([IsCoach])
 def leaderboard(request):
-    """Every active student of the gym with XP, level and fighter class, highest XP first."""
+    """Every active student with XP, level, fighter class and attendance, highest XP first."""
     gym = request.user.gym
     pending = Q(mission_completions__status=MissionCompletion.Status.PENDING)
     students = (
@@ -99,17 +100,41 @@ def leaderboard(request):
         .annotate(pending=Count("mission_completions", filter=pending))
         .values_list("id", "pending")
     )
+    attendance = attendance_by_student(gym, students)
     return Response(
         [
             {
                 "student": PublicUserSerializer(student).data,
                 "fighter_class": student.fighter_class_id,
                 "pending_missions": pending_counts.get(student.id, 0),
+                **attendance[student.id],
                 **level_for(student.xp, gym.xp_per_level),
             }
             for student in students
         ]
     )
+
+
+def attendance_by_student(gym, students) -> dict[int, dict]:
+    """Classes attended and missed per student.
+
+    Only classes where the coach took attendance (marked anyone as present or absent) count, and
+    only from the day the student joined: missing such a class without being marked present is
+    an absence, whether or not the student had checked in.
+    """
+    taken = list(
+        TrainingSession.objects.filter(gym=gym, check_ins__attended__isnull=False).distinct().values_list("id", "date")
+    )
+    present = set(
+        CheckIn.objects.filter(session__gym=gym, attended=True).values_list("student_id", "session_id")
+    )
+    result = {}
+    for student in students:
+        joined = timezone.localtime(student.date_joined).date()
+        counted = [session_id for session_id, day in taken if day >= joined]
+        attended = sum((student.id, session_id) in present for session_id in counted)
+        result[student.id] = {"attended": attended, "absences": len(counted) - attended}
+    return result
 
 
 def available_missions(user):

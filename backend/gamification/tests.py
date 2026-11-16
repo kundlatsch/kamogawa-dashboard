@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.utils import timezone
 
+from accounts.models import User
 from gamification.models import FighterClass, Mission, MissionCompletion, XpEvent
 from training.models import CheckIn, TrainingSession
 
@@ -130,3 +131,21 @@ def test_gamification_is_isolated_between_gyms(coach, api_as, gym, other_gym, ma
     assert client.post("/api/xp-events/", {"student": rival.id, "amount": 5}).status_code == 400
     ana = make_user("ana")
     assert api_as(ana).post(f"/api/me/missions/{rival_mission.id}/complete/").status_code == 404
+
+
+def test_leaderboard_counts_attendance_and_absences(coach, api_as, gym, make_user):
+    ana, bia = make_user("ana"), make_user("bia")
+    User.objects.filter(pk__in=[ana.pk, bia.pk]).update(date_joined=timezone.now() - timedelta(days=30))
+    late = make_user("cris")  # joined today: earlier classes are not absences
+    today = timezone.localdate()
+    taken = [TrainingSession.objects.create(gym=gym, date=today - timedelta(days=d)) for d in (1, 2, 3)]
+    CheckIn.objects.create(session=taken[0], student=ana, attended=True)
+    CheckIn.objects.create(session=taken[1], student=ana, attended=True)
+    CheckIn.objects.create(session=taken[2], student=bia, attended=False)
+    CheckIn.objects.create(session=taken[0], student=bia, attended=True)
+    untaken = TrainingSession.objects.create(gym=gym, date=today - timedelta(days=4))
+    CheckIn.objects.create(session=untaken, student=bia)  # attendance never taken: not counted
+    board = {row["student"]["display_name"]: row for row in api_as(coach).get("/api/leaderboard/").json()}
+    assert (board["ana"]["attended"], board["ana"]["absences"]) == (2, 1)
+    assert (board["bia"]["attended"], board["bia"]["absences"]) == (1, 2)
+    assert (board[late.display_name]["attended"], board[late.display_name]["absences"]) == (0, 0)

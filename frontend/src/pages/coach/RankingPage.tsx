@@ -9,6 +9,7 @@ import Avatar from "../../components/Avatar";
 import FighterClassArt from "../../components/FighterClassArt";
 import { Button, Input, Modal, PageHeader } from "../../components/ui";
 import XpBar from "../../components/XpBar";
+import { sortLeaderboard } from "../../lib/ranking";
 import { formatDate } from "../../lib/dates";
 
 const field = "rounded-md border border-rope bg-ring px-2 py-1.5 text-sm text-chalk outline-none focus:border-glove";
@@ -30,10 +31,12 @@ export default function RankingPage() {
 function Leaderboard() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const { data: entries = [] } = useQuery({
+  const [order, setOrder] = useState<"xp" | "attendance">("xp");
+  const { data = [], isLoading, isError } = useQuery({
     queryKey: ["leaderboard"],
     queryFn: async () => (await api.get<LeaderboardEntry[]>("/leaderboard/")).data,
   });
+  const entries = sortLeaderboard(data, order);
   const { data: classes = [] } = useFighterClasses();
   const [giving, setGiving] = useState<PublicUser | null>(null);
   const setClass = useMutation({
@@ -47,7 +50,24 @@ function Leaderboard() {
 
   return (
     <div className="rounded-xl border border-rope bg-canvas p-5">
-      {entries.length === 0 && <p className="text-smoke">{t("ranking.empty")}</p>}
+      <div role="tablist" className="mb-3 flex gap-2">
+        {(["xp", "attendance"] as const).map((key) => (
+          <button
+            key={key}
+            role="tab"
+            aria-selected={order === key}
+            onClick={() => setOrder(key)}
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold ${
+              order === key ? "bg-glove text-chalk" : "border border-rope text-smoke hover:text-chalk"
+            }`}
+          >
+            {t(`ranking.by.${key}`)}
+          </button>
+        ))}
+      </div>
+      {isLoading && <p className="text-smoke">{t("common.loading")}</p>}
+      {isError && <p className="text-glove">{t("ranking.loadError")}</p>}
+      {!isLoading && !isError && entries.length === 0 && <p className="text-smoke">{t("ranking.empty")}</p>}
       <ol className="flex flex-col divide-y divide-rope">
         {entries.map((entry, index) => {
           const fighterClass = classes.find((c) => c.id === entry.fighter_class);
@@ -67,6 +87,12 @@ function Leaderboard() {
                   )}
                 </span>
                 <XpBar level={entry} compact />
+                <span className="text-xs text-smoke">
+                  <span className={order === "attendance" ? "font-semibold text-belt" : ""}>
+                    ✓ {t("ranking.attended", { count: entry.attended })}
+                  </span>{" "}
+                  · <span className={entry.absences > 0 ? "text-glove" : ""}>✗ {t("ranking.absences", { count: entry.absences })}</span>
+                </span>
               </div>
               <select
                 aria-label={t("ranking.classFor", { name: entry.student.display_name })}
