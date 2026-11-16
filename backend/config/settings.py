@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "accounts",
     "training",
     "notifications",
+    "progress",
 ]
 
 AUTH_USER_MODEL = "accounts.User"

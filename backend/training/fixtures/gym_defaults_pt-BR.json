@@ -80,5 +80,47 @@
       "mode": "COLLECTIVE",
       "start_offset_minutes": null
     }
+  ],
+  "metrics": [
+    {
+      "name": "Velocidade",
+      "group": "PHYSICAL",
+      "color": "#3a86ff"
+    },
+    {
+      "name": "Força",
+      "group": "PHYSICAL",
+      "color": "#d62828"
+    },
+    {
+      "name": "Resistência",
+      "group": "PHYSICAL",
+      "color": "#2a9d8f"
+    },
+    {
+      "name": "Mobilidade",
+      "group": "PHYSICAL",
+      "color": "#9b5de5"
+    },
+    {
+      "name": "Guarda",
+      "group": "TECHNICAL",
+      "color": "#e9c46a"
+    },
+    {
+      "name": "Movimentação",
+      "group": "TECHNICAL",
+      "color": "#f77f00"
+    },
+    {
+      "name": "Coordenação",
+      "group": "TECHNICAL",
+      "color": "#06d6a0"
+    },
+    {
+      "name": "Defesa",
+      "group": "TECHNICAL",
+      "color": "#118ab2"
+    }
   ]
 }
