@@ -431,3 +431,14 @@ Requested by Gustavo plus the PM's audio feedback:
 - Settings are split into tabs (gym, classes, periodization, assessments,
   fighters) behind a gear icon; UI copy says "exercício" for library items
   and "treino" for a class.
+
+### 11.1 Student screens (2026-11-16)
+
+- Decision 4 changed: students see a class's exercises as soon as it is
+  published, also for future classes (`me/sessions/<id>/`).
+- The student calendar (`me/calendar/`) lists every class day: published
+  classes with details, unpublished ones and schedule weekdays without a
+  session only as "there will be a class" with the time.
+- Students see a read-only ranking (`ranking/`, attendance or missions).
+- Class times are configurable per weekday (`WeeklySchedule.weekday_times`);
+  changing them moves only upcoming, untouched regular drafts.
