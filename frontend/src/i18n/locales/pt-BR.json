@@ -217,7 +217,14 @@
     "removeClassImage": "remover imagem própria",
     "classImageHint": "A imagem enviada aparece no lugar da arte escolhida. JPG, PNG ou WebP até 5 MB; PNG transparente fica melhor.",
     "fighterClassEmoji": "Emoji (usado quando não há arte)",
-    "confirmArchiveClass": "Excluir a classe {{name}}? Alunos com essa classe ficam sem classe."
+    "confirmArchiveClass": "Excluir a classe {{name}}? Alunos com essa classe ficam sem classe.",
+    "tabs": {
+      "gym": "Academia",
+      "classes": "Aulas",
+      "periodization": "Periodização",
+      "assessments": "Avaliações",
+      "fighters": "Lutadores"
+    }
   },
   "calendar": {
     "previous": "Semanas anteriores",

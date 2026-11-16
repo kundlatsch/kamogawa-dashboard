@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 
 import { api } from "../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -14,50 +15,91 @@ import { ColorPicker } from "../../components/pickers";
 import { Button, Input, PageHeader } from "../../components/ui";
 import { weekdayNames } from "../../lib/dates";
 
+const TABS = ["gym", "classes", "periodization", "assessments", "fighters"] as const;
+type Tab = (typeof TABS)[number];
+
+/** Everything coach-configurable, grouped in tabs (the tab is kept in the URL, `?tab=`). */
 export default function SettingsPage() {
   const { t } = useTranslation();
+  const [params, setParams] = useSearchParams();
+  const requested = params.get("tab") as Tab | null;
+  const tab: Tab = requested && TABS.includes(requested) ? requested : "gym";
+
   return (
-    <section className="flex flex-col gap-8">
+    <section className="flex flex-col gap-6">
       <PageHeader title={t("settings.title")} />
-      <GymSettings />
-      <ScheduleSettings />
-      <CheckinSettings />
-      <AssessmentScaleSettings />
-      <FighterClassSettings />
-      <BlockSettings />
-      <CategorySettings />
-      <NamedListSettings
-        path="/valences/"
-        title={t("settings.valences")}
-        hint={t("settings.valencesHint")}
-        nameLabel={t("settings.valenceName")}
-        addLabel={t("settings.addValence")}
-      />
-      <NamedListSettings
-        path="/microcycle-phases/"
-        title={t("settings.phases")}
-        hint={t("settings.phasesHint")}
-        nameLabel={t("settings.phaseName")}
-        addLabel={t("settings.addPhase")}
-      />
-      <NamedListSettings
-        path="/focus-options/"
-        title={t("settings.focuses")}
-        hint={t("settings.focusesHint")}
-        nameLabel={t("settings.focusName")}
-        addLabel={t("settings.addFocus")}
-      />
-      <NamedListSettings
-        path="/metrics/"
-        title={t("settings.metrics")}
-        hint={t("settings.metricsHint")}
-        nameLabel={t("settings.metricName")}
-        addLabel={t("settings.addMetric")}
-        groups={[
-          { value: "PHYSICAL", label: t("metricGroup.PHYSICAL") },
-          { value: "TECHNICAL", label: t("metricGroup.TECHNICAL") },
-        ]}
-      />
+      <div role="tablist" aria-label={t("settings.title")} className="-mt-2 flex flex-wrap gap-2 border-b border-rope pb-3">
+        {TABS.map((key) => (
+          <button
+            key={key}
+            role="tab"
+            aria-selected={tab === key}
+            onClick={() => setParams({ tab: key }, { replace: true })}
+            className={`rounded-md px-4 py-2 text-sm font-semibold ${
+              tab === key ? "bg-glove text-chalk" : "text-smoke hover:bg-rope hover:text-chalk"
+            }`}
+          >
+            {t(`settings.tabs.${key}`)}
+          </button>
+        ))}
+      </div>
+      <div role="tabpanel" className="flex flex-col gap-8">
+        {tab === "gym" && (
+          <>
+            <GymSettings />
+            <ScheduleSettings />
+            <CheckinSettings />
+          </>
+        )}
+        {tab === "classes" && (
+          <>
+            <BlockSettings />
+            <CategorySettings />
+            <NamedListSettings
+              path="/focus-options/"
+              title={t("settings.focuses")}
+              hint={t("settings.focusesHint")}
+              nameLabel={t("settings.focusName")}
+              addLabel={t("settings.addFocus")}
+            />
+          </>
+        )}
+        {tab === "periodization" && (
+          <>
+            <NamedListSettings
+              path="/valences/"
+              title={t("settings.valences")}
+              hint={t("settings.valencesHint")}
+              nameLabel={t("settings.valenceName")}
+              addLabel={t("settings.addValence")}
+            />
+            <NamedListSettings
+              path="/microcycle-phases/"
+              title={t("settings.phases")}
+              hint={t("settings.phasesHint")}
+              nameLabel={t("settings.phaseName")}
+              addLabel={t("settings.addPhase")}
+            />
+          </>
+        )}
+        {tab === "assessments" && (
+          <>
+            <AssessmentScaleSettings />
+            <NamedListSettings
+              path="/metrics/"
+              title={t("settings.metrics")}
+              hint={t("settings.metricsHint")}
+              nameLabel={t("settings.metricName")}
+              addLabel={t("settings.addMetric")}
+              groups={[
+                { value: "PHYSICAL", label: t("metricGroup.PHYSICAL") },
+                { value: "TECHNICAL", label: t("metricGroup.TECHNICAL") },
+              ]}
+            />
+          </>
+        )}
+        {tab === "fighters" && <FighterClassSettings />}
+      </div>
     </section>
   );
 }
