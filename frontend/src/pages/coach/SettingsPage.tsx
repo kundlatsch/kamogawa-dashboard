@@ -37,6 +37,13 @@ export default function SettingsPage() {
         addLabel={t("settings.addPhase")}
       />
       <NamedListSettings
+        path="/focus-options/"
+        title={t("settings.focuses")}
+        hint={t("settings.focusesHint")}
+        nameLabel={t("settings.focusName")}
+        addLabel={t("settings.addFocus")}
+      />
+      <NamedListSettings
         path="/metrics/"
         title={t("settings.metrics")}
         hint={t("settings.metricsHint")}

@@ -37,7 +37,8 @@
     "cycles": "Ciclos",
     "plan": "Plano",
     "assessments": "Avaliações",
-    "stats": "Estatísticas"
+    "stats": "Estatísticas",
+    "week": "Semana"
   },
   "drills": {
     "title": "Biblioteca de treinos",
@@ -113,7 +114,11 @@
     "upcomingHint": "Os exercícios aparecem no dia do treino.",
     "noUpcoming": "Nenhuma sessão marcada por enquanto.",
     "weekObjective": "Objetivo da semana",
-    "blockAt": "às {{time}}"
+    "blockAt": "às {{time}}",
+    "thisWeek": "Sua semana",
+    "yourFocuses": "Seus focos",
+    "homework": "Tarefa de casa",
+    "coachNotes": "Observações do treinador"
   },
   "notifications": {
     "title": "Avisos",
@@ -166,7 +171,11 @@
     "metrics": "Estatísticas avaliadas",
     "metricsHint": "O que você avalia de 1 a 5 todo mês, separado em capacidades físicas e habilidades técnicas.",
     "metricName": "Nome da estatística",
-    "addMetric": "Adicionar estatística"
+    "addMetric": "Adicionar estatística",
+    "focuses": "Focos da semana",
+    "focusesHint": "Opções de foco que você escolhe para cada aluno toda semana (ex.: guarda alta, jab, respiração).",
+    "focusName": "Nome do foco",
+    "addFocus": "Adicionar foco"
   },
   "calendar": {
     "previous": "Semanas anteriores",
@@ -338,5 +347,37 @@
     "delta_up": "+{{count}} desde o mês anterior",
     "delta_down": "{{count}} desde o mês anterior",
     "history": "Histórico"
+  },
+  "week": {
+    "title": "Semana dos alunos",
+    "hint": "Escolha os 2 focos de cada aluno, passe tarefas de casa e registre observações.",
+    "weekOf": "Semana de {{date}}",
+    "previous": "Semana anterior",
+    "next": "Próxima semana",
+    "focuses": "Focos",
+    "focus1": "Foco 1",
+    "focus2": "Foco 2",
+    "noFocus": "—",
+    "focusFor": "Foco {{position}} de {{student}}",
+    "noFocusOptions": "Cadastre as opções de foco em Configurações.",
+    "notes": "Observações",
+    "notesFor": "Observações sobre {{name}}",
+    "noNotes": "Nenhuma observação ainda.",
+    "newNote": "Nova observação",
+    "visibleToStudent": "O aluno pode ver",
+    "hiddenFromStudent": "Só o treinador vê",
+    "addNote": "Salvar observação",
+    "homework": "Tarefa de casa",
+    "noHomework": "Nenhuma tarefa nesta semana.",
+    "newHomework": "Nova tarefa",
+    "homeworkTitle": "Tarefa",
+    "homeworkDescription": "Detalhes",
+    "drill": "Treino da biblioteca (opcional)",
+    "noDrill": "Nenhum",
+    "forEveryone": "Para todos",
+    "forStudents": "Para alunos escolhidos",
+    "pickStudents": "Escolha pelo menos um aluno.",
+    "addHomework": "Adicionar tarefa",
+    "everyone": "Todos"
   }
 }

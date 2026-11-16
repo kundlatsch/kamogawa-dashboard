@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
 import { useMetrics } from "../../api/hooks";
-import type { Assessment, MetricGroup } from "../../api/types";
+import type { Assessment, MetricGroup, MyWeek } from "../../api/types";
 import { PageHeader } from "../../components/ui";
 import { formatDate } from "../../lib/dates";
 import { latestScores } from "../../lib/assessments";
@@ -17,6 +17,10 @@ export default function StatsPage() {
   const { data: history, isLoading } = useQuery({
     queryKey: ["me", "assessments"],
     queryFn: async () => (await api.get<Assessment[]>("/me/assessments/")).data,
+  });
+  const { data: week } = useQuery({
+    queryKey: ["me", "week"],
+    queryFn: async () => (await api.get<MyWeek>("/me/week/")).data,
   });
   const latest = latestScores(history ?? []);
   const lastPeriod = history?.length ? history[history.length - 1].period : null;
@@ -72,6 +76,22 @@ export default function StatsPage() {
             </div>
           );
         })}
+      {week && week.notes.length > 0 && (
+        <div className="rounded-xl border border-rope bg-canvas p-5">
+          <h2 className="mb-3 font-display text-2xl tracking-wide uppercase">{t("student.coachNotes")}</h2>
+          <ul className="flex flex-col gap-2">
+            {week.notes.map((note) => (
+              <li key={note.id} className="rounded-lg bg-ring p-3 text-sm">
+                <p className="whitespace-pre-line">{note.body}</p>
+                <p className="mt-1 text-xs text-smoke">
+                  {formatDate(note.created_at.slice(0, 10), i18n.language, { day: "numeric", month: "short" })} ·{" "}
+                  {note.author_name}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

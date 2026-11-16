@@ -17,6 +17,7 @@ import AccountsPage from "./pages/coach/AccountsPage";
 import CalendarPage from "./pages/coach/CalendarPage";
 import AssessmentsPage from "./pages/coach/AssessmentsPage";
 import CyclesPage from "./pages/coach/CyclesPage";
+import WeekPage from "./pages/coach/WeekPage";
 import BoardPage from "./pages/coach/board/BoardPage";
 import DrillsPage from "./pages/coach/DrillsPage";
 import SettingsPage from "./pages/coach/SettingsPage";
@@ -56,6 +57,7 @@ function AppRoutes() {
       { to: "/cycles", labelKey: "nav.cycles" },
       { to: "/drills", labelKey: "nav.drills" },
       { to: "/students", labelKey: "nav.students" },
+      { to: "/week", labelKey: "nav.week" },
       { to: "/assessments", labelKey: "nav.assessments" },
       { to: "/settings", labelKey: "nav.settings" },
     ];
@@ -67,6 +69,7 @@ function AppRoutes() {
           <Route path="cycles" element={<CyclesPage />} />
           <Route path="drills" element={<DrillsPage />} />
           <Route path="students" element={<AccountsPage kind="students" />} />
+          <Route path="week" element={<WeekPage />} />
           <Route path="assessments" element={<AssessmentsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="profile" element={<ProfilePage />} />

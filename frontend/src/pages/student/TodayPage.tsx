@@ -6,6 +6,7 @@ import { api } from "../../api/client";
 import type { MyRoutine, RoutineItem } from "../../api/types";
 import { KindBadge } from "../../components/SessionBadge";
 import SparringBanner from "../../components/SparringBanner";
+import WeekCard from "../../components/WeekCard";
 import { useAuth } from "../../auth/AuthContext";
 import { blockStartTime, formatDate } from "../../lib/dates";
 import { groupByBlock } from "../../lib/routine";
@@ -33,6 +34,7 @@ export default function TodayPage() {
       </div>
 
       <SparringBanner />
+      <WeekCard />
 
       {isLoading && <p className="text-smoke">{t("common.loading")}</p>}
       {data && data.sessions.length === 0 && (

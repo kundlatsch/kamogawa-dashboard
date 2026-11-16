@@ -215,3 +215,41 @@ export interface Assessment {
   notes: string;
   updated_at: string;
 }
+
+export interface WeeklyFocus {
+  id: number;
+  student: number;
+  week_start: string;
+  position: 1 | 2;
+  focus: number;
+  focus_detail: NamedItem;
+  note: string;
+}
+
+export interface CoachNote {
+  id: number;
+  student: number;
+  body: string;
+  visible_to_student: boolean;
+  author_name: string;
+  created_at: string;
+}
+
+export interface Homework {
+  id: number;
+  week_start: string;
+  title: string;
+  description: string;
+  drill: number | null;
+  drill_detail: Drill | null;
+  is_broadcast: boolean;
+  participants: number[];
+  created_at: string;
+}
+
+export interface MyWeek {
+  week_start: string;
+  focuses: WeeklyFocus[];
+  homework: Omit<Homework, "participants">[];
+  notes: CoachNote[];
+}
