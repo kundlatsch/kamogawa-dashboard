@@ -10,9 +10,11 @@ import ProfilePage from "./pages/ProfilePage";
 import GymDetailPage from "./pages/admin/GymDetailPage";
 import GymsPage from "./pages/admin/GymsPage";
 import TodayPage from "./pages/student/TodayPage";
+import PlanPage from "./pages/student/PlanPage";
 import UpcomingPage from "./pages/student/UpcomingPage";
 import AccountsPage from "./pages/coach/AccountsPage";
 import CalendarPage from "./pages/coach/CalendarPage";
+import CyclesPage from "./pages/coach/CyclesPage";
 import BoardPage from "./pages/coach/board/BoardPage";
 import DrillsPage from "./pages/coach/DrillsPage";
 import SettingsPage from "./pages/coach/SettingsPage";
@@ -49,6 +51,7 @@ function AppRoutes() {
     const nav: NavItem[] = [
       { to: "/", labelKey: "nav.board" },
       { to: "/calendar", labelKey: "nav.calendar" },
+      { to: "/cycles", labelKey: "nav.cycles" },
       { to: "/drills", labelKey: "nav.drills" },
       { to: "/students", labelKey: "nav.students" },
       { to: "/settings", labelKey: "nav.settings" },
@@ -58,6 +61,7 @@ function AppRoutes() {
         <Route element={<AppShell nav={nav} />}>
           <Route index element={<BoardPage />} />
           <Route path="calendar" element={<CalendarPage />} />
+          <Route path="cycles" element={<CyclesPage />} />
           <Route path="drills" element={<DrillsPage />} />
           <Route path="students" element={<AccountsPage kind="students" />} />
           <Route path="settings" element={<SettingsPage />} />
@@ -71,12 +75,14 @@ function AppRoutes() {
   const nav: NavItem[] = [
     { to: "/", labelKey: "nav.today" },
     { to: "/upcoming", labelKey: "nav.upcoming" },
+    { to: "/plan", labelKey: "nav.plan" },
   ];
   return (
     <Routes>
       <Route element={<AppShell nav={nav} />}>
         <Route index element={<TodayPage />} />
         <Route path="upcoming" element={<UpcomingPage />} />
+        <Route path="plan" element={<PlanPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

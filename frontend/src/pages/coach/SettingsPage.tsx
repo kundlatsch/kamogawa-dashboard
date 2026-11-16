@@ -7,6 +7,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { Wordmark } from "../../components/AppShell";
 import { useCategories, useSchedule } from "../../api/hooks";
 import type { DrillCategory } from "../../api/types";
+import NamedListSettings from "../../components/NamedListSettings";
 import { ColorPicker } from "../../components/pickers";
 import { Button, Input, PageHeader } from "../../components/ui";
 import { weekdayNames } from "../../lib/dates";
@@ -19,6 +20,20 @@ export default function SettingsPage() {
       <GymSettings />
       <ScheduleSettings />
       <CategorySettings />
+      <NamedListSettings
+        path="/valences/"
+        title={t("settings.valences")}
+        hint={t("settings.valencesHint")}
+        nameLabel={t("settings.valenceName")}
+        addLabel={t("settings.addValence")}
+      />
+      <NamedListSettings
+        path="/microcycle-phases/"
+        title={t("settings.phases")}
+        hint={t("settings.phasesHint")}
+        nameLabel={t("settings.phaseName")}
+        addLabel={t("settings.addPhase")}
+      />
     </section>
   );
 }

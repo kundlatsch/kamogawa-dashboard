@@ -33,7 +33,9 @@
     "gyms": "Academias",
     "settings": "Configurações",
     "today": "Hoje",
-    "upcoming": "Próximos"
+    "upcoming": "Próximos",
+    "cycles": "Ciclos",
+    "plan": "Plano"
   },
   "drills": {
     "title": "Biblioteca de treinos",
@@ -86,7 +88,12 @@
     "publishSparring": "Publicar e avisar todos",
     "unpublish": "Voltar para rascunho",
     "noSessions": "Nenhuma sessão nas próximas semanas. Confira os dias de treino ou crie uma sessão no",
-    "noStudents": "Nenhum aluno ainda. Cadastre em"
+    "noStudents": "Nenhum aluno ainda. Cadastre em",
+    "objective": "Objetivo da aula",
+    "objectivePlaceholder": "Deixe em branco para usar o objetivo da semana",
+    "noObjective": "Sem objetivo (monte os ciclos em Ciclos)",
+    "fromWeek": "da semana",
+    "changeObjective": "alterar"
   },
   "student": {
     "hello": "Fala, {{name}}! 👊",
@@ -94,7 +101,8 @@
     "noDrills": "O treinador ainda não definiu seus exercícios para esta sessão.",
     "everyone": "Todos",
     "upcomingHint": "Os exercícios aparecem no dia do treino.",
-    "noUpcoming": "Nenhuma sessão marcada por enquanto."
+    "noUpcoming": "Nenhuma sessão marcada por enquanto.",
+    "weekObjective": "Objetivo da semana"
   },
   "notifications": {
     "title": "Avisos",
@@ -122,7 +130,16 @@
     "gymHint": "Nome da academia e a cor da área dos alunos. A área do treinador continua vermelha.",
     "studentPreview": "Prévia da área do aluno",
     "gymError": "Não foi possível salvar. Confira o nome e a cor.",
-    "gymColor": "Cor da área dos alunos"
+    "gymColor": "Cor da área dos alunos",
+    "valences": "Valências",
+    "valencesHint": "Capacidades físicas que cada mesociclo trabalha (velocidade, força…).",
+    "valenceName": "Nome da valência",
+    "addValence": "Adicionar valência",
+    "phases": "Fases do microciclo",
+    "phasesHint": "Tipos de semana dentro de um mesociclo (adaptação, choque…). Um mesociclo novo começa com uma semana de cada fase.",
+    "phaseName": "Nome da fase",
+    "addPhase": "Adicionar fase",
+    "duplicateName": "Já existe um item com esse nome."
   },
   "calendar": {
     "previous": "Semanas anteriores",
@@ -228,5 +245,43 @@
     "RIGHT": "Destro",
     "LEFT": "Canhoto",
     "UNSPECIFIED": "Não informado"
+  },
+  "cycles": {
+    "title": "Ciclos de treino",
+    "hint": "Monte o macrociclo, ordene as valências de cada mesociclo e defina a fase e o objetivo de cada semana. Cada aula herda o objetivo da semana em que cai.",
+    "empty": "Nenhum macrociclo ainda. Crie o primeiro para planejar as valências.",
+    "newMacrocycle": "Novo macrociclo",
+    "editMacrocycle": "Editar macrociclo",
+    "macrocycleName": "Nome",
+    "macrocyclePlaceholder": "Ex.: 1º semestre 2027",
+    "startDate": "Começa em",
+    "notes": "Observações",
+    "saveError": "Não foi possível salvar. Confira os campos.",
+    "confirmDeleteMacrocycle": "Excluir o macrociclo {{name}} e todo o seu planejamento?",
+    "confirmDeleteMesocycle": "Excluir este mesociclo e suas semanas?",
+    "addMesocycle": "Adicionar mesociclo",
+    "pickValence": "Escolha a valência…",
+    "mesocycle": "Mesociclo",
+    "mesocycleNumber": "Mesociclo {{number}}",
+    "mesocycleName": "Nome do mesociclo",
+    "mesocycleNamePlaceholder": "Nome (opcional)",
+    "valence": "Valência",
+    "moveEarlier": "Mover para antes",
+    "moveLater": "Mover para depois",
+    "microcycleNumber": "Semana {{number}}",
+    "deleteMicrocycle": "Excluir semana {{number}}",
+    "addMicrocycle": "Semana",
+    "phase": "Fase",
+    "noPhase": "Sem fase",
+    "lengthDays": "Duração em dias",
+    "days": "dias",
+    "objective": "Objetivo",
+    "objectivePlaceholder": "Objetivo da semana para as aulas coletivas…"
+  },
+  "plan": {
+    "title": "Plano de treino",
+    "empty": "O treinador ainda não montou o plano de treino.",
+    "now": "Agora",
+    "thisWeek": "Esta semana"
   }
 }

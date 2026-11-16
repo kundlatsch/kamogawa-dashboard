@@ -17,7 +17,7 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { api } from "../../../api/client";
 import { useDrills, useSessions, useStudents } from "../../../api/hooks";
-import type { Assignment, User } from "../../../api/types";
+import type { Assignment, TrainingSession, User } from "../../../api/types";
 import DrillCard from "../../../components/DrillCard";
 import { KindBadge, StatusBadge } from "../../../components/SessionBadge";
 import { Button, PageHeader } from "../../../components/ui";
@@ -218,6 +218,7 @@ export default function BoardPage() {
             {mutation.isError && <span className="text-xs text-glove">{t("board.error")}</span>}
           </div>
         )}
+        {session && <SessionObjective key={session.id} session={session} />}
 
         <p className="text-sm text-smoke">{t("board.howTo")}</p>
         {selected.size > 1 && (
@@ -301,5 +302,59 @@ export default function BoardPage() {
         />
       )}
     </DndContext>
+  );
+}
+
+/** The class objective: inherited from the week's microcycle unless the coach overrides it. */
+function SessionObjective({ session }: { session: TrainingSession }) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(session.objective_override);
+  const save = useMutation({
+    mutationFn: async (objective_override: string) => api.patch(`/sessions/${session.id}/`, { objective_override }),
+    onSuccess: () => {
+      setEditing(false);
+      queryClient.invalidateQueries({ queryKey: ["sessions"] });
+    },
+  });
+
+  if (editing) {
+    return (
+      <form
+        className="flex flex-wrap items-center gap-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          save.mutate(value.trim());
+        }}
+      >
+        <input
+          autoFocus
+          aria-label={t("board.objective")}
+          placeholder={t("board.objectivePlaceholder")}
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          className="min-w-0 flex-1 rounded-md border border-rope bg-ring px-3 py-1.5 text-sm text-chalk outline-none focus:border-glove"
+        />
+        <Button type="submit" disabled={save.isPending}>
+          {t("common.save")}
+        </Button>
+        <Button type="button" variant="ghost" onClick={() => setEditing(false)}>
+          {t("common.cancel")}
+        </Button>
+      </form>
+    );
+  }
+  return (
+    <p className="flex flex-wrap items-center gap-2 text-sm">
+      <span className="font-semibold text-belt">🎯 {t("board.objective")}:</span>
+      <span className={session.objective ? "" : "text-smoke"}>{session.objective || t("board.noObjective")}</span>
+      {!session.objective_override && session.objective && (
+        <span className="text-xs text-smoke">({t("board.fromWeek")})</span>
+      )}
+      <button className="text-xs text-smoke underline hover:text-chalk" onClick={() => setEditing(true)}>
+        {t("board.changeObjective")}
+      </button>
+    </p>
   );
 }

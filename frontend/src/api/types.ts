@@ -80,6 +80,10 @@ export interface TrainingSession {
   kind: SessionKind;
   status: SessionStatus;
   published_at: string | null;
+  /** Set by the coach; blank means the session inherits its microcycle's objective. */
+  objective_override: string;
+  /** Resolved objective (override or the microcycle's). */
+  objective: string;
 }
 
 export interface Assignment {
@@ -117,7 +121,7 @@ export interface RoutineItem {
 
 export interface MyRoutine {
   date: string;
-  sessions: (SessionSummary & { routine: RoutineItem[] })[];
+  sessions: (SessionSummary & { objective: string; routine: RoutineItem[] })[];
 }
 
 export interface AppNotification {
@@ -135,3 +139,49 @@ export interface NotificationList {
 
 /** Coaches run the coach module of their gym. */
 export const isCoach = (user: User | null | undefined) => user?.role === "COACH";
+
+/** Coach-editable list item (valences, microcycle phases, ...). */
+export interface NamedItem {
+  id: number;
+  name: string;
+  color: string;
+  order: number;
+  archived: boolean;
+}
+
+export interface PlannedMicrocycle {
+  id: number;
+  order: number;
+  objective: string;
+  length_days: number;
+  phase: NamedItem | null;
+  start_date: string;
+  end_date: string;
+}
+
+export interface PlannedMesocycle {
+  id: number;
+  name: string;
+  notes: string;
+  order: number;
+  valence: NamedItem;
+  start_date: string | null;
+  end_date: string | null;
+  microcycles: PlannedMicrocycle[];
+}
+
+export interface Macrocycle {
+  id: number;
+  name: string;
+  start_date: string;
+  notes: string;
+  end_date: string | null;
+  mesocycles: PlannedMesocycle[];
+}
+
+export interface CurrentCycle {
+  date: string;
+  macrocycle: Macrocycle | null;
+  mesocycle: number | null;
+  microcycle: number | null;
+}

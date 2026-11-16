@@ -53,6 +53,11 @@ export default function TodayPage() {
             {session.start_time && <span className="font-semibold">{session.start_time.slice(0, 5)}</span>}
             {session.title && <span>{session.title}</span>}
             {session.notes && <p className="w-full text-sm text-smoke">{session.notes}</p>}
+            {session.objective && (
+              <p className="w-full text-sm">
+                <span className="font-semibold text-belt">🎯 {t("student.weekObjective")}:</span> {session.objective}
+              </p>
+            )}
           </div>
           {session.routine.length === 0 ? (
             <p className="text-sm text-smoke">{t("student.noDrills")}</p>
