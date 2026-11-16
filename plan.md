@@ -453,3 +453,14 @@ Requested by Gustavo plus the PM's audio feedback:
   are stored in `WeeklyAbsence` (re-runnable: `record_weekly_absences --week`).
 - The ranking's attendance counts check-ins up to today that were not marked
   missed; absences = closed weeks plus marked misses in the open week.
+
+### 11.3 Check-in on any class and cancellations (2026-11-16)
+
+- Students check in on any class that is not cancelled — drafts included — until
+  the deadline; regular weekdays are created when the student calendar loads,
+  so students can confirm presence before the coach plans the class.
+- The coach cancels a class from the calendar with a reason (status
+  `CANCELLED`, `cancel_reason`); students get a `SESSION_CANCELLED` alert and
+  the class can be restored. A cancelled class keeps its date taken, so the
+  schedule does not recreate it, and weekly absences only expect as many
+  classes as the week really had.

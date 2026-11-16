@@ -11,6 +11,8 @@ import { Button, PageHeader } from "../../components/ui";
 import { addDays, formatDate, startOfWeek, toISODate, todayISO, weekdayNames } from "../../lib/dates";
 
 const WEEKS = 4;
+/** The list below the calendar only shows the next few classes; the grid shows the rest. */
+const UPCOMING_SHOWN = 4;
 
 /**
  * Student calendar: every class day is shown (from the coach's schedule even before it is
@@ -34,7 +36,9 @@ export default function StudentCalendarPage() {
   const today = todayISO();
   const names = weekdayNames(i18n.language, "short");
   // Every class still ahead: published ones open with exercises, drafts only take check-ins.
-  const upcoming = entries.filter((e) => e.date >= today && (e.published || e.checkin || e.cancelled));
+  const upcoming = entries
+    .filter((e) => e.date >= today && (e.published || e.checkin || e.cancelled))
+    .slice(0, UPCOMING_SHOWN);
   const time = (entry: CalendarEntry) => entry.start_time?.slice(0, 5) ?? "";
 
   return (
@@ -91,6 +95,7 @@ export default function StudentCalendarPage() {
                 >
                   {entry.kind === "SPARRING" ? "🥊 " : ""}
                   {time(entry)}
+                  {entry.checkin?.mine && " ✓"}
                 </Link>
               ) : (
                 <span
@@ -99,6 +104,7 @@ export default function StudentCalendarPage() {
                   className="rounded border border-dashed border-rope px-1 py-0.5 text-[11px] leading-tight text-smoke"
                 >
                   {time(entry) || t("studentCalendar.class")}
+                  {entry.checkin?.mine && " ✓"}
                 </span>
               ),
             )}
