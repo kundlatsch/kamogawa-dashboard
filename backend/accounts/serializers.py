@@ -38,7 +38,18 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "display_name", "avatar_emoji", "color", "role", "gym", "is_active"]
+        fields = [
+            "id",
+            "username",
+            "display_name",
+            "avatar_emoji",
+            "color",
+            "handedness",
+            "limitations",
+            "role",
+            "gym",
+            "is_active",
+        ]
         read_only_fields = ["id", "role", "gym"]
 
 
@@ -50,7 +61,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["display_name", "avatar_emoji", "color"]
+        fields = ["display_name", "avatar_emoji", "color", "handedness", "limitations"]
 
 
 class PublicUserSerializer(serializers.ModelSerializer):

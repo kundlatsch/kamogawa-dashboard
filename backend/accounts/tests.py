@@ -184,3 +184,27 @@ def test_profile_update_validates_name_and_color(make_user, api_as):
     assert client.patch("/api/auth/me/", {"display_name": "  "}).status_code == 400
     assert client.patch("/api/auth/me/", {"color": "red"}).status_code == 400
 
+
+
+def test_user_sets_handedness_and_limitations(make_user, api_as):
+    client = api_as(make_user("ana"))
+    response = client.patch(
+        "/api/auth/me/", {"handedness": "LEFT", "limitations": "Joelho direito operado, sem sparring."}
+    )
+    assert response.status_code == 200
+    assert response.json()["handedness"] == "LEFT"
+    assert response.json()["limitations"] == "Joelho direito operado, sem sparring."
+
+
+def test_handedness_must_be_a_known_choice(make_user, api_as):
+    assert api_as(make_user("ana")).patch("/api/auth/me/", {"handedness": "BOTH"}).status_code == 400
+
+
+def test_coach_sees_student_handedness_and_limitations(coach, api_as, make_user):
+    ana = make_user("ana")
+    ana.handedness, ana.limitations = User.Handedness.LEFT, "Sem sparring."
+    ana.save()
+    students = api_as(coach).get("/api/students/").json()
+    student = next(s for s in students if s["username"] == "ana")
+    assert student["handedness"] == "LEFT"
+    assert student["limitations"] == "Sem sparring."

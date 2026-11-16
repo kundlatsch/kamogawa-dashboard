@@ -20,7 +20,7 @@ from .serializers import (
 
 @api_view(["GET", "PATCH"])
 def me(request):
-    """The signed-in user; PATCH updates their own display name, emoji and color."""
+    """The signed-in user; PATCH updates their own profile fields."""
     if request.method == "PATCH":
         serializer = ProfileSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)

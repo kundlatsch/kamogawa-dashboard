@@ -41,11 +41,19 @@ class User(AbstractUser):
         COACH = "COACH", _("Coach")
         STUDENT = "STUDENT", _("Student")
 
+    class Handedness(models.TextChoices):
+        UNSPECIFIED = "UNSPECIFIED", _("Unspecified")
+        RIGHT = "RIGHT", _("Right-handed")
+        LEFT = "LEFT", _("Left-handed")
+
     role = models.CharField(max_length=16, choices=Role.choices, default=Role.STUDENT)
     gym = models.ForeignKey(Gym, null=True, blank=True, on_delete=models.PROTECT, related_name="members")
     display_name = models.CharField(max_length=80, blank=True)
     avatar_emoji = models.CharField(max_length=16, default="🥊")
     color = models.CharField(max_length=7, default="#d62828")
+    handedness = models.CharField(max_length=16, choices=Handedness.choices, default=Handedness.UNSPECIFIED)
+    # Free text the user keeps up to date: injuries, sparring or equipment restrictions.
+    limitations = models.TextField(blank=True, max_length=1000)
 
     class Meta:
         ordering = ["display_name", "username"]
