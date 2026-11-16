@@ -244,7 +244,7 @@ while building:
    account is created from `.env` on first boot. Admins and coaches share the
    coach module; only admins can manage coach accounts.
 
-## 10. Phase 10 — Periodization, assessments and check-in (proposed 2026-11-16)
+## 10. Phase 10 — Periodization, assessments, check-in and gamification (proposed 2026-11-16)
 
 Source: feedback from the project manager. This phase turns the drill board
 into a periodized training plan. Everything below is additive: existing
@@ -260,9 +260,19 @@ Items marked **(open)** wait for confirmation before they are built.
 - **Student** sees their stats, coach observations and the two focuses of the
   week, the week's objective for group classes, homework, and checks in
   before a deadline with an optional pain/injury report.
-- **Periodization**: a month is a mesocycle focused on one physical capacity;
-  each week is a microcycle with a phase (adaptation, development, shock,
-  recovery/assessment); each class inherits the week's objective.
+- **Periodization** (added by Gustavo): three coach-configurable levels.
+  A **macrocycle** (the big cycle, e.g. a semester) holds an ordered list of
+  **mesocycles**; each mesocycle trains one valence (typically a month) and
+  holds an ordered list of **microcycles** (typically weeks) with a phase
+  (adaptation, development, shock, recovery/assessment) and an objective.
+  The coach sets durations and orders the valences by drag and drop; each
+  class inherits its microcycle's objective. Students see the whole plan
+  (which valence now, which next).
+- **Gamification** (added by Gustavo): students earn XP for attending classes;
+  the coach configures classes (levels) and missions that award XP.
+- **Profile** (added by Gustavo): each user marks whether they are left- or
+  right-handed and writes a free-text description of their limitations
+  (injuries, sparring or equipment restrictions) on their own profile.
 - **Class blocks**: mobility and general warm-up (collective, fixed time) →
   specific warm-up (individual, starts when each student finishes the general
   one) → boxing school and combat (pairs built from check-ins) → cool-down.
@@ -275,8 +285,11 @@ Items marked **(open)** wait for confirmation before they are built.
 | Collective blocks | Broadcast assignment | Mobility, general warm-up and cool-down default to broadcast |
 | Individual specific warm-up | Solo assignment | Unchanged, placed in the specific warm-up block |
 | Pairs for school/combat | Pair assignment | Pairs can be created from a suggestion based on check-ins |
-| Month valence | — | New `Mesocycle` (month + `Valence`) |
-| Week phase/objective | — | New `Microcycle`; sessions resolve their week by date |
+| Big cycle | — | New `Macrocycle` with date range |
+| Valence block | — | New `Mesocycle` (ordered in a macrocycle, one `Valence`) |
+| Week phase/objective | — | New `Microcycle` (ordered in a mesocycle); sessions resolve it by date |
+| XP, classes, missions | — | New `XpEvent`, `RankClass`, `Mission`, `MissionCompletion` |
+| Handedness, limitations | `User` | New `handedness` and `limitations` fields |
 | Stats 1–5 | — | New `Metric` + `Assessment` (monthly) |
 | Weekly focuses, observations | — | New `WeeklyFocus`, `CoachNote` |
 | Homework | — | New `Homework` (per student or for everyone, per week) |
@@ -289,12 +302,16 @@ Items marked **(open)** wait for confirmation before they are built.
 Valence            gym, name, order, archived
                    seeded per gym: speed, strength, endurance, power,
                    coordination, agility (coach-editable list)
-Mesocycle          gym, year, month, valence → Valence, notes
-                   unique (gym, year, month)
+Macrocycle         gym, name, start_date, notes
+Mesocycle          macrocycle, order, valence → Valence, weeks (default 4),
+                   name, notes
 MicrocyclePhase    gym, name, order        seeded: adaptation, development,
                                            shock, recovery/assessment
-Microcycle         mesocycle, week_start (Monday), phase → MicrocyclePhase,
-                   objective (text)        unique (mesocycle, week_start)
+Microcycle         mesocycle, order, phase → MicrocyclePhase, objective,
+                   length_days (default 7)
+                   Dates are derived: a macrocycle starts on start_date and
+                   its mesocycles/microcycles follow in order, so reordering
+                   valences shifts the calendar automatically.
 TrainingSession    + objective_override (blank = inherit the week's objective)
 SessionBlock       gym, name, order, mode = COLLECTIVE | INDIVIDUAL | PAIRS,
                    default_start_offset_minutes (collective blocks only)
@@ -317,6 +334,18 @@ CheckIn            session, student, created_at, has_pain,
                    pain_location, pain_level 0–10, notes
                    unique (session, student)
 Gym                + checkin_deadline_minutes (before session start)
+User               + handedness = LEFT | RIGHT | UNSPECIFIED (default),
+                   + limitations (text); editable by the user on their
+                   profile, visible to the gym's coaches
+RankClass          gym, name, emoji, color, min_xp, order
+                   (the student's class is the highest one they reach)
+Mission            gym, title, description, xp_reward, active,
+                   starts_on / ends_on (optional), repeatable
+MissionCompletion  mission, student, completed_at, approved_by
+XpEvent            student, amount, reason = ATTENDANCE | MISSION | MANUAL,
+                   session / mission_completion (optional), created_at
+                   (XP total is the sum of events, so it can be audited)
+Gym                + attendance_xp (XP per class attended)
 ```
 
 Valences and metrics stay separate lists, following the PM's suggestion that
@@ -336,16 +365,22 @@ mobility and technique are assessed but are not a month's valence.
   **(open: pairing criteria)**. Accepting a suggestion creates pair
   assignments in the PAIRS blocks; the coach can still edit them by drag
   and drop.
+- Attendance XP is granted once per (student, session) **(open: on
+  check-in, or only after the coach confirms attendance)**.
+- Pair suggestions can also mix or match handedness **(open)**.
 - Students see their own assessments (current month + history), notes marked
   visible, this week's focuses, objective and homework. Today's routine rule
   (decision 4) is unchanged.
 
 ### 10.5 Delivery steps
 
-1. Periodization backend: `Valence`, `Mesocycle`, `MicrocyclePhase`,
-   `Microcycle`, session objective resolution, API + isolation tests.
-2. Cycle planner UI: month view to pick the valence and set each week's
-   phase and objective.
+0. Profile: handedness and limitations (user edits, coach sees).
+1. Periodization backend: `Valence`, `Macrocycle`, `Mesocycle`,
+   `MicrocyclePhase`, `Microcycle`, date derivation, session objective
+   resolution, API + isolation tests.
+2. Cycle planner UI: macrocycle timeline where the coach drags valences into
+   order, sets durations, and each microcycle's phase and objective; a
+   read-only version for students.
 3. Session blocks: `SessionBlock` + `Assignment.block` migration; board
    grouped into block lanes; collective blocks show their fixed time.
 4. Assessments backend + coach UI (student × metric grid, 1–5, per month).
@@ -355,3 +390,6 @@ mobility and technique are assessed but are not a month's valence.
    form with pain fields.
 8. Coach check-in panel: confirmed list, injury alerts, pair suggestions
    that create pair assignments.
+9. Gamification backend: `RankClass`, `Mission`, `MissionCompletion`,
+   `XpEvent`, attendance XP; coach configuration UI.
+10. Gamification student UI: XP bar, current class, missions.
