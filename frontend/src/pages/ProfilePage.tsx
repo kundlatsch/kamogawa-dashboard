@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../api/client";
 import type { Handedness } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
+import Avatar from "../components/Avatar";
 import { ColorPicker, EmojiPicker, AVATAR_EMOJIS } from "../components/pickers";
 import { Button, Input, PageHeader, PasswordInput } from "../components/ui";
 
@@ -121,12 +122,7 @@ function ProfileDetails() {
       className="flex flex-col gap-4 rounded-xl border border-rope bg-canvas p-5"
     >
       <div className="flex items-center gap-4">
-        <span
-          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-3xl"
-          style={{ backgroundColor: `${color}33`, border: `2px solid ${color}` }}
-        >
-          {emoji}
-        </span>
+        <Avatar person={{ ...user, avatar_emoji: emoji, color }} size="lg" ring />
         <div className="min-w-0">
           <p className="truncate text-xl font-semibold">{displayName || user.display_name}</p>
           <p className="text-sm text-smoke">
@@ -145,6 +141,7 @@ function ProfileDetails() {
         onChange={(event) => setDisplayName(event.target.value)}
         required
       />
+      <PhotoUpload />
       <EmojiPicker value={emoji} onChange={setEmoji} options={AVATAR_EMOJIS} label={t("profile.emoji")} />
       <ColorPicker value={color} onChange={setColor} label={t("profile.color")} />
       <fieldset className="flex flex-col gap-1 text-sm">
@@ -184,5 +181,52 @@ function ProfileDetails() {
         {save.isError && <span className="text-sm text-glove">{t("profile.detailsError")}</span>}
       </div>
     </form>
+  );
+}
+
+/** Upload or remove the profile photo; it replaces the emoji wherever the user appears. */
+function PhotoUpload() {
+  const { t } = useTranslation();
+  const { user, refreshUser } = useAuth();
+  const upload = useMutation({
+    mutationFn: async (file: File) => {
+      const form = new FormData();
+      form.append("avatar", file);
+      return api.post("/auth/me/avatar/", form);
+    },
+    onSuccess: () => refreshUser(),
+  });
+  const remove = useMutation({
+    mutationFn: async () => api.delete("/auth/me/avatar/"),
+    onSuccess: () => refreshUser(),
+  });
+
+  return (
+    <div className="flex flex-col gap-1 text-sm">
+      <span className="text-smoke">{t("profile.photo")}</span>
+      <div className="flex flex-wrap items-center gap-2">
+        <label className="cursor-pointer rounded-md border border-rope px-4 py-2 font-semibold hover:border-smoke">
+          {user?.avatar_url ? t("profile.changePhoto") : t("profile.uploadPhoto")}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="sr-only"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) upload.mutate(file);
+              event.target.value = "";
+            }}
+          />
+        </label>
+        {user?.avatar_url && (
+          <Button type="button" variant="ghost" onClick={() => remove.mutate()} disabled={remove.isPending}>
+            {t("profile.removePhoto")}
+          </Button>
+        )}
+        {upload.isPending && <span className="text-smoke">{t("profile.uploading")}</span>}
+        {upload.isError && <span className="text-glove">{t("profile.photoError")}</span>}
+      </div>
+      <span className="text-xs text-smoke">{t("profile.photoHint")}</span>
+    </div>
   );
 }

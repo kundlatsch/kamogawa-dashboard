@@ -26,6 +26,7 @@ import { addDays, formatDate, toISODate, todayISO } from "../../../lib/dates";
 import AssignmentModal, { type AssignmentChanges } from "./AssignmentModal";
 import BoardColumn from "./BoardColumn";
 import { Draggable, type DragData, type DropData } from "./dnd";
+import Avatar from "../../../components/Avatar";
 
 export default function BoardPage() {
   const { t, i18n } = useTranslation();
@@ -154,7 +155,7 @@ export default function BoardPage() {
     }
     if (dragging.type === "student") {
       const student = studentsById.get(dragging.studentId);
-      return student && <span className="text-4xl">{student.avatar_emoji}</span>;
+      return student && <Avatar person={student} size="lg" ring />;
     }
     const assignment = assignments.find((a) => a.id === dragging.assignmentId);
     return assignment && <DrillCard drill={assignment.drill_detail} compact />;

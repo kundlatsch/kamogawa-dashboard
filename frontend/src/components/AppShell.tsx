@@ -4,6 +4,7 @@ import { NavLink, Outlet } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext";
 import NotificationBell from "./NotificationBell";
+import Avatar from "./Avatar";
 
 export interface NavItem {
   to: string;
@@ -69,7 +70,7 @@ export default function AppShell({ nav }: { nav: NavItem[] }) {
                 `rounded-md px-2 py-1 ${isActive ? "bg-rope text-chalk" : "text-smoke hover:text-chalk"}`
               }
             >
-              {user?.avatar_emoji} {user?.display_name}
+              {user && <Avatar person={user} />} {user?.display_name}
             </NavLink>
             <button onClick={logout} className="text-smoke hover:text-glove">
               {t("auth.logout")}

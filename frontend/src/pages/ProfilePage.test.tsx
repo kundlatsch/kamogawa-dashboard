@@ -10,6 +10,7 @@ const user: User = {
   username: "ana",
   display_name: "Ana",
   avatar_emoji: "🥊",
+  avatar_url: null,
   color: "#d62828",
   handedness: "UNSPECIFIED",
   limitations: "",
@@ -52,5 +53,16 @@ describe("ProfilePage", () => {
     );
     expect(refreshUser).toHaveBeenCalled();
     expect(screen.getByText(/@ana/)).toBeInTheDocument();
+  });
+});
+
+describe("ProfilePage photo", () => {
+  it("uploads the chosen photo as multipart form data", async () => {
+    const post = vi.spyOn(api, "post").mockResolvedValue({ data: {} });
+    renderPage();
+    const file = new File(["img"], "me.png", { type: "image/png" });
+    fireEvent.change(screen.getByLabelText("Enviar foto"), { target: { files: [file] } });
+    await waitFor(() => expect(post).toHaveBeenCalledWith("/auth/me/avatar/", expect.any(FormData)));
+    expect((post.mock.calls[0][1] as FormData).get("avatar")).toBe(file);
   });
 });

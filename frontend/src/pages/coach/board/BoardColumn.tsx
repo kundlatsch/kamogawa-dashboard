@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { Assignment, User } from "../../../api/types";
 import type { ColumnKey } from "../../../lib/board";
 import { Draggable, Droppable } from "./dnd";
+import Avatar from "../../../components/Avatar";
 
 export default function BoardColumn({
   column,
@@ -45,12 +46,8 @@ export default function BoardColumn({
           student && (
             <>
               <Draggable id={`student:${student.id}`} data={{ type: "student", studentId: student.id }}>
-                <span
-                  title={t("board.dragStudentHint")}
-                  className="flex h-10 w-10 cursor-grab items-center justify-center rounded-full text-xl"
-                  style={{ backgroundColor: `${student.color}33`, border: `2px solid ${student.color}` }}
-                >
-                  {student.avatar_emoji}
+                <span title={t("board.dragStudentHint")} className="flex cursor-grab">
+                  <Avatar person={student} size="md" ring />
                 </span>
               </Draggable>
               <p className="min-w-0 flex-1 truncate font-semibold">{student.display_name}</p>
@@ -133,7 +130,7 @@ export default function BoardColumn({
                           className="rounded-full px-1.5 py-0.5 text-chalk"
                           style={{ backgroundColor: `${partner.color}44` }}
                         >
-                          {partner.avatar_emoji} {partner.display_name}
+                          <Avatar person={partner} /> {partner.display_name}
                         </span>
                       ))}
                     </div>

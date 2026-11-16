@@ -239,7 +239,14 @@
     "detailsError": "Não foi possível salvar. Confira o nome e a cor.",
     "handedness": "Mão dominante",
     "limitations": "Limitações",
-    "limitationsPlaceholder": "Lesões, restrições de sparring ou de equipamento que o treinador deve saber."
+    "limitationsPlaceholder": "Lesões, restrições de sparring ou de equipamento que o treinador deve saber.",
+    "photo": "Foto",
+    "uploadPhoto": "Enviar foto",
+    "changePhoto": "Trocar foto",
+    "removePhoto": "Remover foto",
+    "uploading": "Enviando…",
+    "photoError": "Não foi possível usar essa imagem. Envie um JPG, PNG ou WebP de até 5 MB.",
+    "photoHint": "A foto aparece no lugar do emoji. Sem foto, o emoji é usado."
   },
   "handedness": {
     "RIGHT": "Destro",

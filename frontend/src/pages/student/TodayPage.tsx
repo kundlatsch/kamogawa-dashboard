@@ -9,6 +9,7 @@ import SparringBanner from "../../components/SparringBanner";
 import { useAuth } from "../../auth/AuthContext";
 import { formatDate } from "../../lib/dates";
 import { youtubeEmbedUrl, youtubeId } from "../../lib/youtube";
+import Avatar from "../../components/Avatar";
 
 export default function TodayPage() {
   const { t, i18n } = useTranslation();
@@ -101,7 +102,7 @@ function RoutineCard({ item, step }: { item: RoutineItem; step: number }) {
               <span className="text-smoke">{t("board.with")}</span>
               {item.partners.map((partner) => (
                 <span key={partner.id} className="rounded-full px-2 py-0.5" style={{ backgroundColor: `${partner.color}44` }}>
-                  {partner.avatar_emoji} {partner.display_name}
+                  <Avatar person={partner} /> {partner.display_name}
                 </span>
               ))}
             </div>

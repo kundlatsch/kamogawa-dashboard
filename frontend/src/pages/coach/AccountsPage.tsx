@@ -6,6 +6,7 @@ import { api } from "../../api/client";
 import type { GeneratedPassword, User } from "../../api/types";
 import { AVATAR_EMOJIS } from "../../components/pickers";
 import { Button, Input, Modal, PageHeader } from "../../components/ui";
+import Avatar from "../../components/Avatar";
 
 /** Manages accounts of one role (students or coaches); passwords are always server-generated. */
 export default function AccountsPage({
@@ -76,9 +77,7 @@ export default function AccountsPage({
               className="flex items-center gap-3 rounded-xl border border-rope bg-canvas p-4"
               style={{ borderLeft: `4px solid ${account.color}` }}
             >
-              <span className="text-3xl" aria-hidden>
-                {account.avatar_emoji}
-              </span>
+              <Avatar person={account} size="lg" />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{account.display_name}</p>
                 <p className="truncate text-xs text-smoke">

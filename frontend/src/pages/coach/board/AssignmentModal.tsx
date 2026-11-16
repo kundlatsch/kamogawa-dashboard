@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { Assignment, User } from "../../../api/types";
 import DrillCard from "../../../components/DrillCard";
 import { Button, Input, Modal } from "../../../components/ui";
+import Avatar from "../../../components/Avatar";
 
 export interface AssignmentChanges {
   notes: string;
@@ -62,7 +63,7 @@ export default function AssignmentModal({
                     participants.includes(student.id) ? "bg-glove text-chalk" : "border border-rope text-smoke"
                   }`}
                 >
-                  {student.avatar_emoji} {student.display_name}
+                  <Avatar person={student} /> {student.display_name}
                 </button>
               ))}
             </div>

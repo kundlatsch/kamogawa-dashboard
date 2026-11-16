@@ -22,6 +22,7 @@ export interface User {
   username: string;
   display_name: string;
   avatar_emoji: string;
+  avatar_url: string | null;
   color: string;
   handedness: Handedness;
   limitations: string;
@@ -34,6 +35,7 @@ export interface PublicUser {
   id: number;
   display_name: string;
   avatar_emoji: string;
+  avatar_url: string | null;
   color: string;
 }
 
