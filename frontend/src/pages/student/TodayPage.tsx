@@ -1,18 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
-import type { MyRoutine, RoutineItem } from "../../api/types";
-import { KindBadge } from "../../components/SessionBadge";
+import type { MyRoutine } from "../../api/types";
+import SessionRoutineView from "../../components/SessionRoutineView";
 import SparringBanner from "../../components/SparringBanner";
 import WeekCard from "../../components/WeekCard";
-import CheckInButton from "../../components/CheckInButton";
 import { useAuth } from "../../auth/AuthContext";
-import { blockStartTime, formatDate } from "../../lib/dates";
-import { groupByBlock } from "../../lib/routine";
-import { youtubeEmbedUrl, youtubeId } from "../../lib/youtube";
-import Avatar from "../../components/Avatar";
+import { formatDate } from "../../lib/dates";
 
 export default function TodayPage() {
   const { t, i18n } = useTranslation();
@@ -47,108 +42,7 @@ export default function TodayPage() {
         </div>
       )}
 
-      {data?.sessions.map((session) => (
-        <div key={session.id} className="flex flex-col gap-3">
-          <div
-            className={`flex flex-wrap items-center gap-2 rounded-xl p-3 ${
-              session.kind === "SPARRING" ? "border border-blood bg-blood/15" : "bg-canvas"
-            }`}
-          >
-            <KindBadge kind={session.kind} />
-            {session.start_time && <span className="font-semibold">{session.start_time.slice(0, 5)}</span>}
-            {session.title && <span>{session.title}</span>}
-            {session.notes && <p className="w-full text-sm text-smoke">{session.notes}</p>}
-            <div className="w-full">
-              <CheckInButton sessionId={session.id} state={session.checkin} />
-            </div>
-            {session.objective && (
-              <p className="w-full text-sm">
-                <span className="font-semibold text-belt">🎯 {t("student.weekObjective")}:</span> {session.objective}
-              </p>
-            )}
-          </div>
-          {session.routine.length === 0 ? (
-            <p className="text-sm text-smoke">{t("student.noDrills")}</p>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {groupByBlock(session.routine).map((group) => {
-                const time =
-                  group.block?.mode === "COLLECTIVE"
-                    ? blockStartTime(session.start_time, group.block.start_offset_minutes)
-                    : null;
-                return (
-                  <section key={group.block?.id ?? "none"} className="flex flex-col gap-2">
-                    {group.block && (
-                      <h3
-                        className="flex items-center gap-2 border-l-4 pl-2 font-display text-lg tracking-wide uppercase"
-                        style={{ borderColor: group.block.color }}
-                      >
-                        {group.block.name}
-                        {time && <span className="font-sans text-sm text-smoke normal-case">{t("student.blockAt", { time })}</span>}
-                      </h3>
-                    )}
-                    <ol className="flex flex-col gap-3">
-                      {group.items.map((item) => (
-                        <RoutineCard key={item.id} item={item} step={session.routine.indexOf(item) + 1} />
-                      ))}
-                    </ol>
-                  </section>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      ))}
+      {data?.sessions.map((session) => <SessionRoutineView key={session.id} session={session} />)}
     </section>
-  );
-}
-
-function RoutineCard({ item, step }: { item: RoutineItem; step: number }) {
-  const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
-  const { drill } = item;
-  const videoId = youtubeId(drill.youtube_url);
-  const rounds = item.rounds ?? drill.default_rounds;
-  const minutes = item.duration_minutes ?? drill.default_duration_minutes;
-
-  return (
-    <li className="overflow-hidden rounded-xl border border-rope bg-canvas" style={{ borderLeft: `6px solid ${drill.color}` }}>
-      <button className="flex w-full items-center gap-3 p-4 text-left" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-        <span className="font-display text-2xl text-smoke">{step}</span>
-        <span className="text-4xl" aria-hidden>
-          {drill.emoji}
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-lg font-semibold">{drill.name}</p>
-          <div className="flex flex-wrap gap-x-3 text-sm text-smoke">
-            {rounds ? <span>{t("drills.roundsCount", { count: rounds })}</span> : null}
-            {minutes ? <span>{t("drills.minutesCount", { count: minutes })}</span> : null}
-            {item.is_broadcast && <span className="text-belt">📣 {t("student.everyone")}</span>}
-          </div>
-          {item.partners.length > 0 && (
-            <div className="mt-1 flex flex-wrap items-center gap-1 text-sm">
-              <span className="text-smoke">{t("board.with")}</span>
-              {item.partners.map((partner) => (
-                <span key={partner.id} className="rounded-full px-2 py-0.5" style={{ backgroundColor: `${partner.color}44` }}>
-                  <Avatar person={partner} /> {partner.display_name}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-        <span className="text-smoke" aria-hidden>
-          {open ? "▴" : "▾"}
-        </span>
-      </button>
-      {open && (
-        <div className="flex flex-col gap-3 border-t border-rope p-4">
-          {item.notes && <p className="rounded-lg bg-belt/10 p-3 text-sm">📝 {item.notes}</p>}
-          {drill.description && <p className="text-sm whitespace-pre-line text-smoke">{drill.description}</p>}
-          {videoId && (
-            <iframe title={drill.name} src={youtubeEmbedUrl(videoId)} className="aspect-video w-full rounded-lg" allowFullScreen />
-          )}
-        </div>
-      )}
-    </li>
   );
 }

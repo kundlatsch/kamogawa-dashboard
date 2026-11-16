@@ -88,8 +88,8 @@ export default function NotificationBell() {
   );
 }
 
-/** Coaches go to the class on the board; students to today's routine or their upcoming classes. */
+/** Coaches go to the class on Planejamento; students to today's routine or the class page. */
 export function notificationTarget(kind: string, sessionId: number, date: string): string {
   if (kind === "INJURY_REPORTED") return `/?session=${sessionId}`;
-  return date === todayISO() ? "/" : "/upcoming";
+  return date === todayISO() ? "/" : `/class/${sessionId}`;
 }

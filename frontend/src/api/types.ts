@@ -339,3 +339,15 @@ export interface MyProgress {
   fighter_class: FighterClass | null;
   missions: (Mission & { status: CompletionStatus | null; times_completed: number; can_complete: boolean })[];
 }
+
+/** A day in the student calendar: published classes carry details; planned ones only date and time. */
+export interface CalendarEntry {
+  id: number | null;
+  date: string;
+  start_time: string | null;
+  published: boolean;
+  kind?: SessionKind;
+  title?: string;
+  notes?: string;
+  checkin?: CheckInState;
+}

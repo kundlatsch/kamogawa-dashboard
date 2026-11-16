@@ -13,7 +13,8 @@ import TodayPage from "./pages/student/TodayPage";
 import PlanPage from "./pages/student/PlanPage";
 import ProgressPage from "./pages/student/ProgressPage";
 import StatsPage from "./pages/student/StatsPage";
-import UpcomingPage from "./pages/student/UpcomingPage";
+import ClassPage from "./pages/student/ClassPage";
+import StudentCalendarPage from "./pages/student/StudentCalendarPage";
 import AccountsPage from "./pages/coach/AccountsPage";
 import CalendarPage from "./pages/coach/CalendarPage";
 import AssessmentsPage from "./pages/coach/AssessmentsPage";
@@ -95,7 +96,8 @@ function AppRoutes() {
     <Routes>
       <Route element={<AppShell nav={nav} />}>
         <Route index element={<TodayPage />} />
-        <Route path="upcoming" element={<UpcomingPage />} />
+        <Route path="upcoming" element={<StudentCalendarPage />} />
+        <Route path="class/:sessionId" element={<ClassPage />} />
         <Route path="plan" element={<PlanPage />} />
         <Route path="stats" element={<StatsPage />} />
         <Route path="progress" element={<ProgressPage />} />

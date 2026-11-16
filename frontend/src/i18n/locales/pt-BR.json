@@ -33,7 +33,7 @@
     "gyms": "Academias",
     "settings": "Configurações",
     "today": "Hoje",
-    "upcoming": "Próximos",
+    "upcoming": "Calendário",
     "cycles": "Ciclos",
     "plan": "Plano",
     "assessments": "Avaliações",
@@ -134,7 +134,7 @@
     "restDay": "Sem treino hoje. Descansa e volta mais forte!",
     "noDrills": "O treinador ainda não definiu seus exercícios para este treino.",
     "everyone": "Todos",
-    "upcomingHint": "Os exercícios aparecem no dia do treino.",
+    "upcomingHint": "Os exercícios aparecem quando o treinador publica o treino.",
     "noUpcoming": "Nenhum treino marcado por enquanto.",
     "weekObjective": "Objetivo da semana",
     "blockAt": "às {{time}}",
@@ -519,5 +519,15 @@
     "strengths": "Fortes",
     "weaknesses": "A melhorar",
     "empty": "Sem classe nem avaliação ainda."
+  },
+  "studentCalendar": {
+    "hint": "Todos os dias de treino aparecem aqui. Quando o treinador publica um treino, ele fica clicável com os exercícios.",
+    "planned": "Vai ter treino; o treinador ainda não publicou os detalhes.",
+    "class": "Treino",
+    "legendPublished": "Treino publicado (clique para ver)",
+    "legendPlanned": "Treino previsto, ainda sem detalhes",
+    "published": "Próximos treinos publicados",
+    "seeExercises": "ver exercícios",
+    "notFound": "Treino não encontrado ou ainda não publicado."
   }
 }
