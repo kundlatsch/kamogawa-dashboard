@@ -511,5 +511,10 @@
     "noScores": "Ainda sem avaliação.",
     "addNote": "Nova observação na Semana",
     "noXp": "Ainda sem XP."
+  },
+  "traits": {
+    "strengths": "Fortes",
+    "weaknesses": "A melhorar",
+    "empty": "Sem classe nem avaliação ainda."
   }
 }

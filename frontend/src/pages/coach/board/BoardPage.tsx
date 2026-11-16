@@ -16,8 +16,10 @@ import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { api } from "../../../api/client";
-import { useDrills, useSessionBlocks, useSessions, useStudents } from "../../../api/hooks";
-import type { Assignment, CheckIn, SessionBlock, TrainingSession, User } from "../../../api/types";
+import { useDrills, useFighterClasses, useMetrics, useSessionBlocks, useSessions, useStudents } from "../../../api/hooks";
+import type { Assessment, Assignment, CheckIn, SessionBlock, TrainingSession, User } from "../../../api/types";
+import FighterTraits from "../../../components/FighterTraits";
+import { strengthsAndWeaknesses } from "../../../lib/fighterProfile";
 import DrillCard from "../../../components/DrillCard";
 import { KindBadge, StatusBadge } from "../../../components/SessionBadge";
 import { Button, PageHeader } from "../../../components/ui";
@@ -78,6 +80,26 @@ export default function BoardPage() {
 
   // Exercises are planned for whoever confirmed presence (the coach can add students to the list).
   const presentStudents = students.filter((s) => checkIns.some((c) => c.student === s.id));
+  const { data: fighterClasses = [] } = useFighterClasses();
+  const { data: metrics = [] } = useMetrics();
+  const { data: allScores = [] } = useQuery({
+    queryKey: ["assessments", "all"],
+    queryFn: async () => (await api.get<Assessment[]>("/assessments/")).data,
+  });
+  const traitsOf = (student: User) => {
+    const { strengths, weaknesses } = strengthsAndWeaknesses(
+      allScores.filter((a) => a.student === student.id),
+      metrics,
+    );
+    return (
+      <FighterTraits
+        student={student}
+        fighterClass={fighterClasses.find((c) => c.id === student.fighter_class)}
+        strengths={strengths}
+        weaknesses={weaknesses}
+      />
+    );
+  };
 
   const studentsById = useMemo(() => new Map(students.map((s) => [s.id, s])), [students]);
   const visibleDrills = drills.filter((d) => d.name.toLowerCase().includes(search.toLowerCase()));
@@ -321,6 +343,7 @@ export default function BoardPage() {
                   assignments={columnAssignments(blockAssignments, column)}
                   studentsById={studentsById}
                   checkIn={checkInOf(student.id)}
+                  traits={traitsOf(student)}
                   selected={selected.has(student.id)}
                   onToggleSelect={() => toggleSelect(student.id)}
                   onOpen={setEditing}

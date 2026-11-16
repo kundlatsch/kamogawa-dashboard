@@ -5,11 +5,13 @@ import type { ColumnKey } from "../../../lib/board";
 import { Draggable, Droppable } from "./dnd";
 import Avatar from "../../../components/Avatar";
 import StudentLink from "../../../components/StudentLink";
+import type { ReactNode } from "react";
 
 export default function BoardColumn({
   column,
   student,
   checkIn,
+  traits,
   assignments,
   studentsById,
   selected,
@@ -21,6 +23,8 @@ export default function BoardColumn({
   student?: User;
   /** The student's check-in for this class, if any (shown as a badge). */
   checkIn?: CheckIn;
+  /** Fighter style, strengths and weaknesses shown under the header. */
+  traits?: ReactNode;
   assignments: Assignment[];
   studentsById: Map<number, User>;
   selected?: boolean;
@@ -76,6 +80,7 @@ export default function BoardColumn({
           )
         )}
       </header>
+      {traits}
       <div className="flex min-h-40 flex-1 flex-col gap-2 p-2">
         {assignments.length === 0 && <p className="p-2 text-center text-xs text-smoke">{t("board.dropHere")}</p>}
         {assignments.map((assignment) => {
