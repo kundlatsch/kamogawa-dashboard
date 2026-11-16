@@ -490,7 +490,10 @@
     "absences_other": "{{count}} faltas",
     "loadError": "Não foi possível carregar o ranking. Recarregue a página.",
     "missionsCompleted_one": "{{count}} missão concluída",
-    "missionsCompleted_other": "{{count}} missões concluídas"
+    "missionsCompleted_other": "{{count}} missões concluídas",
+    "attended_zero": "0 presenças",
+    "absences_zero": "0 faltas",
+    "missionsCompleted_zero": "0 missões concluídas"
   },
   "progress": {
     "title": "Meu lutador",
