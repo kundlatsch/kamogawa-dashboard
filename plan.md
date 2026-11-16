@@ -442,3 +442,14 @@ Requested by Gustavo plus the PM's audio feedback:
 - Students see a read-only ranking (`ranking/`, attendance or missions).
 - Class times are configurable per weekday (`WeeklySchedule.weekday_times`);
   changing them moves only upcoming, untouched regular drafts.
+
+### 11.2 Weekly absences (2026-11-16)
+
+- Students (and coaches, on the student's page) set "treinos por semana"
+  (`User.weekly_classes`, blank = not tracked).
+- Every Sunday at 23:00 the `scheduler` service (`run_scheduler`) closes the
+  week (`training/absences.py`): absences = committed classes minus check-ins
+  not marked as missed, never fewer than the coach's marked misses. Results
+  are stored in `WeeklyAbsence` (re-runnable: `record_weekly_absences --week`).
+- The ranking's attendance counts check-ins up to today that were not marked
+  missed; absences = closed weeks plus marked misses in the open week.

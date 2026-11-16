@@ -53,6 +53,8 @@ See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
 - Multi-gym: every tenant-owned query must be filtered by `request.user.gym`
   (use `GymScopedViewSet` / `GymScopedSerializer` in `training`), and every new
   endpoint needs a cross-gym isolation test (see `training/test_gym_isolation.py`).
+- Scheduled jobs run in the `scheduler` service (`run_scheduler`, same backend
+  image); weekly absences close every Sunday at 23:00 server time.
 - Keep `seed_test` (fixture `training/fixtures/test_seed_pt-BR.json`) working when
   models change; `training/test_seed.py` runs it on every test run.
 - Nothing about the schedule is hardcoded: training weekdays, times, and
@@ -65,6 +67,7 @@ docker compose up --build                 # start the full stack
 docker compose exec backend python manage.py migrate
 docker compose exec backend python manage.py seed_demo
 docker compose exec backend python manage.py seed_test   # known test logins (treinador, aluno1..4)
+docker compose exec backend python manage.py record_weekly_absences --previous  # re-close last week
 docker compose exec backend pytest
 docker compose exec frontend npm test
 ```

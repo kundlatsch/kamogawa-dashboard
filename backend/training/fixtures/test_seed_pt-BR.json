@@ -1,22 +1,114 @@
 {
-  "gym": {"name": "Chacão Boxing Team", "slug": "chacao-boxing-team"},
-  "coach": {"username": "treinador", "password": "treinador", "display_name": "Treinador", "avatar_emoji": "🏆", "color": "#e9b949"},
+  "gym": {
+    "name": "Chacão Boxing Team",
+    "slug": "chacao-boxing-team"
+  },
+  "coach": {
+    "username": "treinador",
+    "password": "treinador",
+    "display_name": "Treinador",
+    "avatar_emoji": "🏆",
+    "color": "#e9b949"
+  },
   "students": [
-    {"username": "aluno1", "password": "aluno1", "display_name": "Aluno 1", "avatar_emoji": "🐯", "color": "#f77f00", "handedness": "RIGHT"},
-    {"username": "aluno2", "password": "aluno2", "display_name": "Aluno 2", "avatar_emoji": "🦁", "color": "#3a86ff", "handedness": "LEFT"},
-    {"username": "aluno3", "password": "aluno3", "display_name": "Aluno 3", "avatar_emoji": "🐺", "color": "#2a9d8f", "handedness": "RIGHT"},
-    {"username": "aluno4", "password": "aluno4", "display_name": "Aluno 4", "avatar_emoji": "🦅", "color": "#9b5de5", "handedness": "RIGHT"}
+    {
+      "username": "aluno1",
+      "password": "aluno1",
+      "display_name": "Aluno 1",
+      "avatar_emoji": "🐯",
+      "color": "#f77f00",
+      "handedness": "RIGHT",
+      "weekly_classes": 2
+    },
+    {
+      "username": "aluno2",
+      "password": "aluno2",
+      "display_name": "Aluno 2",
+      "avatar_emoji": "🦁",
+      "color": "#3a86ff",
+      "handedness": "LEFT",
+      "weekly_classes": 2
+    },
+    {
+      "username": "aluno3",
+      "password": "aluno3",
+      "display_name": "Aluno 3",
+      "avatar_emoji": "🐺",
+      "color": "#2a9d8f",
+      "handedness": "RIGHT",
+      "weekly_classes": 2
+    },
+    {
+      "username": "aluno4",
+      "password": "aluno4",
+      "display_name": "Aluno 4",
+      "avatar_emoji": "🦅",
+      "color": "#9b5de5",
+      "handedness": "RIGHT",
+      "weekly_classes": 2
+    }
   ],
   "extra_drills": [
-    {"name": "Mobilidade articular", "category": "Aquecimento", "emoji": "🤸", "color": "#2a9d8f", "default_duration_minutes": 8, "description": "Pescoço, ombros, quadril, joelhos e tornozelos, 10 repetições cada."},
-    {"name": "Polichinelo", "category": "Aquecimento", "emoji": "⭐", "color": "#e9b949", "default_duration_minutes": 3, "description": "Ritmo constante para elevar a frequência cardíaca."}
+    {
+      "name": "Mobilidade articular",
+      "category": "Aquecimento",
+      "emoji": "🤸",
+      "color": "#2a9d8f",
+      "default_duration_minutes": 8,
+      "description": "Pescoço, ombros, quadril, joelhos e tornozelos, 10 repetições cada."
+    },
+    {
+      "name": "Polichinelo",
+      "category": "Aquecimento",
+      "emoji": "⭐",
+      "color": "#e9b949",
+      "default_duration_minutes": 3,
+      "description": "Ritmo constante para elevar a frequência cardíaca."
+    }
   ],
   "class_plan": [
-    {"block": 0, "mode": "everyone", "drills": ["Mobilidade articular"]},
-    {"block": 1, "mode": "everyone", "drills": ["Pular corda", "Polichinelo"]},
-    {"block": 2, "mode": "each", "drills": ["Sombra"]},
-    {"block": 3, "mode": "pairs", "drills": ["Toque no ombro"]},
-    {"block": 4, "mode": "pairs", "drills": ["Esquiva e contra-ataque"]},
-    {"block": 5, "mode": "everyone", "drills": ["Alongamento"]}
+    {
+      "block": 0,
+      "mode": "everyone",
+      "drills": [
+        "Mobilidade articular"
+      ]
+    },
+    {
+      "block": 1,
+      "mode": "everyone",
+      "drills": [
+        "Pular corda",
+        "Polichinelo"
+      ]
+    },
+    {
+      "block": 2,
+      "mode": "each",
+      "drills": [
+        "Sombra"
+      ]
+    },
+    {
+      "block": 3,
+      "mode": "pairs",
+      "drills": [
+        "Toque no ombro"
+      ]
+    },
+    {
+      "block": 4,
+      "mode": "pairs",
+      "drills": [
+        "Esquiva e contra-ataque"
+      ]
+    },
+    {
+      "block": 5,
+      "mode": "everyone",
+      "drills": [
+        "Alongamento"
+      ]
+    }
   ]
 }
