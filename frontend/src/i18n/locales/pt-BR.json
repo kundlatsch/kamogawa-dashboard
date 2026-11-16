@@ -119,7 +119,12 @@
     "attendanceHint": "Depois da aula, marque quem veio.",
     "removeCheckin": "Tirar {{name}} da lista",
     "addedByCoach": "adicionado pelo treinador",
-    "publishToCheckIn": "Os alunos só conseguem confirmar presença depois que a aula é publicada. Você pode adicionar alunos à lista a qualquer momento."
+    "publishToCheckIn": "Os alunos só conseguem confirmar presença depois que a aula é publicada. Você pode adicionar alunos à lista a qualquer momento.",
+    "toSparring": "Transformar em sparring",
+    "toRegular": "Voltar para aula normal",
+    "confirmSparring": "Transformar esta aula em sparring? Os exercícios já montados continuam.",
+    "confirmSparringPublished": "Transformar esta aula em sparring? Os exercícios continuam e todos os alunos recebem o aviso de sparring agora.",
+    "confirmRegular": "Voltar esta aula para aula normal? Os exercícios continuam."
   },
   "student": {
     "hello": "Fala, {{name}}! 👊",

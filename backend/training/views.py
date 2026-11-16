@@ -174,6 +174,22 @@ class TrainingSessionViewSet(GymScopedViewSet):
         session.save(update_fields=["status"])
         return Response(self.get_serializer(session).data)
 
+    @action(detail=True, methods=["post"], url_path="convert")
+    def convert(self, request, pk=None):
+        """Turn a class into sparring (or back into a regular class), keeping its drills.
+
+        Converting a published class to sparring sends the sparring alert right away.
+        """
+        session = self.get_object()
+        kind = request.data.get("kind")
+        if kind not in TrainingSession.Kind.values:
+            raise ValidationError({"kind": "Unknown session kind."})
+        session.kind = kind
+        session.save(update_fields=["kind"])
+        if kind == TrainingSession.Kind.SPARRING and session.status == TrainingSession.Status.PUBLISHED:
+            notify_session_published(session)
+        return Response(self.get_serializer(session).data)
+
     @action(detail=False, methods=["post"])
     def sparring(self, request):
         """Dedicated entry point for sparring sessions (students get a special alert on publish)."""

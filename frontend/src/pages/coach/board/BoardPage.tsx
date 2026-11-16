@@ -90,6 +90,11 @@ export default function BoardPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["sessions"] }),
   });
 
+  const convert = useMutation({
+    mutationFn: async (kind: "SPARRING" | "REGULAR") => api.post(`/sessions/${session!.id}/convert/`, { kind }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["sessions"] }),
+  });
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
@@ -218,7 +223,23 @@ export default function BoardPage() {
             <KindBadge kind={session.kind} />
             <StatusBadge status={session.status} />
             {session.title && <span className="text-smoke">{session.title}</span>}
-            <div className="ml-auto">
+            <div className="ml-auto flex flex-wrap gap-2">
+              <Button
+                variant={session.kind === "SPARRING" ? "ghost" : "danger"}
+                disabled={convert.isPending}
+                onClick={() => {
+                  const toSparring = session.kind !== "SPARRING";
+                  const question =
+                    toSparring && session.status === "PUBLISHED"
+                      ? t("board.confirmSparringPublished")
+                      : toSparring
+                        ? t("board.confirmSparring")
+                        : t("board.confirmRegular");
+                  if (window.confirm(question)) convert.mutate(toSparring ? "SPARRING" : "REGULAR");
+                }}
+              >
+                {session.kind === "SPARRING" ? t("board.toRegular") : `🥊 ${t("board.toSparring")}`}
+              </Button>
               {session.status === "DRAFT" ? (
                 <Button
                   onClick={() => publish.mutate("publish")}

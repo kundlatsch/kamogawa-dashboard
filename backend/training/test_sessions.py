@@ -1,5 +1,6 @@
 from datetime import date
 
+from accounts.models import User
 from training.models import TrainingSession, WeeklySchedule
 
 # 2026-11-16 is a Monday.
@@ -79,3 +80,22 @@ def test_session_range_filter(coach, api_as):
     TrainingSession.objects.create(gym=coach.gym, date=date(2026, 12, 1))
     data = api_as(coach).get("/api/sessions/?from=2026-11-01&to=2026-11-30").json()
     assert len(data) == 1
+
+
+def test_convert_class_to_sparring_keeps_drills_and_alerts_students(api_as, make_user, gym):
+    from notifications.models import Notification
+    from training.models import Assignment, Drill
+
+    coach = make_user("coach2", User.Role.COACH)
+    ana = make_user("ana")
+    session = TrainingSession.objects.create(gym=gym, date=date(2026, 11, 20), status=TrainingSession.Status.PUBLISHED)
+    drill = Drill.objects.create(gym=gym, name="Sombra")
+    Assignment.objects.create(session=session, drill=drill, is_broadcast=True)
+    client = api_as(coach)
+    response = client.post(f"/api/sessions/{session.id}/convert/", {"kind": "SPARRING"})
+    assert response.status_code == 200 and response.json()["kind"] == "SPARRING"
+    assert session.assignments.count() == 1
+    assert Notification.objects.filter(recipient=ana, kind=Notification.Kind.SPARRING, session=session).exists()
+    assert client.post(f"/api/sessions/{session.id}/convert/", {"kind": "REGULAR"}).json()["kind"] == "REGULAR"
+    assert client.post(f"/api/sessions/{session.id}/convert/", {"kind": "PARTY"}).status_code == 400
+    assert api_as(ana).post(f"/api/sessions/{session.id}/convert/", {"kind": "SPARRING"}).status_code == 403
