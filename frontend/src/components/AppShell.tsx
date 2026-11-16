@@ -63,6 +63,18 @@ export default function AppShell({ nav }: { nav: NavItem[] }) {
           </nav>
           <div className="flex items-center gap-3 text-sm">
             {(isStudent || user?.role === "COACH") && <NotificationBell />}
+            {user?.role === "COACH" && (
+              <NavLink
+                to="/settings"
+                title={t("nav.settings")}
+                aria-label={t("nav.settings")}
+                className={({ isActive }) =>
+                  `rounded-md px-2 py-1 text-lg ${isActive ? "bg-glove text-chalk" : "text-smoke hover:text-chalk"}`
+                }
+              >
+                ⚙️
+              </NavLink>
+            )}
             <NavLink
               to="/profile"
               title={t("profile.title")}

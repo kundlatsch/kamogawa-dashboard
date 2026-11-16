@@ -63,7 +63,6 @@ function AppRoutes() {
       { to: "/week", labelKey: "nav.week" },
       { to: "/assessments", labelKey: "nav.assessments" },
       { to: "/ranking", labelKey: "nav.ranking" },
-      { to: "/settings", labelKey: "nav.settings" },
     ];
     return (
       <Routes>

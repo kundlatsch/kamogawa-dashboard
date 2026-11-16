@@ -132,10 +132,10 @@
   "student": {
     "hello": "Fala, {{name}}! 👊",
     "restDay": "Sem treino hoje. Descansa e volta mais forte!",
-    "noDrills": "O treinador ainda não definiu seus exercícios para esta sessão.",
+    "noDrills": "O treinador ainda não definiu seus exercícios para este treino.",
     "everyone": "Todos",
     "upcomingHint": "Os exercícios aparecem no dia do treino.",
-    "noUpcoming": "Nenhuma sessão marcada por enquanto.",
+    "noUpcoming": "Nenhum treino marcado por enquanto.",
     "weekObjective": "Objetivo da semana",
     "blockAt": "às {{time}}",
     "thisWeek": "Sua semana",
@@ -159,7 +159,7 @@
   "settings": {
     "title": "Configurações",
     "schedule": "Dias de treino",
-    "scheduleHint": "Dias da semana em que as sessões regulares são criadas automaticamente.",
+    "scheduleHint": "Dias da semana em que os treinos regulares são criados automaticamente.",
     "startTime": "Horário padrão",
     "saved": "Salvo!",
     "categories": "Categorias de exercício",
@@ -245,8 +245,8 @@
       "DRAFT": "Rascunho",
       "PUBLISHED": "Publicado"
     },
-    "newExtra": "Sessão extra",
-    "newSparring": "Nova sessão de sparring",
+    "newExtra": "Treino extra",
+    "newSparring": "Novo treino de sparring",
     "createSparring": "Criar sparring",
     "sparringDefaultTitle": "Dia de sparring",
     "sparringHint": "Quando você publicar, todos os alunos recebem um alerta especial de sparring.",
@@ -254,7 +254,7 @@
     "time": "Horário",
     "title": "Título",
     "notes": "Observações",
-    "saveError": "Não foi possível criar a sessão."
+    "saveError": "Não foi possível criar o treino."
   },
   "roles": {
     "ACCOUNT_ADMIN": "Admin de contas",
