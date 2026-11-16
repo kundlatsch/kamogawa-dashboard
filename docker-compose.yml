@@ -29,6 +29,7 @@ services:
     command: sh -c "python manage.py migrate --noinput && python manage.py ensure_admin && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
+      - media-data:/app/media
     ports:
       - "${BACKEND_PORT:-8010}:8000"
     depends_on:
@@ -50,4 +51,5 @@ services:
 
 volumes:
   postgres-data:
+  media-data:
   frontend-node-modules:

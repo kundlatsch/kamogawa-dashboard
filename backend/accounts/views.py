@@ -2,9 +2,12 @@ from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action, api_view, parser_classes, permission_classes
+from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
+from .avatars import InvalidImage, remove_avatar, replace_avatar
 from .models import Gym, User
 from .passwords import generate_password
 from .permissions import IsAccountAdmin, IsCoach
@@ -25,6 +28,23 @@ def me(request):
         serializer = ProfileSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+    return Response(UserSerializer(request.user).data)
+
+
+@api_view(["POST", "DELETE"])
+@parser_classes([MultiPartParser])
+def my_avatar(request):
+    """Upload (multipart field `avatar`) or remove the signed-in user's profile photo."""
+    if request.method == "DELETE":
+        remove_avatar(request.user)
+    else:
+        upload = request.FILES.get("avatar")
+        if upload is None:
+            raise ValidationError({"avatar": "Send an image in the `avatar` field."})
+        try:
+            replace_avatar(request.user, upload)
+        except InvalidImage as error:
+            raise ValidationError({"avatar": str(error)})
     return Response(UserSerializer(request.user).data)
 
 

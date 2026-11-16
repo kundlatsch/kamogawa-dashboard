@@ -6,7 +6,8 @@ services:
     environment:
       DJANGO_DEBUG: "false"
     command: !reset null
-    volumes: !reset []
+    volumes: !override
+      - media-data:/app/media
     ports: !reset []
 
   frontend:

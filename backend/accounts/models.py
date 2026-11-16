@@ -51,6 +51,8 @@ class User(AbstractUser):
     display_name = models.CharField(max_length=80, blank=True)
     avatar_emoji = models.CharField(max_length=16, default="🥊")
     color = models.CharField(max_length=7, default="#d62828")
+    # Optional profile photo; the emoji is shown when there is none.
+    avatar = models.ImageField(upload_to="avatars/", blank=True)
     handedness = models.CharField(max_length=16, choices=Handedness.choices, default=Handedness.UNSPECIFIED)
     # Free text the user keeps up to date: injuries, sparring or equipment restrictions.
     limitations = models.TextField(blank=True, max_length=1000)

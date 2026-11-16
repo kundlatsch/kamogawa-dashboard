@@ -33,8 +33,13 @@ class ChangePasswordSerializer(serializers.Serializer):
         return attrs
 
 
+def avatar_url(user) -> str | None:
+    return user.avatar.url if user.avatar else None
+
+
 class UserSerializer(serializers.ModelSerializer):
     gym = GymSummarySerializer(read_only=True)
+    avatar_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -43,6 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "display_name",
             "avatar_emoji",
+            "avatar_url",
             "color",
             "handedness",
             "limitations",
@@ -51,6 +57,9 @@ class UserSerializer(serializers.ModelSerializer):
             "is_active",
         ]
         read_only_fields = ["id", "role", "gym"]
+
+    def get_avatar_url(self, user):
+        return avatar_url(user)
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -67,9 +76,14 @@ class ProfileSerializer(serializers.ModelSerializer):
 class PublicUserSerializer(serializers.ModelSerializer):
     """Minimal representation used when showing training partners."""
 
+    avatar_url = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ["id", "display_name", "avatar_emoji", "color"]
+        fields = ["id", "display_name", "avatar_emoji", "avatar_url", "color"]
+
+    def get_avatar_url(self, user):
+        return avatar_url(user)
 
 
 class NewAccountSerializer(serializers.Serializer):

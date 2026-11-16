@@ -12,6 +12,7 @@ export default defineConfig({
     watch: { usePolling: true, interval: 300 },
     proxy: {
       "/api": { target: apiTarget, changeOrigin: true },
+      "/media": { target: apiTarget, changeOrigin: true },
     },
   },
   test: {
