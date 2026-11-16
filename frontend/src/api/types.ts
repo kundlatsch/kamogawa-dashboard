@@ -95,6 +95,8 @@ export interface Assignment {
   drill_detail: Drill;
   participants: number[];
   is_broadcast: boolean;
+  /** Class block (mobility, warm-up, ...); null for drills created before blocks existed. */
+  block: number | null;
   order: number;
   notes: string;
   rounds: number | null;
@@ -113,6 +115,7 @@ export interface SessionSummary {
 export interface RoutineItem {
   id: number;
   drill: Drill;
+  block: SessionBlock | null;
   is_broadcast: boolean;
   order: number;
   notes: string;
@@ -186,4 +189,12 @@ export interface CurrentCycle {
   macrocycle: Macrocycle | null;
   mesocycle: number | null;
   microcycle: number | null;
+}
+
+export type BlockMode = "COLLECTIVE" | "INDIVIDUAL" | "PAIRS";
+
+export interface SessionBlock extends NamedItem {
+  mode: BlockMode;
+  /** Minutes after the class starts (collective blocks with a fixed time). */
+  start_offset_minutes: number | null;
 }

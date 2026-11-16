@@ -1,4 +1,12 @@
-import { pythonWeekday, startOfWeek, toISODate, fromISODate, weekdayNames } from "./dates";
+import {
+  addMinutesToTime,
+  blockStartTime,
+  fromISODate,
+  pythonWeekday,
+  startOfWeek,
+  toISODate,
+  weekdayNames,
+} from "./dates";
 
 describe("dates", () => {
   it("round-trips ISO dates without timezone drift", () => {
@@ -16,5 +24,15 @@ describe("dates", () => {
 
   it("localizes weekday names", () => {
     expect(weekdayNames("pt-BR")[0].toLowerCase()).toContain("segunda");
+  });
+});
+
+describe("block times", () => {
+  it("adds minutes to the class start", () => {
+    expect(addMinutesToTime("19:00:00", 10)).toBe("19:10");
+    expect(addMinutesToTime("23:50", 20)).toBe("00:10");
+    expect(blockStartTime("19:00:00", 0)).toBe("19:00");
+    expect(blockStartTime("19:00:00", null)).toBeNull();
+    expect(blockStartTime(null, 10)).toBeNull();
   });
 });

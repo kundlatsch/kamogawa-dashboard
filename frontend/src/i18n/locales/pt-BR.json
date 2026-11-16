@@ -93,7 +93,15 @@
     "objectivePlaceholder": "Deixe em branco para usar o objetivo da semana",
     "noObjective": "Sem objetivo (monte os ciclos em Ciclos)",
     "fromWeek": "da semana",
-    "changeObjective": "alterar"
+    "changeObjective": "alterar",
+    "blocks": "Blocos da aula",
+    "noBlock": "Sem bloco",
+    "noBlockHint": "Treinos criados antes dos blocos existirem. Remova-os ou recrie no bloco certo.",
+    "blockMode": {
+      "COLLECTIVE": "Bloco coletivo: arraste o treino para \"Todos\". Todos fazem juntos no horário fixo.",
+      "INDIVIDUAL": "Bloco individual: cada aluno começa assim que termina o aquecimento geral. Arraste um treino para cada aluno.",
+      "PAIRS": "Bloco em duplas: solte o treino em um aluno e arraste o parceiro sobre o card."
+    }
   },
   "student": {
     "hello": "Fala, {{name}}! 👊",
@@ -102,7 +110,8 @@
     "everyone": "Todos",
     "upcomingHint": "Os exercícios aparecem no dia do treino.",
     "noUpcoming": "Nenhuma sessão marcada por enquanto.",
-    "weekObjective": "Objetivo da semana"
+    "weekObjective": "Objetivo da semana",
+    "blockAt": "às {{time}}"
   },
   "notifications": {
     "title": "Avisos",
@@ -139,7 +148,19 @@
     "phasesHint": "Tipos de semana dentro de um mesociclo (adaptação, choque…). Um mesociclo novo começa com uma semana de cada fase.",
     "phaseName": "Nome da fase",
     "addPhase": "Adicionar fase",
-    "duplicateName": "Já existe um item com esse nome."
+    "duplicateName": "Já existe um item com esse nome.",
+    "blocks": "Blocos da aula",
+    "blocksHint": "As partes de toda aula, em ordem. Blocos coletivos podem ter horário fixo (minutos depois do início da aula).",
+    "blockName": "Nome do bloco",
+    "addBlock": "Adicionar bloco",
+    "blockMode": "Formato",
+    "startOffset": "Começa (min após o início)",
+    "noFixedTime": "sem horário fixo",
+    "mode": {
+      "COLLECTIVE": "Coletivo",
+      "INDIVIDUAL": "Individual",
+      "PAIRS": "Duplas"
+    }
   },
   "calendar": {
     "previous": "Semanas anteriores",

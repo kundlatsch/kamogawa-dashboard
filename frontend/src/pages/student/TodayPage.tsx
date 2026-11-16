@@ -7,7 +7,8 @@ import type { MyRoutine, RoutineItem } from "../../api/types";
 import { KindBadge } from "../../components/SessionBadge";
 import SparringBanner from "../../components/SparringBanner";
 import { useAuth } from "../../auth/AuthContext";
-import { formatDate } from "../../lib/dates";
+import { blockStartTime, formatDate } from "../../lib/dates";
+import { groupByBlock } from "../../lib/routine";
 import { youtubeEmbedUrl, youtubeId } from "../../lib/youtube";
 import Avatar from "../../components/Avatar";
 
@@ -63,11 +64,32 @@ export default function TodayPage() {
           {session.routine.length === 0 ? (
             <p className="text-sm text-smoke">{t("student.noDrills")}</p>
           ) : (
-            <ol className="flex flex-col gap-3">
-              {session.routine.map((item, index) => (
-                <RoutineCard key={item.id} item={item} step={index + 1} />
-              ))}
-            </ol>
+            <div className="flex flex-col gap-4">
+              {groupByBlock(session.routine).map((group) => {
+                const time =
+                  group.block?.mode === "COLLECTIVE"
+                    ? blockStartTime(session.start_time, group.block.start_offset_minutes)
+                    : null;
+                return (
+                  <section key={group.block?.id ?? "none"} className="flex flex-col gap-2">
+                    {group.block && (
+                      <h3
+                        className="flex items-center gap-2 border-l-4 pl-2 font-display text-lg tracking-wide uppercase"
+                        style={{ borderColor: group.block.color }}
+                      >
+                        {group.block.name}
+                        {time && <span className="font-sans text-sm text-smoke normal-case">{t("student.blockAt", { time })}</span>}
+                      </h3>
+                    )}
+                    <ol className="flex flex-col gap-3">
+                      {group.items.map((item) => (
+                        <RoutineCard key={item.id} item={item} step={session.routine.indexOf(item) + 1} />
+                      ))}
+                    </ol>
+                  </section>
+                );
+              })}
+            </div>
           )}
         </div>
       ))}

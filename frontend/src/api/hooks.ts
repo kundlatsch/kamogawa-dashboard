@@ -8,6 +8,7 @@ import type {
   DrillCategory,
   Macrocycle,
   NamedItem,
+  SessionBlock,
   TrainingSession,
   User,
   WeeklySchedule,
@@ -51,4 +52,10 @@ export const useCurrentCycle = () =>
   useQuery({
     queryKey: ["macrocycles", "current"],
     queryFn: async () => (await api.get<CurrentCycle>("/cycles/current/")).data,
+  });
+
+export const useSessionBlocks = () =>
+  useQuery({
+    queryKey: ["/session-blocks/"],
+    queryFn: async () => (await api.get<SessionBlock[]>("/session-blocks/")).data,
   });

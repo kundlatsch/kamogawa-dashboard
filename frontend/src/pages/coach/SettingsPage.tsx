@@ -7,6 +7,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { Wordmark } from "../../components/AppShell";
 import { useCategories, useSchedule } from "../../api/hooks";
 import type { DrillCategory } from "../../api/types";
+import BlockSettings from "../../components/BlockSettings";
 import NamedListSettings from "../../components/NamedListSettings";
 import { ColorPicker } from "../../components/pickers";
 import { Button, Input, PageHeader } from "../../components/ui";
@@ -19,6 +20,7 @@ export default function SettingsPage() {
       <PageHeader title={t("settings.title")} />
       <GymSettings />
       <ScheduleSettings />
+      <BlockSettings />
       <CategorySettings />
       <NamedListSettings
         path="/valences/"

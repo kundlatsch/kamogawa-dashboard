@@ -16,13 +16,13 @@ import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { api } from "../../../api/client";
-import { useDrills, useSessions, useStudents } from "../../../api/hooks";
-import type { Assignment, TrainingSession, User } from "../../../api/types";
+import { useDrills, useSessionBlocks, useSessions, useStudents } from "../../../api/hooks";
+import type { Assignment, SessionBlock, TrainingSession, User } from "../../../api/types";
 import DrillCard from "../../../components/DrillCard";
 import { KindBadge, StatusBadge } from "../../../components/SessionBadge";
 import { Button, PageHeader } from "../../../components/ui";
 import { columnAssignments, columnStudentId, dropTargets, moveBefore, studentColumn } from "../../../lib/board";
-import { addDays, formatDate, toISODate, todayISO } from "../../../lib/dates";
+import { addDays, blockStartTime, formatDate, toISODate, todayISO } from "../../../lib/dates";
 import AssignmentModal, { type AssignmentChanges } from "./AssignmentModal";
 import BoardColumn from "./BoardColumn";
 import { Draggable, type DragData, type DropData } from "./dnd";
@@ -41,6 +41,8 @@ export default function BoardPage() {
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [dragging, setDragging] = useState<DragData | null>(null);
   const [editing, setEditing] = useState<Assignment | null>(null);
+  const { data: blocks = [] } = useSessionBlocks();
+  const [blockChoice, setBlockChoice] = useState<number | "none" | null>(null);
 
   const today = todayISO();
   const requestedId = Number(params.get("session")) || null;
@@ -57,6 +59,12 @@ export default function BoardPage() {
     enabled: Boolean(session),
     queryFn: async () => (await api.get<Assignment[]>("/assignments/", { params: { session: session!.id } })).data,
   });
+
+  const hasUnblocked = assignments.some((a) => a.block === null);
+  const activeBlock: number | "none" =
+    blockChoice !== null && (blockChoice !== "none" || hasUnblocked) ? blockChoice : (blocks[0]?.id ?? "none");
+  // The board shows one block of the class at a time; new drills land in that block.
+  const blockAssignments = assignments.filter((a) => (activeBlock === "none" ? a.block === null : a.block === activeBlock));
 
   const studentsById = useMemo(() => new Map(students.map((s) => [s.id, s])), [students]);
   const visibleDrills = drills.filter((d) => d.name.toLowerCase().includes(search.toLowerCase()));
@@ -95,7 +103,8 @@ export default function BoardPage() {
         targetStudent === null
           ? { is_broadcast: true, participants: [] }
           : { is_broadcast: false, participants: dropTargets(targetStudent, selected) };
-      run(() => api.post("/assignments/", { session: session.id, drill: source.drillId, ...body }));
+      const block = activeBlock === "none" ? null : activeBlock;
+      run(() => api.post("/assignments/", { session: session.id, drill: source.drillId, block, ...body }));
       return;
     }
 
@@ -222,6 +231,16 @@ export default function BoardPage() {
         {session && <SessionObjective key={session.id} session={session} />}
 
         <p className="text-sm text-smoke">{t("board.howTo")}</p>
+        {session && (
+          <BlockTabs
+            blocks={blocks}
+            assignments={assignments}
+            active={activeBlock}
+            showUnblocked={hasUnblocked}
+            sessionStart={session.start_time}
+            onSelect={setBlockChoice}
+          />
+        )}
         {selected.size > 1 && (
           <p className="rounded-lg border border-glove bg-glove/10 p-2 text-sm">
             {t("board.groupSelected", { count: selected.size })}{" "}
@@ -258,7 +277,7 @@ export default function BoardPage() {
           <div className="flex min-w-0 flex-1 gap-3 overflow-x-auto pb-4">
             <BoardColumn
               column="broadcast"
-              assignments={columnAssignments(assignments, "broadcast")}
+              assignments={columnAssignments(blockAssignments, "broadcast")}
               studentsById={studentsById}
               onOpen={setEditing}
               onRemove={(a) => removeFromColumn(a, "broadcast")}
@@ -270,7 +289,7 @@ export default function BoardPage() {
                   key={student.id}
                   column={column}
                   student={student}
-                  assignments={columnAssignments(assignments, column)}
+                  assignments={columnAssignments(blockAssignments, column)}
                   studentsById={studentsById}
                   selected={selected.has(student.id)}
                   onToggleSelect={() => toggleSelect(student.id)}
@@ -357,5 +376,64 @@ function SessionObjective({ session }: { session: TrainingSession }) {
         {t("board.changeObjective")}
       </button>
     </p>
+  );
+}
+
+const MODE_ICONS = { COLLECTIVE: "📣", INDIVIDUAL: "🧍", PAIRS: "🤝" } as const;
+
+/** One tab per class block, in order, with its fixed time and how many drills it holds. */
+function BlockTabs({
+  blocks,
+  assignments,
+  active,
+  showUnblocked,
+  sessionStart,
+  onSelect,
+}: {
+  blocks: SessionBlock[];
+  assignments: Assignment[];
+  active: number | "none";
+  showUnblocked: boolean;
+  sessionStart: string | null;
+  onSelect: (block: number | "none") => void;
+}) {
+  const { t } = useTranslation();
+  const current = blocks.find((b) => b.id === active);
+  const tab = (key: number | "none", label: string, color: string, extra: string | null, count: number) => (
+    <button
+      key={key}
+      role="tab"
+      aria-selected={active === key}
+      onClick={() => onSelect(key)}
+      className={`flex shrink-0 items-center gap-2 rounded-lg border px-3 py-1.5 text-sm ${
+        active === key ? "border-chalk bg-rope text-chalk" : "border-rope text-smoke hover:text-chalk"
+      }`}
+      style={{ borderBottom: `3px solid ${color}` }}
+    >
+      <span className="font-semibold">{label}</span>
+      {extra && <span className="text-xs">{extra}</span>}
+      <span className="rounded-full bg-ring px-1.5 text-xs">{count}</span>
+    </button>
+  );
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div role="tablist" aria-label={t("board.blocks")} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+        {blocks.map((block) =>
+          tab(
+            block.id,
+            `${MODE_ICONS[block.mode]} ${block.name}`,
+            block.color,
+            block.mode === "COLLECTIVE" ? blockStartTime(sessionStart, block.start_offset_minutes) : null,
+            assignments.filter((a) => a.block === block.id).length,
+          ),
+        )}
+        {showUnblocked &&
+          tab("none", t("board.noBlock"), "transparent", null, assignments.filter((a) => a.block === null).length)}
+      </div>
+      <p className="text-xs text-smoke">
+        {current ? t(`board.blockMode.${current.mode}`) : t("board.noBlockHint")}
+      </p>
+    </div>
   );
 }

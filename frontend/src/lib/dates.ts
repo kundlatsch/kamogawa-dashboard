@@ -42,3 +42,15 @@ export function weekdayNames(locale: string, style: "long" | "short" = "long"): 
     new Intl.DateTimeFormat(locale, { weekday: style }).format(addDays(monday, i)),
   );
 }
+
+/** "19:00" (or "19:00:00") plus minutes, as "HH:MM"; wraps past midnight. */
+export function addMinutesToTime(time: string, minutes: number): string {
+  const [h, m] = time.split(":").map(Number);
+  const total = (((h * 60 + m + minutes) % 1440) + 1440) % 1440;
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
+
+/** Start time of a block with a fixed time, or null. */
+export function blockStartTime(sessionStart: string | null, offset: number | null): string | null {
+  return sessionStart && offset !== null ? addMinutesToTime(sessionStart, offset) : null;
+}
