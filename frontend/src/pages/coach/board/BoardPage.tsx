@@ -33,8 +33,8 @@ export default function BoardPage() {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const [params, setParams] = useSearchParams();
-  const from = toISODate(addDays(new Date(), -7));
-  const to = toISODate(addDays(new Date(), 28));
+  const from = toISODate(addDays(new Date(), -60));
+  const to = toISODate(addDays(new Date(), 60));
   const { data: sessions = [] } = useSessions(from, to);
   const { data: students = [] } = useStudents();
   const { data: drills = [] } = useDrills();
@@ -46,9 +46,10 @@ export default function BoardPage() {
   const [blockChoice, setBlockChoice] = useState<number | "none" | null>(null);
 
   const today = todayISO();
+  const nextDate = sessions.find((s) => s.date >= today)?.date;
   const requestedId = Number(params.get("session")) || null;
-  const session =
-    sessions.find((s) => s.id === requestedId) ?? sessions.find((s) => s.date >= today) ?? sessions[sessions.length - 1];
+  // Planejamento works on the next class; other days are opened from the calendar (?session=).
+  const session = sessions.find((s) => s.id === requestedId) ?? sessions.find((s) => s.date >= today);
 
   useEffect(() => {
     if (session && session.id !== requestedId) setParams({ session: String(session.id) }, { replace: true });
@@ -74,6 +75,9 @@ export default function BoardPage() {
     refetchInterval: 60_000,
   });
   const checkInOf = (studentId: number) => checkIns.find((c) => c.student === studentId);
+
+  // Exercises are planned for whoever confirmed presence (the coach can add students to the list).
+  const presentStudents = students.filter((s) => checkIns.some((c) => c.student === s.id));
 
   const studentsById = useMemo(() => new Map(students.map((s) => [s.id, s])), [students]);
   const visibleDrills = drills.filter((d) => d.name.toLowerCase().includes(search.toLowerCase()));
@@ -184,7 +188,7 @@ export default function BoardPage() {
     return assignment && <DrillCard drill={assignment.drill_detail} compact />;
   })();
 
-  if (sessions.length === 0) {
+  if (!session) {
     return (
       <section>
         <PageHeader title={t("nav.board")} />
@@ -198,22 +202,6 @@ export default function BoardPage() {
   return (
     <DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setDragging(null)}>
       <section className="flex flex-col gap-4">
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
-          {sessions.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setParams({ session: String(s.id) })}
-              className={`flex shrink-0 flex-col items-start gap-1 rounded-lg border px-3 py-2 text-left text-xs ${
-                s.id === session?.id ? "border-glove bg-glove/15" : "border-rope bg-canvas hover:border-smoke"
-              } ${s.date < today ? "opacity-60" : ""}`}
-            >
-              <span className="font-semibold first-letter:uppercase">
-                {formatDate(s.date, i18n.language, { weekday: "short", day: "numeric", month: "short" })}
-              </span>
-              <KindBadge kind={s.kind} />
-            </button>
-          ))}
-        </div>
 
         {session && (
           <div className="flex flex-wrap items-center gap-3">
@@ -223,6 +211,14 @@ export default function BoardPage() {
             <KindBadge kind={session.kind} />
             <StatusBadge status={session.status} />
             {session.title && <span className="text-smoke">{session.title}</span>}
+            {requestedId === session.id && session.date !== nextDate && (
+              <Link to="/" className="text-xs text-smoke underline hover:text-chalk">
+                {t("board.backToNext")}
+              </Link>
+            )}
+            <Link to="/calendar" className="text-xs text-smoke underline hover:text-chalk">
+              {t("board.otherClasses")}
+            </Link>
             <div className="ml-auto flex flex-wrap gap-2">
               <Button
                 variant={session.kind === "SPARRING" ? "ghost" : "danger"}
@@ -315,7 +311,7 @@ export default function BoardPage() {
               onOpen={setEditing}
               onRemove={(a) => removeFromColumn(a, "broadcast")}
             />
-            {students.map((student: User) => {
+            {presentStudents.map((student: User) => {
               const column = studentColumn(student.id);
               return (
                 <BoardColumn
@@ -332,10 +328,8 @@ export default function BoardPage() {
                 />
               );
             })}
-            {students.length === 0 && (
-              <p className="p-4 text-sm text-smoke">
-                {t("board.noStudents")} <Link className="text-glove underline" to="/students">{t("nav.students")}</Link>
-              </p>
+            {presentStudents.length === 0 && (
+              <p className="max-w-60 p-4 text-sm text-smoke">{t("board.noCheckedInStudents")}</p>
             )}
           </div>
         </div>

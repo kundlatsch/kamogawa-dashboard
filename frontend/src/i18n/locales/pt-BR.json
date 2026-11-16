@@ -25,7 +25,7 @@
     "hidePassword": "Ocultar senha"
   },
   "nav": {
-    "board": "Quadro",
+    "board": "Planejamento",
     "calendar": "Calendário",
     "drills": "Exercícios",
     "students": "Alunos",
@@ -92,7 +92,7 @@
     "publish": "Publicar para os alunos",
     "publishSparring": "Publicar e avisar todos",
     "unpublish": "Voltar para rascunho",
-    "noSessions": "Nenhuma sessão nas próximas semanas. Confira os dias de treino ou crie uma sessão no",
+    "noSessions": "Nenhum treino marcado. Confira os dias de treino em Configurações ou crie um treino no",
     "noStudents": "Nenhum aluno ainda. Cadastre em",
     "objective": "Objetivo da aula",
     "objectivePlaceholder": "Deixe em branco para usar o objetivo da semana",
@@ -124,7 +124,10 @@
     "toRegular": "Voltar para aula normal",
     "confirmSparring": "Transformar esta aula em sparring? Os exercícios já montados continuam.",
     "confirmSparringPublished": "Transformar esta aula em sparring? Os exercícios continuam e todos os alunos recebem o aviso de sparring agora.",
-    "confirmRegular": "Voltar esta aula para aula normal? Os exercícios continuam."
+    "confirmRegular": "Voltar esta aula para aula normal? Os exercícios continuam.",
+    "noCheckedInStudents": "Ninguém fez check-in ainda. Os alunos aparecem aqui quando confirmam presença, ou use \"Adicionar aluno\" no painel de presenças.",
+    "backToNext": "voltar ao próximo treino",
+    "otherClasses": "outros treinos no calendário"
   },
   "student": {
     "hello": "Fala, {{name}}! 👊",
