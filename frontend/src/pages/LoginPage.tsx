@@ -39,7 +39,8 @@ export default function LoginPage() {
             🥊
           </div>
           <h1 className="mt-2 font-display text-4xl tracking-wide uppercase">
-            <span className="text-glove">Chacão</span> {t("brand.suffix")}
+            <span className="text-glove">{t("brand.name").split(" ")[0]}</span>{" "}
+            {t("brand.name").split(" ").slice(1).join(" ")}
           </h1>
           <p className="text-sm text-smoke">{t("brand.tagline")}</p>
         </div>

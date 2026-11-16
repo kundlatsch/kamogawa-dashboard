@@ -1,6 +1,6 @@
-# 🥊 Chacão Boxing Dashboard
+# 🥊 Kamogawa Dashboard
 
-The training dashboard of **Chacão Boxing Team**. Coaches build a library of
+A multi-gym boxing training dashboard, first used by **Chacão Boxing Team**. Coaches build a library of
 drills and drag them onto students for each training session: solo, in pairs,
 in groups, or broadcast to everyone. Students log in to see their routine for
 the day, and get a special alert when a sparring session is scheduled.

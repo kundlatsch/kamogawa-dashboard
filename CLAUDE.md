@@ -1,4 +1,4 @@
-# CLAUDE.md — Chacão Boxing Dashboard
+# CLAUDE.md — Kamogawa Dashboard
 
 Guidance for AI agents (Claude Code and others) working in this repository.
 

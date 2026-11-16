@@ -1,4 +1,7 @@
-# Chacão Boxing Dashboard — Implementation Plan
+# Kamogawa Dashboard — Implementation Plan
+
+> The system was renamed from "Chacão Boxing Dashboard" to **Kamogawa Dashboard**
+> on 2026-11-16. Chacão Boxing Team remains the first gym (tenant).
 
 ## 1. Goal
 
