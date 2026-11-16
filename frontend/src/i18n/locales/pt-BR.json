@@ -118,7 +118,8 @@
     "absent": "Faltou",
     "attendanceHint": "Depois da aula, marque quem veio.",
     "removeCheckin": "Tirar {{name}} da lista",
-    "addedByCoach": "adicionado pelo treinador"
+    "addedByCoach": "adicionado pelo treinador",
+    "publishToCheckIn": "Os alunos só conseguem confirmar presença depois que a aula é publicada. Você pode adicionar alunos à lista a qualquer momento."
   },
   "student": {
     "hello": "Fala, {{name}}! 👊",

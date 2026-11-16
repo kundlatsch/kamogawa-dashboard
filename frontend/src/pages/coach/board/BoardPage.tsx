@@ -240,7 +240,7 @@ export default function BoardPage() {
         {session && <SessionObjective key={session.id} session={session} />}
 
         <p className="text-sm text-smoke">{t("board.howTo")}</p>
-        {session && session.status === "PUBLISHED" && (
+        {session && (
           <CheckInPanel session={session} checkIns={checkIns} students={students} />
         )}
         {session && (

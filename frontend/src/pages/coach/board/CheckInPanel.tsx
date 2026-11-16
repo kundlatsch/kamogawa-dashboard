@@ -68,6 +68,7 @@ export default function CheckInPanel({
           </select>
         )}
       </div>
+      {session.status === "DRAFT" && <p className="text-xs text-belt">{t("board.publishToCheckIn")}</p>}
       {checkIns.length === 0 && <p className="text-sm text-smoke">{t("board.noCheckins")}</p>}
       {canConfirmAttendance && checkIns.length > 0 && <p className="text-xs text-smoke">{t("board.attendanceHint")}</p>}
       <ul className="flex flex-wrap gap-2">
