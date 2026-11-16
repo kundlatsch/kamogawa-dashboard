@@ -35,7 +35,9 @@
     "today": "Hoje",
     "upcoming": "Próximos",
     "cycles": "Ciclos",
-    "plan": "Plano"
+    "plan": "Plano",
+    "assessments": "Avaliações",
+    "stats": "Estatísticas"
   },
   "drills": {
     "title": "Biblioteca de treinos",
@@ -160,7 +162,11 @@
       "COLLECTIVE": "Coletivo",
       "INDIVIDUAL": "Individual",
       "PAIRS": "Duplas"
-    }
+    },
+    "metrics": "Estatísticas avaliadas",
+    "metricsHint": "O que você avalia de 1 a 5 todo mês, separado em capacidades físicas e habilidades técnicas.",
+    "metricName": "Nome da estatística",
+    "addMetric": "Adicionar estatística"
   },
   "calendar": {
     "previous": "Semanas anteriores",
@@ -311,5 +317,26 @@
     "empty": "O treinador ainda não montou o plano de treino.",
     "now": "Agora",
     "thisWeek": "Esta semana"
+  },
+  "metricGroup": {
+    "PHYSICAL": "Capacidades físicas",
+    "TECHNICAL": "Habilidades técnicas"
+  },
+  "assessments": {
+    "title": "Avaliações do mês",
+    "hint": "Dê uma nota de 1 a 5 para cada aluno em cada estatística. As notas são reavaliadas todo mês e o aluno vê a evolução.",
+    "month": "Mês",
+    "student": "Aluno",
+    "noScore": "–",
+    "scoreFor": "Nota de {{student}} em {{metric}}",
+    "noStudents": "Nenhum aluno cadastrado."
+  },
+  "stats": {
+    "title": "Minhas estatísticas",
+    "empty": "O treinador ainda não fez sua avaliação.",
+    "assessedIn": "Avaliação de {{month}}",
+    "delta_up": "+{{count}} desde o mês anterior",
+    "delta_down": "{{count}} desde o mês anterior",
+    "history": "Histórico"
   }
 }

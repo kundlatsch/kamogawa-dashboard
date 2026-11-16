@@ -36,6 +36,17 @@ export default function SettingsPage() {
         nameLabel={t("settings.phaseName")}
         addLabel={t("settings.addPhase")}
       />
+      <NamedListSettings
+        path="/metrics/"
+        title={t("settings.metrics")}
+        hint={t("settings.metricsHint")}
+        nameLabel={t("settings.metricName")}
+        addLabel={t("settings.addMetric")}
+        groups={[
+          { value: "PHYSICAL", label: t("metricGroup.PHYSICAL") },
+          { value: "TECHNICAL", label: t("metricGroup.TECHNICAL") },
+        ]}
+      />
     </section>
   );
 }

@@ -198,3 +198,20 @@ export interface SessionBlock extends NamedItem {
   /** Minutes after the class starts (collective blocks with a fixed time). */
   start_offset_minutes: number | null;
 }
+
+export type MetricGroup = "PHYSICAL" | "TECHNICAL";
+
+export interface Metric extends NamedItem {
+  group: MetricGroup;
+}
+
+export interface Assessment {
+  id: number;
+  student: number;
+  metric: number;
+  /** First day of the month. */
+  period: string;
+  score: number;
+  notes: string;
+  updated_at: string;
+}

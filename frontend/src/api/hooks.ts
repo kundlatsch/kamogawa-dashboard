@@ -7,6 +7,7 @@ import type {
   Drill,
   DrillCategory,
   Macrocycle,
+  Metric,
   NamedItem,
   SessionBlock,
   TrainingSession,
@@ -59,3 +60,6 @@ export const useSessionBlocks = () =>
     queryKey: ["/session-blocks/"],
     queryFn: async () => (await api.get<SessionBlock[]>("/session-blocks/")).data,
   });
+
+export const useMetrics = () =>
+  useQuery({ queryKey: ["/metrics/"], queryFn: async () => (await api.get<Metric[]>("/metrics/")).data });
