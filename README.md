@@ -57,7 +57,7 @@ other's data.
 - **Backend:** Django 5.2, Django REST Framework, SimpleJWT, Pillow
 - **Database:** PostgreSQL 16
 - **Infrastructure:** Docker Compose — development profile with hot reload,
-  production profile with nginx + gunicorn
+  production stack with nginx + gunicorn; GitHub Actions CI/CD to GHCR, Watchtower updates
 
 Everything runs in Docker; the host only needs Docker (with Compose v2.24+).
 
@@ -102,61 +102,24 @@ docker compose exec frontend npm run typecheck
 
 The backend suite also runs `seed_test`, so the seed keeps working as models change.
 
-## Production (gym server)
+## Production (home server)
 
-The production profile builds the frontend into static files served by nginx,
-runs Django on gunicorn, and keeps the source out of the containers.
+Deployment is continuous and pull-based:
 
-1. **Configure `.env`** on the server:
+1. Every push to `main` runs the tests on GitHub Actions
+   ([`.github/workflows/ci-cd.yml`](./.github/workflows/ci-cd.yml)). If they pass, the
+   backend (gunicorn) and frontend (nginx serving the built app) images are published to
+   GitHub Container Registry, tagged `latest` and `sha-<commit>`, for x86-64 and ARM64.
+2. The server runs [`docker-compose.prod.yml`](./docker-compose.prod.yml) with those images.
+   Watchtower polls GHCR every 5 minutes and recreates the app containers when a new
+   image appears; the backend applies migrations on start.
 
-   ```dotenv
-   DJANGO_DEBUG=false
-   DJANGO_SECRET_KEY=<a long random string>
-   POSTGRES_PASSWORD=<a strong password>
-   ADMIN_USERNAME=admin
-   ADMIN_PASSWORD=<a strong password>
-   # The server's LAN IP or hostname, so phones on the gym network can connect
-   DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,backend,192.168.0.10
-   DJANGO_CSRF_TRUSTED_ORIGINS=http://192.168.0.10:8088
-   APP_PORT=8088
-   TZ=America/Sao_Paulo
-   ```
+The server needs only Docker, `docker-compose.prod.yml` and a `.env` based on
+[`.env.prod.example`](./.env.prod.example): no source code, no build, and no inbound
+connection from GitHub. Optional services: nightly database and uploads backups, and a
+Cloudflare Tunnel for public HTTPS access.
 
-   `TZ` matters: check-in deadlines and the Sunday 23:00 job use the server time zone.
-
-2. **Start the stack:**
-
-   ```bash
-   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-   ```
-
-   The app is served at `http://<server>:<APP_PORT>` (default 8088); nginx
-   proxies `/api`, `/media` and the Django admin to the backend. Containers
-   restart automatically with Docker.
-
-3. **Log in as the account admin**, create the gym and its coaches under
-   **Academias**, then hand the coaches their generated passwords.
-
-**Updating** to a new version:
-
-```bash
-git pull
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-```
-
-Migrations are applied on start; they are additive and keep existing data.
-
-**Backups** — the database lives in the `postgres-data` volume and profile
-photos and class images in `media-data`:
-
-```bash
-docker compose exec -T db sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc' > backup.dump
-docker compose exec -T db sh -c 'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --clean' < backup.dump
-```
-
-The app has no HTTPS of its own; it is meant for a local network. To expose it
-on the internet, put it behind a reverse proxy that terminates TLS and add the
-public origin to `DJANGO_CSRF_TRUSTED_ORIGINS`.
+Step-by-step instructions: **[docs/server-setup.md](./docs/server-setup.md)**.
 
 ## Useful commands
 

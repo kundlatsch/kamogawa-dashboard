@@ -55,6 +55,10 @@ See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
   endpoint needs a cross-gym isolation test (see `training/test_gym_isolation.py`).
 - Scheduled jobs run in the `scheduler` service (`run_scheduler`, same backend
   image); weekly absences close every Sunday at 23:00 server time.
+- Deployment: `.github/workflows/ci-cd.yml` tests every push and publishes images to GHCR
+  from `main`; the server runs `docker-compose.prod.yml` (prebuilt images, Watchtower
+  auto-updates). The backend entrypoint migrates on start, so migrations must be safe to
+  apply unattended. Server guide: `docs/server-setup.md`.
 - Keep `seed_test` (fixture `training/fixtures/test_seed_pt-BR.json`) working when
   models change; `training/test_seed.py` runs it on every test run.
 - Nothing about the schedule is hardcoded: training weekdays, times, and
