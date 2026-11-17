@@ -9,6 +9,11 @@ describe("App", () => {
     expect(screen.getByLabelText("Usuário")).toBeInTheDocument();
   });
 
+  it("shows the app version and author in the login footer", () => {
+    render(<App />);
+    expect(screen.getByText(`Kamogawa Dashboard v${__APP_VERSION__}, desenvolvido por Taguma`)).toBeInTheDocument();
+  });
+
   it("toggles password visibility on the login screen", () => {
     render(<App />);
     const password = screen.getByLabelText("Senha");

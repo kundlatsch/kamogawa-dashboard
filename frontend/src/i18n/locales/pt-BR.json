@@ -1,7 +1,8 @@
 {
   "brand": {
     "name": "Kamogawa Dashboard",
-    "tagline": "Painel de treinos"
+    "tagline": "Painel de treinos",
+    "footer": "{{name}} v{{version}}, desenvolvido por Taguma"
   },
   "common": {
     "loading": "Carregando…",

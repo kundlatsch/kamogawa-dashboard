@@ -29,40 +29,45 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_#3a0b0b_0%,_#0a0a0a_60%)] p-4">
-      <form
-        onSubmit={onSubmit}
-        className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-rope bg-canvas/90 p-8 shadow-2xl"
-      >
-        <div className="text-center">
-          <div className="text-6xl" aria-hidden>
-            🥊
+    <div className="flex min-h-screen flex-col items-center bg-[radial-gradient(circle_at_top,_#3a0b0b_0%,_#0a0a0a_60%)] p-4">
+      <div className="flex w-full flex-1 items-center justify-center">
+        <form
+          onSubmit={onSubmit}
+          className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-rope bg-canvas/90 p-8 shadow-2xl"
+        >
+          <div className="text-center">
+            <div className="text-6xl" aria-hidden>
+              🥊
+            </div>
+            <h1 className="mt-2 font-display text-4xl tracking-wide uppercase">
+              <span className="text-glove">{t("brand.name").split(" ")[0]}</span>{" "}
+              {t("brand.name").split(" ").slice(1).join(" ")}
+            </h1>
+            <p className="text-sm text-smoke">{t("brand.tagline")}</p>
           </div>
-          <h1 className="mt-2 font-display text-4xl tracking-wide uppercase">
-            <span className="text-glove">{t("brand.name").split(" ")[0]}</span>{" "}
-            {t("brand.name").split(" ").slice(1).join(" ")}
-          </h1>
-          <p className="text-sm text-smoke">{t("brand.tagline")}</p>
-        </div>
-        <Input
-          label={t("auth.username")}
-          autoComplete="username"
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
-          required
-        />
-        <PasswordInput
-          label={t("auth.password")}
-          autoComplete="current-password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-        />
-        {error && <p className="text-sm text-glove">{t("auth.invalid")}</p>}
-        <Button type="submit" disabled={busy}>
-          {t("auth.login")}
-        </Button>
-      </form>
+          <Input
+            label={t("auth.username")}
+            autoComplete="username"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            required
+          />
+          <PasswordInput
+            label={t("auth.password")}
+            autoComplete="current-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+          />
+          {error && <p className="text-sm text-glove">{t("auth.invalid")}</p>}
+          <Button type="submit" disabled={busy}>
+            {t("auth.login")}
+          </Button>
+        </form>
+      </div>
+      <footer className="pt-4 text-center text-xs text-smoke">
+        {t("brand.footer", { name: t("brand.name"), version: __APP_VERSION__ })}
+      </footer>
     </div>
   );
 }
