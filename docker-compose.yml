@@ -25,6 +25,8 @@ services:
     environment:
       DJANGO_DEBUG: ${DJANGO_DEBUG:-true}
       POSTGRES_HOST: db
+      # The dev command below migrates itself; skip the image entrypoint's startup tasks.
+      RUN_STARTUP_TASKS: "false"
     # Dev: auto-reloading server on top of the mounted source.
     command: sh -c "python manage.py migrate --noinput && python manage.py ensure_admin && python manage.py runserver 0.0.0.0:8000"
     volumes:
@@ -46,6 +48,7 @@ services:
     environment:
       DJANGO_DEBUG: ${DJANGO_DEBUG:-true}
       POSTGRES_HOST: db
+      RUN_STARTUP_TASKS: "false"
     command: sh -c "python manage.py migrate --noinput && python -u manage.py run_scheduler"
     volumes:
       - ./backend:/app
