@@ -16,7 +16,7 @@ const HANDEDNESS: Handedness[] = ["RIGHT", "LEFT", "UNSPECIFIED"];
 /** Every user (account admin, coach, student) sees their details and changes their password here. */
 export default function ProfilePage() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -86,6 +86,13 @@ export default function ProfilePage() {
           </Button>
         </div>
       </form>
+
+      {/* Students on phones have no logout in the header (it only fits on larger screens). */}
+      {user.role === "STUDENT" && (
+        <Button variant="danger" className="w-full py-3 md:hidden" onClick={logout}>
+          {t("auth.logout")}
+        </Button>
+      )}
     </section>
   );
 }

@@ -24,6 +24,7 @@
     "hidePassword": "Ocultar senha"
   },
   "nav": {
+    "main": "Navegação principal",
     "board": "Planejamento",
     "calendar": "Calendário",
     "drills": "Exercícios",

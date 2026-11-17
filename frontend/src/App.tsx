@@ -87,12 +87,12 @@ function AppRoutes() {
   }
 
   const nav: NavItem[] = [
-    { to: "/", labelKey: "nav.today" },
-    { to: "/upcoming", labelKey: "nav.upcoming" },
-    { to: "/plan", labelKey: "nav.plan" },
-    { to: "/stats", labelKey: "nav.stats" },
-    { to: "/progress", labelKey: "nav.progress" },
-    { to: "/ranking", labelKey: "nav.ranking" },
+    { to: "/", labelKey: "nav.today", icon: "🥊" },
+    { to: "/upcoming", labelKey: "nav.upcoming", icon: "📅" },
+    { to: "/plan", labelKey: "nav.plan", icon: "📋" },
+    { to: "/stats", labelKey: "nav.stats", icon: "📊" },
+    { to: "/progress", labelKey: "nav.progress", icon: "🎯" },
+    { to: "/ranking", labelKey: "nav.ranking", icon: "🏆" },
   ];
   return (
     <Routes>
