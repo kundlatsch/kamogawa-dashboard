@@ -78,7 +78,7 @@ export default function AppShell({ nav }: { nav: NavItem[] }) {
             ))}
           </nav>
           <div className={`flex items-center text-sm ${isStudent ? "gap-1 md:gap-3" : "gap-3"}`}>
-            {(isStudent || user?.role === "COACH") && <NotificationBell />}
+            {(isStudent || user?.role === "COACH") && <NotificationBell fullWidthOnPhone={isStudent} />}
             {user?.role === "COACH" && (
               <NavLink
                 to="/settings"

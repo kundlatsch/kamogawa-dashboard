@@ -24,7 +24,7 @@ export default function TodayPage() {
       <div>
         <p className="text-smoke">{t("student.hello", { name: user?.display_name })}</p>
         {data && (
-          <h1 className="font-display text-4xl tracking-wide uppercase first-letter:uppercase">
+          <h1 className="font-display text-3xl tracking-wide uppercase first-letter:uppercase md:text-4xl">
             {formatDate(data.date, i18n.language, { weekday: "long", day: "numeric", month: "long" })}
           </h1>
         )}

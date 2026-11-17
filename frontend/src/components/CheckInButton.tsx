@@ -38,11 +38,19 @@ export default function CheckInButton({ sessionId, state }: { sessionId: number;
       )}
       {state.open ? (
         <>
-          <Button variant={mine ? "ghost" : "primary"} className="!py-1" onClick={() => setEditing(true)}>
+          <Button
+            variant={mine ? "ghost" : "primary"}
+            // Comfortable thumb target on phones; compact from md up.
+            className="max-md:min-h-11 md:!py-1"
+            onClick={() => setEditing(true)}
+          >
             {mine ? t("checkin.edit") : `✋ ${t("checkin.confirm")}`}
           </Button>
           {mine && (
-            <button className="text-xs text-smoke underline hover:text-glove" onClick={() => cancel.mutate()}>
+            <button
+              className="rounded-md px-2 py-2 text-xs text-smoke underline hover:text-glove md:p-0"
+              onClick={() => cancel.mutate()}
+            >
               {t("checkin.cancel")}
             </button>
           )}

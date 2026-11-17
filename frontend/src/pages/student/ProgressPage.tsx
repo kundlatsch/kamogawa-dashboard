@@ -70,7 +70,11 @@ export default function ProgressPage() {
                 </p>
               </div>
               {mission.can_complete ? (
-                <Button className="!py-1" disabled={complete.isPending} onClick={() => complete.mutate(mission.id)}>
+                <Button
+                  className="max-md:min-h-11 md:!py-1"
+                  disabled={complete.isPending}
+                  onClick={() => complete.mutate(mission.id)}
+                >
                   {t("progress.complete")}
                 </Button>
               ) : (

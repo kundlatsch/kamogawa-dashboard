@@ -33,7 +33,7 @@ export default function StudentRankingPage() {
             role="tab"
             aria-selected={order === key}
             onClick={() => setOrder(key)}
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold ${
+            className={`rounded-full px-4 py-2 text-sm font-semibold max-md:flex-1 ${
               order === key ? "bg-glove text-chalk" : "border border-rope text-smoke hover:text-chalk"
             }`}
           >
@@ -62,12 +62,13 @@ export default function StudentRankingPage() {
                   <Avatar person={entry.student} /> {entry.student.display_name}
                   {me && ` (${t("studentRanking.you")})`}
                 </p>
-                <p className="text-xs font-normal text-smoke">
-                  <span className={order === "attendance" ? "text-belt" : ""}>
+                {/* Each stat wraps as a whole, never in the middle of "0 missões concluídas". */}
+                <p className="flex flex-wrap gap-x-2 text-xs font-normal text-smoke">
+                  <span className={`whitespace-nowrap ${order === "attendance" ? "text-belt" : ""}`}>
                     ✓ {t("ranking.attended", { count: entry.attended })}
-                  </span>{" "}
-                  · ✗ {t("ranking.absences", { count: entry.absences })} ·{" "}
-                  <span className={order === "missions" ? "text-belt" : ""}>
+                  </span>
+                  <span className="whitespace-nowrap">✗ {t("ranking.absences", { count: entry.absences })}</span>
+                  <span className={`whitespace-nowrap ${order === "missions" ? "text-belt" : ""}`}>
                     🎯 {t("ranking.missionsCompleted", { count: entry.missions_completed })}
                   </span>
                 </p>

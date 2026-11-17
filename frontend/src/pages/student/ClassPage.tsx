@@ -25,7 +25,7 @@ export default function ClassPage() {
       {!session && !isError && <p className="text-smoke">{t("common.loading")}</p>}
       {session && (
         <>
-          <h1 className="font-display text-4xl tracking-wide uppercase first-letter:uppercase">
+          <h1 className="font-display text-3xl tracking-wide uppercase first-letter:uppercase md:text-4xl">
             {formatDate(session.date, i18n.language, { weekday: "long", day: "numeric", month: "long" })}
           </h1>
           <SessionRoutineView session={session} />

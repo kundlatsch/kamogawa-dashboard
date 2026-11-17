@@ -15,7 +15,8 @@ export const useNotifications = () =>
     refetchInterval: 60_000,
   });
 
-export default function NotificationBell() {
+/** `fullWidthOnPhone` opens the panel across the screen below the header on small screens. */
+export default function NotificationBell({ fullWidthOnPhone = false }: { fullWidthOnPhone?: boolean }) {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const { data } = useNotifications();
@@ -54,7 +55,11 @@ export default function NotificationBell() {
         )}
       </button>
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-rope bg-canvas p-2 shadow-2xl">
+        <div
+          className={`absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-rope bg-canvas p-2 shadow-2xl ${
+            fullWidthOnPhone ? "max-md:fixed max-md:inset-x-4 max-md:top-16 max-md:w-auto max-md:max-w-none" : ""
+          }`}
+        >
           <p className="px-2 py-1 font-display text-lg tracking-wide uppercase">{t("notifications.title")}</p>
           {!data?.results.length && <p className="p-2 text-sm text-smoke">{t("notifications.empty")}</p>}
           <ul className="max-h-96 overflow-y-auto">
