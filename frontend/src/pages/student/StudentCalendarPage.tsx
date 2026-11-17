@@ -43,8 +43,10 @@ export default function StudentCalendarPage() {
 
   return (
     <section className="mx-auto flex max-w-3xl flex-col gap-4">
-      <PageHeader title={t("nav.upcoming")} />
-      <p className="-mt-4 text-sm text-smoke">{t("studentCalendar.hint")}</p>
+      <div className="max-md:order-first">
+        <PageHeader title={t("nav.upcoming")} />
+        <p className="-mt-4 text-sm text-smoke">{t("studentCalendar.hint")}</p>
+      </div>
 
       <div className="flex items-center gap-2">
         <Button variant="ghost" onClick={() => setWeekOffset((w) => w - WEEKS)} aria-label={t("calendar.previous")}>
@@ -89,7 +91,7 @@ export default function StudentCalendarPage() {
                 <Link
                   key={entry.id}
                   to={`/class/${entry.id}`}
-                  className={`rounded px-1 py-0.5 text-[11px] font-semibold leading-tight hover:ring-1 hover:ring-chalk ${
+                  className={`rounded px-1 py-1 text-[11px] font-semibold leading-tight hover:ring-1 hover:ring-chalk ${
                     entry.kind === "SPARRING" ? "bg-blood text-chalk" : "bg-glove/80 text-chalk"
                   }`}
                 >
@@ -122,52 +124,64 @@ export default function StudentCalendarPage() {
         </span>
       </div>
 
-      <h2 className="mt-2 font-display text-2xl tracking-wide uppercase">{t("studentCalendar.upcoming")}</h2>
-      {!isLoading && upcoming.length === 0 && <p className="text-sm text-smoke">{t("student.noUpcoming")}</p>}
-      <ul className="flex flex-col gap-2">
-        {upcoming.map((entry) => (
-          <li
-            key={entry.id}
-            className={`flex flex-wrap items-center gap-3 rounded-xl border p-4 ${
-              entry.cancelled
-                ? "border-rope bg-canvas opacity-70"
-                : entry.kind === "SPARRING"
-                  ? "border-blood bg-blood/15"
-                  : "border-rope bg-canvas"
-            }`}
-          >
-            {entry.published ? (
-              <Link to={`/class/${entry.id}`} className="font-semibold first-letter:uppercase hover:text-glove hover:underline">
-                {formatDate(entry.date, i18n.language, { weekday: "long", day: "numeric", month: "short" })}
-              </Link>
-            ) : (
-              <span className={`font-semibold first-letter:uppercase ${entry.cancelled ? "line-through" : ""}`}>
-                {formatDate(entry.date, i18n.language, { weekday: "long", day: "numeric", month: "short" })}
-              </span>
-            )}
-            <span className="text-smoke">{time(entry)}</span>
-            {entry.kind && <KindBadge kind={entry.kind} />}
-            {entry.title && <span className="text-sm">{entry.title}</span>}
-            {entry.cancelled && (
-              <span className="text-sm text-glove">
-                {t("studentCalendar.cancelled")}: {entry.cancel_reason}
-              </span>
-            )}
-            {entry.published ? (
-              <Link to={`/class/${entry.id}`} className="ml-auto text-xs text-smoke underline hover:text-chalk">
-                {t("studentCalendar.seeExercises")}
-              </Link>
-            ) : (
-              !entry.cancelled && <span className="ml-auto text-xs text-smoke">{t("studentCalendar.notPublishedYet")}</span>
-            )}
-            {entry.checkin && (
-              <div className="w-full">
-                <CheckInButton sessionId={entry.id!} state={entry.checkin} />
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
+      {/* On phones the next classes (where students check in) come first; the month grid follows. */}
+      <div className="flex flex-col gap-4 max-md:order-first">
+        <h2 className="mt-2 font-display text-2xl tracking-wide uppercase">{t("studentCalendar.upcoming")}</h2>
+        {!isLoading && upcoming.length === 0 && <p className="text-sm text-smoke">{t("student.noUpcoming")}</p>}
+        <ul className="flex flex-col gap-2">
+          {upcoming.map((entry) => {
+            const date = formatDate(entry.date, i18n.language, { weekday: "long", day: "numeric", month: "short" });
+            return (
+              <li
+                key={entry.id}
+                className={`flex flex-col gap-3 rounded-xl border p-4 ${
+                  entry.cancelled
+                    ? "border-rope bg-canvas opacity-70"
+                    : entry.kind === "SPARRING"
+                      ? "border-blood bg-blood/15"
+                      : "border-rope bg-canvas"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className={`font-semibold first-letter:uppercase ${entry.cancelled ? "line-through" : ""}`}>
+                      {entry.published ? (
+                        <Link to={`/class/${entry.id}`} className="hover:text-glove hover:underline">
+                          {date}
+                        </Link>
+                      ) : (
+                        date
+                      )}
+                    </p>
+                    <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-smoke">
+                      <span>{time(entry)}</span>
+                      {entry.kind && <KindBadge kind={entry.kind} />}
+                      {entry.title && <span className="text-chalk">{entry.title}</span>}
+                      {!entry.published && !entry.cancelled && (
+                        <span className="text-xs">{t("studentCalendar.notPublishedYet")}</span>
+                      )}
+                    </p>
+                  </div>
+                  {entry.published && (
+                    <Link
+                      to={`/class/${entry.id}`}
+                      className="shrink-0 rounded-md border border-rope px-3 py-2 text-xs font-semibold text-chalk hover:border-smoke"
+                    >
+                      {t("studentCalendar.seeExercises")} ›
+                    </Link>
+                  )}
+                </div>
+                {entry.cancelled && (
+                  <p className="text-sm text-glove">
+                    {t("studentCalendar.cancelled")}: {entry.cancel_reason}
+                  </p>
+                )}
+                {entry.checkin && <CheckInButton sessionId={entry.id!} state={entry.checkin} />}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </section>
   );
 }
