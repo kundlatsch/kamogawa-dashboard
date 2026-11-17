@@ -111,7 +111,7 @@ Deployment is continuous and pull-based:
    backend (gunicorn) and frontend (nginx serving the built app) images are published to
    GitHub Container Registry, tagged `latest` and `sha-<commit>`, for x86-64 and ARM64.
 2. The server runs [`docker-compose.prod.yml`](./docker-compose.prod.yml) with those images.
-   Watchtower polls GHCR every 5 minutes and recreates the app containers when a new
+   Watchtower checks GHCR hourly (configurable) and recreates the app containers when a new
    image appears; the backend applies migrations on start.
 
 The server needs only Docker, `docker-compose.prod.yml` and a `.env` based on

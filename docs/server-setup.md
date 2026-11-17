@@ -8,7 +8,7 @@ automatically. It takes about 20 minutes and needs no programming.
 ```
 push to main ──► GitHub Actions ──► tests pass? ──► build images ──► ghcr.io
                                                                        ▲
-home server:  Watchtower checks every 5 minutes ───────────────────────┘
+home server:  Watchtower checks every hour ────────────────────────────┘
               new image? ─► pull it ─► restart the app containers
 ```
 
@@ -18,7 +18,9 @@ home server:  Watchtower checks every 5 minutes ──────────�
   `ghcr.io/kundlatsch/kamogawa-dashboard-backend` and `...-frontend`, each tagged `latest`
   and `sha-<commit>`.
 - **The server never receives connections from GitHub.** It *pulls*: the Watchtower
-  container polls GHCR and, when `latest` changes, downloads the image and recreates the
+  container checks GHCR (hourly by default, see
+  [Tuning](#tuning-update-checks-and-healthchecks)) and, when `latest` changes, downloads the
+  image and recreates the
   backend, scheduler and frontend containers. The database container is never touched.
 - On start, the backend applies database migrations by itself, so an update needs no
   manual step. Migrations are additive and keep existing data.
@@ -132,6 +134,57 @@ to resume automatic updates. Rolling back does not undo database migrations.
 **Updating the deployment files.** Watchtower updates images, not `docker-compose.prod.yml`.
 When that file changes in the repository, download it again (step 3, first `curl` only)
 and run `docker compose up -d`.
+
+## Tuning update checks and healthchecks
+
+Both are set in `.env`; run `docker compose up -d` after changing them.
+
+### How often Watchtower looks for new versions
+
+Watchtower runs no healthchecks and uses almost no resources: it sleeps, and on each check it
+asks GHCR whether the `latest` tag of each app image changed. That is one small HTTP request
+per image (backend, frontend, scheduler); an image is downloaded only when it really changed.
+Between checks it idles at roughly 10–20 MB of RAM.
+
+| Goal | Setting in `.env` |
+|---|---|
+| Check every hour (default) | `WATCHTOWER_POLL_INTERVAL=3600` |
+| Check every 15 minutes (faster deploys) | `WATCHTOWER_POLL_INTERVAL=900` |
+| Check every 6 hours | `WATCHTOWER_POLL_INTERVAL=21600` |
+
+**Deploying only at a fixed time** (for example at 4 AM, when nobody is training) uses a
+cron schedule instead of an interval. Watchtower refuses to start when both are set, so
+in `docker-compose.prod.yml` replace the `WATCHTOWER_POLL_INTERVAL` line of the `watchtower`
+service with:
+
+```yaml
+      WATCHTOWER_SCHEDULE: ${WATCHTOWER_SCHEDULE:-0 0 4 * * *}
+```
+
+and set `WATCHTOWER_SCHEDULE` in `.env` if you want another time. The format has six fields,
+seconds first: `0 0 4 * * *` is every day at 04:00:00, `0 30 3 * * 1` is Mondays at 03:30. It
+uses the `TZ` time zone.
+
+To deploy right away without waiting for the next check:
+`docker compose pull && docker compose up -d`.
+
+### How often Docker checks that the app is alive
+
+Healthchecks are run by Docker itself, not by Watchtower. Each one is a tiny command:
+`pg_isready` for the database, a local request to `/api/health/` for the backend and to
+`/healthz` for nginx. They let Docker mark a container as unhealthy and make the app wait
+for the database and backend on start.
+
+| Setting in `.env` | Effect |
+|---|---|
+| `HEALTHCHECK_INTERVAL=5m` (default) | each container is checked every 5 minutes |
+| `HEALTHCHECK_INTERVAL=1m` | problems show up sooner in `docker compose ps` |
+| `HEALTHCHECK_INTERVAL=15m` | even lighter |
+
+While a container is starting it is probed every few seconds whatever the interval, so a
+long interval does not slow down startup or updates. The trade-off is only how long a
+container can be broken before `docker compose ps` shows it as `unhealthy`. (Crashes are
+handled separately: `restart: unless-stopped` restarts a stopped container immediately.)
 
 ## Backups (optional, recommended)
 
