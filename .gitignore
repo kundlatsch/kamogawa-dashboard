@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.prod.example
 
 # Python
 __pycache__/
@@ -28,6 +29,7 @@ npm-debug.log*
 
 # Docker volumes / local data
 postgres-data/
+backups/
 data/
 
 # Editors / OS

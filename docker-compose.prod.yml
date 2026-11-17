@@ -1,25 +1,159 @@
-# Production-like override for the gym's local server:
-#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-# Serves the built frontend through nginx and runs Django on gunicorn (no source mounts).
+# Production stack for the home server. It runs prebuilt images from GitHub Container
+# Registry (GHCR) instead of building from source, so the server only needs this file
+# and a `.env` (copy `.env.prod.example`). See docs/server-setup.md.
+#
+#   docker compose up -d        (`.env` sets COMPOSE_FILE to this file)
+#
+# Every push to `main` that passes CI publishes new images; Watchtower notices them within
+# WATCHTOWER_POLL_INTERVAL seconds, pulls them and recreates the app containers.
+name: kamogawa
+
+x-backend: &backend
+  image: ${IMAGE_PREFIX:-ghcr.io/kundlatsch/kamogawa-dashboard}-backend:${IMAGE_TAG:-latest}
+  restart: unless-stopped
+  env_file: .env
+  environment: &backend-env
+    DJANGO_DEBUG: "false"
+    POSTGRES_HOST: db
+  labels:
+    com.centurylinklabs.watchtower.enable: "true"
+  logging: &logging
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
 services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-chacao}
+      POSTGRES_USER: ${POSTGRES_USER:-chacao}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      TZ: ${TZ:-America/Sao_Paulo}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: *logging
+
+  # Django on gunicorn. Its entrypoint migrates, collects static files and creates the
+  # account admin before starting, so a new image upgrades the database by itself.
   backend:
-    environment:
-      DJANGO_DEBUG: "false"
-    command: !reset null
-    volumes: !override
+    <<: *backend
+    volumes:
       - media-data:/app/media
-    ports: !reset []
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/', timeout=4)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s  # migrations run before gunicorn starts
+    depends_on:
+      db:
+        condition: service_healthy
 
+  # Weekly jobs (absences every Sunday at 23:00). Same image; the backend runs migrations.
   scheduler:
+    <<: *backend
+    command: ["python", "-u", "manage.py", "run_scheduler"]
     environment:
-      DJANGO_DEBUG: "false"
-    volumes: !reset []
+      <<: *backend-env
+      RUN_STARTUP_TASKS: "false"
+    depends_on:
+      backend:
+        condition: service_healthy
 
+  # nginx serving the built React app and proxying /api, /media and the admin to Django.
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.prod
-    environment: !reset {}
-    volumes: !reset []
-    ports: !override
+    image: ${IMAGE_PREFIX:-ghcr.io/kundlatsch/kamogawa-dashboard}-frontend:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
       - "${APP_PORT:-8088}:80"
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    depends_on:
+      backend:
+        condition: service_healthy
+    logging: *logging
+
+  # Polls GHCR and updates only the containers labelled above (not the database or itself).
+  # The original containrrr/watchtower is unmaintained and fails on Docker 29+; this is the
+  # maintained fork with the same labels and options.
+  watchtower:
+    image: nickfedor/watchtower:1.24.0
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Uncomment if the GHCR images are private and you ran `docker login ghcr.io` on the host:
+      # - ${HOME}/.docker/config.json:/config.json:ro
+    environment:
+      TZ: ${TZ:-America/Sao_Paulo}
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_CLEANUP: "true"          # delete the old image after an update
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-300}
+      WATCHTOWER_INCLUDE_RESTARTING: "true"
+    logging: *logging
+
+  # Optional: nightly pg_dump plus a copy of the uploads into ./backups on the host.
+  # Enable with COMPOSE_PROFILES=backup in .env (or `--profile backup`).
+  backup:
+    image: postgres:16-alpine
+    profiles: ["backup"]
+    restart: unless-stopped
+    environment:
+      PGHOST: db
+      PGDATABASE: ${POSTGRES_DB:-chacao}
+      PGUSER: ${POSTGRES_USER:-chacao}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+      BACKUP_AT: ${BACKUP_AT:-03:00}
+      TZ: ${TZ:-America/Sao_Paulo}
+    volumes:
+      - ${BACKUP_DIR:-./backups}:/backups
+      - media-data:/media:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        backup() {
+          stamp=$$(date +%Y-%m-%d_%H%M)
+          pg_dump -Fc -f "/backups/db_$$stamp.dump"
+          tar -czf "/backups/media_$$stamp.tar.gz" -C /media .
+          find /backups -name 'db_*.dump' -mtime +$$BACKUP_KEEP_DAYS -delete
+          find /backups -name 'media_*.tar.gz' -mtime +$$BACKUP_KEEP_DAYS -delete
+          echo "backup: wrote db_$$stamp.dump and media_$$stamp.tar.gz"
+        }
+        echo "backup: daily at $$BACKUP_AT, keeping $$BACKUP_KEEP_DAYS days"
+        while true; do
+          now=$$(date +%s)
+          next=$$(date -d "$$(date +%Y-%m-%d) $$BACKUP_AT" +%s)
+          [ "$$next" -le "$$now" ] && next=$$((next + 86400))
+          sleep $$((next - now))
+          backup || echo "backup: FAILED"
+        done
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
+
+  # Optional: Cloudflare Tunnel to reach the app from the internet over HTTPS without
+  # opening router ports. Enable with COMPOSE_PROFILES=tunnel and set CLOUDFLARE_TUNNEL_TOKEN.
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: ["tunnel"]
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on:
+      - frontend
+    logging: *logging
+
+volumes:
+  postgres-data:
+  media-data:
