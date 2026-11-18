@@ -12,7 +12,7 @@ import { scaleOf, scaleSteps } from "../../lib/scale";
 
 const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
 
-/** The student's latest score on each metric and how it changed since the month before. */
+/** The student's current score on each metric and how it changed since the previous one. */
 export default function StatsPage() {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
@@ -27,7 +27,10 @@ export default function StatsPage() {
     queryFn: async () => (await api.get<MyWeek>("/me/week/")).data,
   });
   const latest = latestScores(history ?? []);
-  const lastPeriod = history?.length ? history[history.length - 1].period : null;
+  const lastUpdate = (history ?? []).reduce<string | null>(
+    (latestSoFar, a) => (a.updated_at && (!latestSoFar || a.updated_at > latestSoFar) ? a.updated_at : latestSoFar),
+    null,
+  );
 
   return (
     <section className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -36,9 +39,9 @@ export default function StatsPage() {
       {history && history.length === 0 && (
         <div className="rounded-xl border border-rope bg-canvas p-8 text-center text-smoke">{t("stats.empty")}</div>
       )}
-      {lastPeriod && (
+      {lastUpdate && (
         <p className="-mt-4 text-sm text-smoke first-letter:uppercase">
-          {t("stats.assessedIn", { month: formatDate(lastPeriod, i18n.language, { month: "long", year: "numeric" }) })}
+          {t("stats.updatedAt", { date: formatDate(lastUpdate.slice(0, 10), i18n.language, { day: "numeric", month: "long", year: "numeric" }) })}
         </p>
       )}
       {history &&

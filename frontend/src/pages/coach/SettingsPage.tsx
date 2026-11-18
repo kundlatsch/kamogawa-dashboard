@@ -345,7 +345,7 @@ function CheckinSettings() {
   );
 }
 
-/** The range of the monthly assessment scale (default 1 to 10). */
+/** The range of the student stats scale (default 1 to 10). */
 function AssessmentScaleSettings() {
   const { t } = useTranslation();
   const { refreshUser } = useAuth();

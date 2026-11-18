@@ -1,7 +1,7 @@
 import type { Assessment } from "../api/types";
 
 /**
- * Latest score per metric and the change since the previous assessed month of that metric
+ * Latest score per metric and the change since the previous score of that metric
  * (`delta` is null when the metric was only assessed once). Input is any order.
  */
 export function latestScores(history: Assessment[]): Map<number, { score: number; delta: number | null }> {

@@ -37,7 +37,7 @@
     "upcoming": "Calendário",
     "cycles": "Ciclos",
     "plan": "Plano",
-    "assessments": "Avaliações",
+    "assessments": "Estatísticas",
     "stats": "Estatísticas",
     "week": "Semana",
     "ranking": "Ranking"
@@ -194,7 +194,7 @@
       "PAIRS": "Duplas"
     },
     "metrics": "Estatísticas avaliadas",
-    "metricsHint": "O que você avalia de 1 a 5 todo mês, separado em capacidades físicas e habilidades técnicas.",
+    "metricsHint": "As estatísticas que você dá nota para cada aluno, separadas em capacidades físicas e habilidades técnicas.",
     "metricName": "Nome da estatística",
     "addMetric": "Adicionar estatística",
     "focuses": "Focos da semana",
@@ -209,7 +209,7 @@
     "addFighterClass": "Adicionar classe",
     "assessmentScaleMax": "Nota máxima",
     "assessmentScale": "Escala da avaliação",
-    "assessmentScaleHint": "De quanto a quanto vai a nota da avaliação mensal de cada estatística. O padrão é de 1 a 10.",
+    "assessmentScaleHint": "De quanto a quanto vai a nota de cada estatística. O padrão é de 1 a 10.",
     "editFighterClass": "Editar classe",
     "fighterClassDescription": "Descrição (estilo, distância preferida…)",
     "fighterClassArt": "Arte da classe",
@@ -223,7 +223,7 @@
       "gym": "Academia",
       "classes": "Aulas",
       "periodization": "Periodização",
-      "assessments": "Avaliações",
+      "assessments": "Estatísticas",
       "fighters": "Lutadores"
     },
     "timeFor": "Horário de {{day}}",
@@ -398,9 +398,8 @@
     "TECHNICAL": "Habilidades técnicas"
   },
   "assessments": {
-    "title": "Avaliações do mês",
-    "hint": "Dê uma nota de {{min}} a {{max}} para cada aluno em cada estatística. As notas são reavaliadas todo mês e o aluno vê a evolução.",
-    "month": "Mês",
+    "title": "Estatísticas do Aluno",
+    "hint": "Dê uma nota de {{min}} a {{max}} para cada aluno em cada estatística e atualize quando ele evoluir. O aluno vê a nota atual e quanto mudou.",
     "student": "Aluno",
     "noScore": "–",
     "scoreFor": "Nota de {{student}} em {{metric}}",
@@ -409,9 +408,9 @@
   "stats": {
     "title": "Minhas estatísticas",
     "empty": "O treinador ainda não fez sua avaliação.",
-    "assessedIn": "Avaliação de {{month}}",
-    "delta_up": "+{{count}} desde o mês anterior",
-    "delta_down": "{{count}} desde o mês anterior",
+    "updatedAt": "Atualizado em {{date}}",
+    "delta_up": "+{{count}} desde a avaliação anterior",
+    "delta_down": "{{count}} desde a avaliação anterior",
     "history": "Histórico"
   },
   "week": {

@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
@@ -9,65 +8,55 @@ import { useAuth } from "../../auth/AuthContext";
 import Avatar from "../../components/Avatar";
 import { PageHeader } from "../../components/ui";
 import { todayISO } from "../../lib/dates";
+import { latestScores } from "../../lib/assessments";
 import { scaleOf, scaleSteps } from "../../lib/scale";
 import StudentLink from "../../components/StudentLink";
 
 const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
 
-/** "2026-11" → "2026-11-01"; the API stores a month as its first day. */
-const monthPeriod = (month: string) => `${month}-01`;
-
-/** Coach grid: one row per student, one column per metric, a score per cell for the chosen month. */
+/**
+ * Coach grid: one row per student, one column per metric, each cell the student's current score.
+ * There is no month to pick: a change is saved on the current month by the API, and older months
+ * stay as the student's history (the evolution shown on their stats page).
+ */
 export default function AssessmentsPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const scale = scaleOf(user?.gym);
   const queryClient = useQueryClient();
-  const [month, setMonth] = useState(todayISO().slice(0, 7));
-  const period = monthPeriod(month);
   const { data: students = [] } = useStudents();
   const { data: metrics = [] } = useMetrics();
-  const key = ["assessments", period];
+  const key = ["assessments", "all"];
   const { data: scores = [] } = useQuery({
     queryKey: key,
-    queryFn: async () => (await api.get<Assessment[]>("/assessments/", { params: { period } })).data,
+    queryFn: async () => (await api.get<Assessment[]>("/assessments/")).data,
   });
 
   const set = useMutation({
     mutationFn: async (input: { student: number; metric: number; score: number | null }) =>
-      api.post("/assessments/set/", { ...input, period }),
+      api.post("/assessments/set/", input),
     onMutate: (input) => {
       // Optimistic: the grid reacts at once; the refetch below settles the real state.
+      const period = `${todayISO().slice(0, 7)}-01`;
       queryClient.setQueryData<Assessment[]>(key, (current = []) => {
-        const rest = current.filter((a) => !(a.student === input.student && a.metric === input.metric));
-        return input.score === null
-          ? rest
-          : [...rest, { id: -1, student: input.student, metric: input.metric, period, score: input.score, notes: "", updated_at: "" }];
+        const sameCell = (a: Assessment) => a.student === input.student && a.metric === input.metric;
+        if (input.score === null) return current.filter((a) => !sameCell(a));
+        const rest = current.filter((a) => !(sameCell(a) && a.period === period));
+        return [...rest, { id: -1, student: input.student, metric: input.metric, period, score: input.score, notes: "", updated_at: "" }];
       });
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: key }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["assessments"] }),
   });
 
-  const scoreOf = (student: number, metric: number) =>
-    scores.find((a) => a.student === student && a.metric === metric)?.score ?? null;
+  const current = new Map(
+    students.map((student) => [student.id, latestScores(scores.filter((a) => a.student === student.id))]),
+  );
+  const scoreOf = (student: number, metric: number) => current.get(student)?.get(metric)?.score ?? null;
   const ordered = GROUPS.flatMap((group) => metrics.filter((m) => m.group === group));
 
   return (
     <section className="flex flex-col gap-6">
-      <PageHeader
-        title={t("assessments.title")}
-        actions={
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-smoke">{t("assessments.month")}</span>
-            <input
-              type="month"
-              value={month}
-              onChange={(event) => event.target.value && setMonth(event.target.value)}
-              className="rounded-md border border-rope bg-ring px-3 py-1.5 text-chalk"
-            />
-          </label>
-        }
-      />
+      <PageHeader title={t("assessments.title")} />
       <p className="-mt-4 text-sm text-smoke">{t("assessments.hint", scale)}</p>
       {students.length === 0 ? (
         <p className="text-smoke">{t("assessments.noStudents")}</p>
