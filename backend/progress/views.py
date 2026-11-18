@@ -49,10 +49,13 @@ def set_assessment(request):
     serializer = SetAssessmentSerializer(data=request.data, context={"request": request})
     serializer.is_valid(raise_exception=True)
     data = serializer.validated_data
-    key = {"student": data["student"], "metric": data["metric"], "period": data["period"]}
+    pair = {"student": data["student"], "metric": data["metric"]}
     if data["score"] is None:
-        Assessment.objects.filter(**key).delete()
+        # Without a period, clearing removes the stat entirely (history included), so an older
+        # score does not resurface as the current one.
+        Assessment.objects.filter(**pair, **({"period": data["period"]} if "period" in data else {})).delete()
         return Response(status=204)
+    key = {**pair, "period": data.get("period", month_start(timezone.localdate()))}
     assessment, _ = Assessment.objects.update_or_create(
         **key, defaults={"score": data["score"], "notes": data["notes"], "assessed_by": request.user}
     )

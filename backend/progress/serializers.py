@@ -24,11 +24,15 @@ def month_start(day):
 
 
 class SetAssessmentSerializer(serializers.Serializer):
-    """Upsert one score; `score: null` clears it. Any day of the month selects that month."""
+    """Upsert one score; `score: null` clears it.
+
+    `period` is optional: the coach keeps each student's current stats, so a score lands on the
+    current month (older months stay as the student's history). Any day of a month selects it.
+    """
 
     student = serializers.PrimaryKeyRelatedField(queryset=User.objects.none())
     metric = serializers.PrimaryKeyRelatedField(queryset=Metric.objects.none())
-    period = serializers.DateField()
+    period = serializers.DateField(required=False)
     score = serializers.IntegerField(min_value=0, allow_null=True)
     notes = serializers.CharField(required=False, allow_blank=True, default="")
 

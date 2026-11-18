@@ -8,7 +8,7 @@ from training.models import hex_color
 
 
 class Metric(models.Model):
-    """Something the coach scores from 1 to 5 every month (speed, guard, ...). Coach-editable list."""
+    """A stat the coach scores for each student (speed, guard, ...). Coach-editable list."""
 
     class Group(models.TextChoices):
         PHYSICAL = "PHYSICAL", "Physical capacity"
@@ -30,7 +30,10 @@ class Metric(models.Model):
 
 
 class Assessment(models.Model):
-    """A student's score on one metric for one month (`period` is the first day of the month).
+    """A student's score on one metric (`period` is the first day of the month it was set in).
+
+    The coach only edits the current score; the latest row per metric is the student's current
+    stat and older months stay as history for the student's evolution.
 
     Scores go from the gym's `assessment_scale_min` to `assessment_scale_max`; changing the scale
     keeps older scores.

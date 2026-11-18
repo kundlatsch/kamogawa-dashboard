@@ -1,5 +1,7 @@
 from datetime import date
 
+from django.utils import timezone
+
 from progress.models import Assessment, Metric
 
 
@@ -74,3 +76,17 @@ def test_assessments_are_isolated_between_gyms(coach, api_as, gym, other_gym, ma
     for attempt in attempts:
         response = client.post("/api/assessments/set/", {**attempt, "period": "2026-11-01", "score": 1})
         assert response.status_code == 400, attempt
+
+
+def test_score_without_period_lands_on_current_month_and_clearing_removes_history(coach, api_as, gym, make_user):
+    student = make_user("ana")
+    metric = Metric.objects.filter(gym=gym).first()
+    Assessment.objects.create(student=student, metric=metric, period=date(2020, 1, 1), score=2)
+    client = api_as(coach)
+    response = client.post("/api/assessments/set/", {"student": student.id, "metric": metric.id, "score": 5})
+    assert response.status_code == 200
+    assert response.json()["period"] == timezone.localdate().replace(day=1).isoformat()
+    assert Assessment.objects.count() == 2  # the old month stays as history
+    payload = {"student": student.id, "metric": metric.id, "score": None}
+    assert client.post("/api/assessments/set/", payload, format="json").status_code == 204
+    assert not Assessment.objects.exists()
