@@ -73,6 +73,7 @@ class UserSerializer(serializers.ModelSerializer):
             "handedness",
             "limitations",
             "weekly_classes",
+            "level",
             "fighter_class",
             "role",
             "gym",

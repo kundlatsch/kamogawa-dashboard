@@ -4,7 +4,7 @@ from accounts.models import User
 from training.models import Drill
 from training.serializers import DrillSerializer, GymScopedSerializer, NamedListSerializer
 
-from .models import Assessment, CoachNote, FocusOption, Homework, Metric, WeeklyFocus, week_start
+from .models import Assessment, CoachNote, FocusOption, Homework, Metric, StudentPoint, WeeklyFocus, week_start
 
 
 class MetricSerializer(NamedListSerializer):
@@ -98,6 +98,21 @@ class CoachNoteSerializer(GymScopedSerializer):
     def validate(self, attrs):
         if self.instance and "student" in attrs and attrs["student"] != self.instance.student:
             raise serializers.ValidationError({"student": "A note cannot move to another student."})
+        return attrs
+
+
+class StudentPointSerializer(GymScopedSerializer):
+    gym_scoped_fields = {"student": lambda gym: User.objects.filter(gym=gym, role=User.Role.STUDENT)}
+    student = serializers.PrimaryKeyRelatedField(queryset=User.objects.none())
+    text = serializers.CharField(max_length=300, allow_blank=False, trim_whitespace=True)
+
+    class Meta:
+        model = StudentPoint
+        fields = ["id", "student", "kind", "text", "created_at"]
+
+    def validate(self, attrs):
+        if self.instance and "student" in attrs and attrs["student"] != self.instance.student:
+            raise serializers.ValidationError({"student": "A point cannot move to another student."})
         return attrs
 
 

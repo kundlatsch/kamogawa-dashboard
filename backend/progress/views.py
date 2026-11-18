@@ -7,7 +7,7 @@ from accounts.permissions import IsCoach, IsGymMember
 from training.cycle_views import ArchivableListViewSet
 from training.views import GymScopedViewSet, parse_date
 
-from .models import Assessment, CoachNote, FocusOption, Homework, Metric, WeeklyFocus, week_start
+from .models import Assessment, CoachNote, FocusOption, Homework, Metric, StudentPoint, WeeklyFocus, week_start
 from .serializers import (
     AssessmentSerializer,
     CoachNoteSerializer,
@@ -16,6 +16,7 @@ from .serializers import (
     MetricSerializer,
     SetAssessmentSerializer,
     SetWeeklyFocusSerializer,
+    StudentPointSerializer,
     WeeklyFocusSerializer,
     month_start,
 )
@@ -117,6 +118,29 @@ class CoachNoteViewSet(GymScopedViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class StudentPointViewSet(GymScopedViewSet):
+    """Strengths and weaknesses the coach writes for students; filter with `?student=`."""
+
+    serializer_class = StudentPointSerializer
+
+    def get_queryset(self):
+        queryset = StudentPoint.objects.filter(student__gym=self.gym)
+        if "student" in self.request.query_params:
+            queryset = queryset.filter(student_id=self.request.query_params["student"])
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+
+@api_view(["GET"])
+@permission_classes([IsGymMember])
+def my_points(request):
+    """The strengths and weaknesses the coach wrote for the requesting student."""
+    points = StudentPoint.objects.filter(student=request.user, student__gym=request.user.gym)
+    return Response(StudentPointSerializer(points, many=True).data)
 
 
 class HomeworkViewSet(GymScopedViewSet):

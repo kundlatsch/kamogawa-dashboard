@@ -18,7 +18,16 @@
       "avatar_emoji": "🐯",
       "color": "#f77f00",
       "handedness": "RIGHT",
-      "weekly_classes": 2
+      "weekly_classes": 2,
+      "level": "BEGINNER",
+      "strengths": [
+        "Jab rápido",
+        "Boa resistência"
+      ],
+      "weaknesses": [
+        "Guarda baixa depois do direto",
+        "Tarefa: 3 rounds de sombra por dia"
+      ]
     },
     {
       "username": "aluno2",
@@ -27,7 +36,14 @@
       "avatar_emoji": "🦁",
       "color": "#3a86ff",
       "handedness": "LEFT",
-      "weekly_classes": 2
+      "weekly_classes": 2,
+      "level": "BEGINNER_INTERMEDIATE",
+      "strengths": [
+        "Esquivas"
+      ],
+      "weaknesses": [
+        "Pouca movimentação de pernas"
+      ]
     },
     {
       "username": "aluno3",
@@ -36,7 +52,10 @@
       "avatar_emoji": "🐺",
       "color": "#2a9d8f",
       "handedness": "RIGHT",
-      "weekly_classes": 2
+      "weekly_classes": 2,
+      "level": "INTERMEDIATE",
+      "strengths": [],
+      "weaknesses": []
     },
     {
       "username": "aluno4",
@@ -45,7 +64,12 @@
       "avatar_emoji": "🦅",
       "color": "#9b5de5",
       "handedness": "RIGHT",
-      "weekly_classes": 2
+      "weekly_classes": 2,
+      "level": "ADVANCED",
+      "strengths": [
+        "Contra-ataque"
+      ],
+      "weaknesses": []
     }
   ],
   "extra_drills": [

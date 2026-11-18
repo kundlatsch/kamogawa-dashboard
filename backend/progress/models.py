@@ -110,6 +110,28 @@ class CoachNote(models.Model):
         ordering = ["-created_at", "-id"]
 
 
+class StudentPoint(models.Model):
+    """A strength or weakness the coach writes for a student, in free text; the student can read it.
+
+    The coach also uses these lists for homework and weekly goals, so items are short editable lines.
+    """
+
+    class Kind(models.TextChoices):
+        STRENGTH = "STRENGTH", "Strength"
+        WEAKNESS = "WEAKNESS", "Weakness"
+
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="points")
+    kind = models.CharField(max_length=8, choices=Kind.choices)
+    text = models.CharField(max_length=300)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at", "id"]
+
+    def __str__(self) -> str:
+        return self.text
+
+
 class Homework(models.Model):
     """A task for a week, for some students or for everyone (`is_broadcast`)."""
 

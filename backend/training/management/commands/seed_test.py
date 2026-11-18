@@ -12,6 +12,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from accounts.models import Gym, User
+from progress.models import StudentPoint
 from training.models import Assignment, CheckIn, Drill, DrillCategory, SessionBlock, TrainingSession
 from training.scheduling import generate_regular_sessions
 
@@ -45,7 +46,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Test data ready in '{gym.name}'."))
 
     def account(self, gym, item, role) -> User:
-        fields = {key: value for key, value in item.items() if key != "password"}
+        fields = {key: value for key, value in item.items() if key not in {"password", "strengths", "weaknesses"}}
         user = User.objects.filter(username=item["username"]).first()
         if user:
             self.stdout.write(f"{item['username']} already exists, left unchanged.")
@@ -53,6 +54,9 @@ class Command(BaseCommand):
         user = User(**fields, role=role, gym=gym)
         user.set_password(item["password"])
         user.save()
+        for kind, key in [(StudentPoint.Kind.STRENGTH, "strengths"), (StudentPoint.Kind.WEAKNESS, "weaknesses")]:
+            for text in item.get(key, []):
+                StudentPoint.objects.create(student=user, kind=kind, text=text)
         self.stdout.write(f"Created {role.lower()} {item['username']}.")
         return user
 

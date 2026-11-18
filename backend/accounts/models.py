@@ -54,6 +54,14 @@ class User(AbstractUser):
         RIGHT = "RIGHT", _("Right-handed")
         LEFT = "LEFT", _("Left-handed")
 
+    class Level(models.TextChoices):
+        UNSPECIFIED = "", _("Unspecified")
+        BEGINNER = "BEGINNER", _("Beginner")
+        BEGINNER_INTERMEDIATE = "BEGINNER_INTERMEDIATE", _("Beginner/Intermediate")
+        INTERMEDIATE = "INTERMEDIATE", _("Intermediate")
+        INTERMEDIATE_ADVANCED = "INTERMEDIATE_ADVANCED", _("Intermediate/Advanced")
+        ADVANCED = "ADVANCED", _("Advanced")
+
     role = models.CharField(max_length=16, choices=Role.choices, default=Role.STUDENT)
     gym = models.ForeignKey(Gym, null=True, blank=True, on_delete=models.PROTECT, related_name="members")
     display_name = models.CharField(max_length=80, blank=True)
@@ -66,6 +74,8 @@ class User(AbstractUser):
     limitations = models.TextField(blank=True, max_length=1000)
     # How many classes a week the student committed to; blank = no weekly absence tracking.
     weekly_classes = models.PositiveSmallIntegerField(null=True, blank=True)
+    # Skill level set by the coach (students cannot change it); blank = not set yet.
+    level = models.CharField(max_length=24, choices=Level.choices, blank=True, default=Level.UNSPECIFIED)
     # Fighting style chosen by the coach (students cannot change it).
     fighter_class = models.ForeignKey(
         "gamification.FighterClass", null=True, blank=True, on_delete=models.SET_NULL, related_name="students"
