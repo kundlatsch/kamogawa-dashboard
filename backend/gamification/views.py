@@ -1,7 +1,5 @@
-from django.db.models import Count, Q, Sum
-from django.shortcuts import get_object_or_404
+from django.db.models import Count, Sum
 from django.utils import timezone
-from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser
@@ -14,11 +12,9 @@ from accounts.serializers import PublicUserSerializer
 from training.cycle_views import ArchivableListViewSet
 from training.absences import week_start
 from training.models import CheckIn, WeeklyAbsence
-from training.views import GymScopedViewSet
 
-from .models import FighterClass, Mission, MissionCompletion
-from .serializers import FighterClassSerializer, MissionCompletionSerializer, MissionSerializer
-from .services import review_completion
+from .models import FighterClass
+from .serializers import FighterClassSerializer
 
 
 class FighterClassViewSet(ArchivableListViewSet):
@@ -47,72 +43,31 @@ class FighterClassViewSet(ArchivableListViewSet):
         return Response(self.get_serializer(fighter_class).data)
 
 
-class MissionViewSet(GymScopedViewSet):
-    serializer_class = MissionSerializer
-
-    def get_queryset(self):
-        return Mission.objects.filter(gym=self.gym)
-
-
-class MissionCompletionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """Coach review queue (`?status=PENDING`) of missions students say they completed."""
-
-    serializer_class = MissionCompletionSerializer
-    permission_classes = [IsCoach]
-
-    def get_queryset(self):
-        gym = self.request.user.gym
-        queryset = MissionCompletion.objects.filter(mission__gym=gym, student__gym=gym).select_related("mission")
-        if "status" in self.request.query_params:
-            queryset = queryset.filter(status=self.request.query_params["status"])
-        return queryset
-
-    @action(detail=True, methods=["post"])
-    def approve(self, request, pk=None):
-        return Response(self.get_serializer(review_completion(self.get_object(), request.user, True)).data)
-
-    @action(detail=True, methods=["post"])
-    def reject(self, request, pk=None):
-        return Response(self.get_serializer(review_completion(self.get_object(), request.user, False)).data)
-
-
 @api_view(["GET"])
 @permission_classes([IsCoach])
 def leaderboard(request):
-    """Every active student with fighter class, attendance and missions (the UI sorts the ranking)."""
-    return Response(ranking_rows(request.user.gym, include_pending=True))
+    """Every active student with fighter class and attendance (the UI sorts the ranking)."""
+    return Response(ranking_rows(request.user.gym))
 
 
 @api_view(["GET"])
 @permission_classes([IsGymMember])
 def ranking(request):
-    """Read-only ranking for students: the same rows without the coach's review queue."""
-    return Response(ranking_rows(request.user.gym, include_pending=False))
+    """Read-only ranking for students: the same rows as the coach sees."""
+    return Response(ranking_rows(request.user.gym))
 
 
-def ranking_rows(gym, include_pending: bool) -> list[dict]:
-    statuses = MissionCompletion.Status
-    students = (
-        User.objects.filter(gym=gym, role=User.Role.STUDENT, is_active=True)
-        .annotate(
-            pending=Count("mission_completions", filter=Q(mission_completions__status=statuses.PENDING)),
-            completed=Count("mission_completions", filter=Q(mission_completions__status=statuses.APPROVED)),
-        )
-        .order_by("display_name")
-    )
+def ranking_rows(gym) -> list[dict]:
+    students = User.objects.filter(gym=gym, role=User.Role.STUDENT, is_active=True).order_by("display_name")
     attendance = attendance_by_student(gym, students)
-    rows = []
-    for student in students:
-        row = {
+    return [
+        {
             "student": PublicUserSerializer(student).data,
             "fighter_class": student.fighter_class_id,
-            "missions_completed": student.completed,
             **attendance[student.id],
         }
-        if include_pending:
-            row["pending_missions"] = student.pending
-        rows.append(row)
-    return rows
+        for student in students
+    ]
 
 
 def attendance_by_student(gym, students) -> dict[int, dict]:
@@ -151,52 +106,3 @@ def attendance_by_student(gym, students) -> dict[int, dict]:
         }
         for student in students
     }
-
-
-def available_missions(user):
-    today = timezone.localdate()
-    return Mission.objects.filter(gym=user.gym, active=True).filter(
-        Q(starts_on__isnull=True) | Q(starts_on__lte=today), Q(ends_on__isnull=True) | Q(ends_on__gte=today)
-    )
-
-
-@api_view(["GET"])
-@permission_classes([IsGymMember])
-def my_progress(request):
-    """The student's fighter class and the missions (weekly goals) they can work on."""
-    user = request.user
-    completions = list(MissionCompletion.objects.filter(student=user))
-    missions = []
-    for mission in available_missions(user):
-        own = [c for c in completions if c.mission_id == mission.id]
-        latest = own[0] if own else None
-        can_complete = latest is None or (mission.repeatable and latest.status != MissionCompletion.Status.PENDING)
-        missions.append(
-            {
-                **MissionSerializer(mission).data,
-                "status": latest.status if latest else None,
-                "times_completed": sum(c.status == MissionCompletion.Status.APPROVED for c in own),
-                "can_complete": can_complete,
-            }
-        )
-    return Response(
-        {
-            "fighter_class": FighterClassSerializer(user.fighter_class).data if user.fighter_class else None,
-            "missions": missions,
-        }
-    )
-
-
-@api_view(["POST"])
-@permission_classes([IsGymMember])
-def complete_mission(request, mission_id):
-    """A student marks a mission as done; it then waits for the coach to approve it."""
-    if request.user.role != User.Role.STUDENT:
-        return Response(status=status.HTTP_403_FORBIDDEN)
-    mission = get_object_or_404(available_missions(request.user), pk=mission_id)
-    latest = MissionCompletion.objects.filter(mission=mission, student=request.user).first()
-    if latest and (latest.status == MissionCompletion.Status.PENDING or not mission.repeatable):
-        raise ValidationError({"detail": "This mission was already sent."})
-    note = str(request.data.get("note", ""))[:300]
-    completion = MissionCompletion.objects.create(mission=mission, student=request.user, note=note)
-    return Response(MissionCompletionSerializer(completion).data, status=status.HTTP_201_CREATED)

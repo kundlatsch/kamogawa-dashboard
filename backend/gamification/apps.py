@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class GamificationConfig(AppConfig):
-    """XP for attending classes and completing missions, levels, and coach-assigned fighter classes."""
+    """Coach-assigned fighter classes and the attendance ranking (plus legacy XP history)."""
 
     default_auto_field = "django.db.models.BigAutoField"
     name = "gamification"

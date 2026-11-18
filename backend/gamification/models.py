@@ -31,48 +31,6 @@ class FighterClass(models.Model):
         return self.name
 
 
-class Mission(models.Model):
-    """A challenge students complete for XP once the coach approves it."""
-
-    gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="missions")
-    title = models.CharField(max_length=120)
-    description = models.TextField(blank=True)
-    emoji = models.CharField(max_length=16, default="🎯")
-    xp_reward = models.PositiveIntegerField(default=20)
-    active = models.BooleanField(default=True)
-    starts_on = models.DateField(null=True, blank=True)
-    ends_on = models.DateField(null=True, blank=True)
-    # Repeatable missions can be completed again once the previous completion was reviewed.
-    repeatable = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["-active", "ends_on", "title"]
-
-    def __str__(self) -> str:
-        return self.title
-
-
-class MissionCompletion(models.Model):
-    class Status(models.TextChoices):
-        PENDING = "PENDING", "Pending review"
-        APPROVED = "APPROVED", "Approved"
-        REJECTED = "REJECTED", "Rejected"
-
-    mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name="completions")
-    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="mission_completions")
-    status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
-    note = models.CharField(max_length=300, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    reviewed_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
-    )
-    reviewed_at = models.DateTimeField(null=True, blank=True)
-
-    class Meta:
-        ordering = ["-created_at", "-id"]
-
-
 class XpEvent(models.Model):
     """Legacy: XP gains from before XP was dropped (2026-11-16). Kept so no data is lost; nothing writes it."""
 
@@ -86,9 +44,6 @@ class XpEvent(models.Model):
     reason = models.CharField(max_length=16, choices=Reason.choices)
     session = models.ForeignKey(
         "training.TrainingSession", null=True, blank=True, on_delete=models.CASCADE, related_name="+"
-    )
-    mission_completion = models.OneToOneField(
-        MissionCompletion, null=True, blank=True, on_delete=models.CASCADE, related_name="xp_event"
     )
     note = models.CharField(max_length=200, blank=True)
     created_by = models.ForeignKey(
