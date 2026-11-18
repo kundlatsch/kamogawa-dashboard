@@ -11,7 +11,6 @@ import GymDetailPage from "./pages/admin/GymDetailPage";
 import GymsPage from "./pages/admin/GymsPage";
 import TodayPage from "./pages/student/TodayPage";
 import PlanPage from "./pages/student/PlanPage";
-import ProgressPage from "./pages/student/ProgressPage";
 import StatsPage from "./pages/student/StatsPage";
 import StudentRankingPage from "./pages/student/StudentRankingPage";
 import ClassPage from "./pages/student/ClassPage";
@@ -91,7 +90,6 @@ function AppRoutes() {
     { to: "/upcoming", labelKey: "nav.upcoming", icon: "📅" },
     { to: "/plan", labelKey: "nav.plan", icon: "📋" },
     { to: "/stats", labelKey: "nav.stats", icon: "📊" },
-    { to: "/progress", labelKey: "nav.progress", icon: "🎯" },
     { to: "/ranking", labelKey: "nav.ranking", icon: "🏆" },
   ];
   return (
@@ -102,7 +100,6 @@ function AppRoutes() {
         <Route path="class/:sessionId" element={<ClassPage />} />
         <Route path="plan" element={<PlanPage />} />
         <Route path="stats" element={<StatsPage />} />
-        <Route path="progress" element={<ProgressPage />} />
         <Route path="ranking" element={<StudentRankingPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

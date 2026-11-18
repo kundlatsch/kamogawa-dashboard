@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
@@ -9,38 +8,43 @@ import { useAuth } from "../../auth/AuthContext";
 import Avatar from "../../components/Avatar";
 import FighterClassArt from "../../components/FighterClassArt";
 import { PageHeader } from "../../components/ui";
-import { sortLeaderboard, type RankingOrder } from "../../lib/ranking";
+import { sortLeaderboard } from "../../lib/ranking";
 
-/** The gym ranking as students see it: read-only, by attendance or completed missions. */
+/** The gym attendance ranking as students see it (read-only), with their own fighter class on top. */
 export default function StudentRankingPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [order, setOrder] = useState<RankingOrder>("attendance");
   const { data = [], isLoading, isError } = useQuery({
     queryKey: ["ranking"],
     queryFn: async () => (await api.get<LeaderboardEntry[]>("/ranking/")).data,
   });
   const { data: classes = [] } = useFighterClasses();
-  const entries = sortLeaderboard(data, order);
+  const entries = sortLeaderboard(data);
+  const myClassId = data.find((entry) => entry.student.id === user?.id)?.fighter_class;
+  const myClass = classes.find((c) => c.id === myClassId);
 
   return (
     <section className="mx-auto flex max-w-2xl flex-col gap-4">
       <PageHeader title={t("nav.ranking")} />
-      <div role="tablist" className="flex gap-2">
-        {(["attendance", "missions"] as const).map((key) => (
-          <button
-            key={key}
-            role="tab"
-            aria-selected={order === key}
-            onClick={() => setOrder(key)}
-            className={`rounded-full px-4 py-2 text-sm font-semibold max-md:flex-1 ${
-              order === key ? "bg-glove text-chalk" : "border border-rope text-smoke hover:text-chalk"
-            }`}
-          >
-            {t(`ranking.by.${key}`)}
-          </button>
-        ))}
-      </div>
+      {!isLoading && !isError && (
+        <div
+          className="flex items-center gap-4 overflow-hidden rounded-xl border border-rope bg-canvas p-4"
+          style={myClass ? { background: `radial-gradient(circle at 15% 50%, ${myClass.color}44, transparent 60%)` } : undefined}
+        >
+          {myClass && <FighterClassArt fighterClass={myClass} />}
+          {myClass ? (
+            <div className="min-w-0 flex-1">
+              <p className="text-xs tracking-wider text-smoke uppercase">{t("studentRanking.yourClass")}</p>
+              <h2 className="font-display text-2xl tracking-wide uppercase" style={{ color: myClass.color }}>
+                {myClass.name}
+              </h2>
+              {myClass.description && <p className="text-sm text-smoke">{myClass.description}</p>}
+            </div>
+          ) : (
+            <p className="text-sm text-smoke">{t("studentRanking.noClass")}</p>
+          )}
+        </div>
+      )}
       {isLoading && <p className="text-smoke">{t("common.loading")}</p>}
       {isError && <p className="text-glove">{t("ranking.loadError")}</p>}
       <ol className="flex flex-col divide-y divide-rope rounded-xl border border-rope bg-canvas px-4">
@@ -62,15 +66,10 @@ export default function StudentRankingPage() {
                   <Avatar person={entry.student} /> {entry.student.display_name}
                   {me && ` (${t("studentRanking.you")})`}
                 </p>
-                {/* Each stat wraps as a whole, never in the middle of "0 missões concluídas". */}
+                {/* Each stat wraps as a whole, never in the middle of "0 presenças". */}
                 <p className="flex flex-wrap gap-x-2 text-xs font-normal text-smoke">
-                  <span className={`whitespace-nowrap ${order === "attendance" ? "text-belt" : ""}`}>
-                    ✓ {t("ranking.attended", { count: entry.attended })}
-                  </span>
+                  <span className="whitespace-nowrap text-belt">✓ {t("ranking.attended", { count: entry.attended })}</span>
                   <span className="whitespace-nowrap">✗ {t("ranking.absences", { count: entry.absences })}</span>
-                  <span className={`whitespace-nowrap ${order === "missions" ? "text-belt" : ""}`}>
-                    🎯 {t("ranking.missionsCompleted", { count: entry.missions_completed })}
-                  </span>
                 </p>
               </div>
             </li>

@@ -309,43 +309,9 @@ export interface FighterClass extends NamedItem {
 export interface LeaderboardEntry {
   student: PublicUser;
   fighter_class: number | null;
-  /** Only in the coach's view. */
-  pending_missions?: number;
-  missions_completed: number;
   /** Classes with attendance taken where the student was marked present / not present. */
   attended: number;
   absences: number;
-}
-
-export interface Mission {
-  id: number;
-  title: string;
-  description: string;
-  emoji: string;
-  xp_reward: number;
-  active: boolean;
-  starts_on: string | null;
-  ends_on: string | null;
-  repeatable: boolean;
-  created_at: string;
-}
-
-export type CompletionStatus = "PENDING" | "APPROVED" | "REJECTED";
-
-export interface MissionCompletion {
-  id: number;
-  mission: number;
-  mission_detail: Mission;
-  student: number;
-  status: CompletionStatus;
-  note: string;
-  created_at: string;
-  reviewed_at: string | null;
-}
-
-export interface MyProgress {
-  fighter_class: FighterClass | null;
-  missions: (Mission & { status: CompletionStatus | null; times_completed: number; can_complete: boolean })[];
 }
 
 /** A day in the student calendar: published classes carry details; planned ones only date and time. */

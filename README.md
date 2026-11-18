@@ -16,7 +16,7 @@ The UI is in Brazilian Portuguese and fully internationalized (see
 |---|---|
 | Account admin (`ACCOUNT_ADMIN`) | Create and deactivate gyms, add coaches, reset coach passwords |
 | Coach (`COACH`) | Everything about their gym: planning, students, assessments, settings |
-| Student (`STUDENT`) | Check in, see their classes, routine, stats, missions and the ranking |
+| Student (`STUDENT`) | Check in, see their classes, routine, stats and the ranking |
 
 Every exercise, class and account belongs to one gym; gyms never see each
 other's data.
@@ -34,8 +34,8 @@ other's data.
   microcycles (phase and objective); every class inherits its week's objective.
 - **Week**: two weekly focuses per student, coach notes and homework.
 - **Assessments**: monthly scores per metric on a configurable scale (1–10 by default).
-- **Ranking and missions**: attendance and absences, missions as weekly goals,
-  fighter classes with artwork (or a custom image).
+- **Ranking**: attendance and absences, and each student's fighter class with
+  artwork (or a custom image).
 - **Settings** (tabs): gym, class times per weekday, check-in deadline, class
   blocks, categories, focuses, valences, phases, metrics, fighter classes.
 
@@ -43,8 +43,8 @@ other's data.
 - **Hoje**: today's class with check-in, the week's objective, focuses and homework.
 - **Calendário**: every class day; check in ahead of time on any class, open
   published classes to see the exercises.
-- **Plano, Estatísticas, Missões, Ranking**: the training plan, monthly scores
-  and coach notes, missions and the gym ranking.
+- **Plano, Estatísticas, Ranking**: the training plan, monthly scores and coach
+  notes, and the gym ranking with their own fighter class.
 - **Profile**: photo, stance, limitations and classes per week.
 
 **Automation**
@@ -138,12 +138,12 @@ backend/
   training/        exercises, schedule, classes and blocks, assignments, cycles, check-ins,
                    weekly absences, student endpoints, scheduler commands
   progress/        metrics and monthly assessments, weekly focuses, coach notes, homework
-  gamification/    fighter classes, missions, ranking
+  gamification/    fighter classes, ranking
   notifications/   in-app notifications
 frontend/src/
   pages/admin/     account admin: gyms and their coaches
   pages/coach/     planning board, calendar, cycles, week, assessments, ranking, settings
-  pages/student/   today, calendar, class, plan, stats, missions, ranking
+  pages/student/   today, calendar, class, plan, stats, ranking
   i18n/locales/    UI translations (pt-BR)
   assets/          fighter class artwork
 ```

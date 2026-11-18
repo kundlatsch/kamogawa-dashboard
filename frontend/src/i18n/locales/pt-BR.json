@@ -40,8 +40,7 @@
     "assessments": "Avaliações",
     "stats": "Estatísticas",
     "week": "Semana",
-    "ranking": "Ranking",
-    "progress": "Missões"
+    "ranking": "Ranking"
   },
   "drills": {
     "title": "Biblioteca de exercícios",
@@ -468,59 +467,21 @@
     "notCheckedIn": "Você não confirmou presença."
   },
   "ranking": {
-    "title": "Ranking e missões",
+    "title": "Ranking",
     "hint": "Presenças são os check-ins (menos os que você marcou como falta). Faltas são fechadas todo domingo às 23h: treinos por semana do aluno menos os check-ins, e as faltas que você marcar no painel de presenças.",
     "position": "#",
     "student": "Aluno",
     "class": "Classe",
     "noClass": "Sem classe",
     "classFor": "Classe de {{name}}",
-    "pending": "Missões para aprovar",
-    "noPending": "Nenhuma missão esperando aprovação.",
-    "approve": "Aprovar",
-    "reject": "Recusar",
-    "missions": "Missões",
-    "noMissions": "Nenhuma missão criada.",
-    "newMission": "Nova missão",
-    "missionTitle": "Missão",
-    "missionDescription": "Descrição",
-    "startsOn": "Começa em",
-    "endsOn": "Termina em",
-    "repeatable": "Pode ser repetida",
-    "active": "Ativa",
-    "paused": "Pausada",
-    "pause": "Pausar",
-    "activate": "Ativar",
-    "addMission": "Criar missão",
     "empty": "Nenhum aluno ainda.",
-    "by": {
-      "attendance": "Por presença",
-      "missions": "Por missões"
-    },
     "attended_one": "{{count}} presença",
     "attended_other": "{{count}} presenças",
     "absences_one": "{{count}} falta",
     "absences_other": "{{count}} faltas",
     "loadError": "Não foi possível carregar o ranking. Recarregue a página.",
-    "missionsCompleted_one": "{{count}} missão concluída",
-    "missionsCompleted_other": "{{count}} missões concluídas",
     "attended_zero": "0 presenças",
-    "absences_zero": "0 faltas",
-    "missionsCompleted_zero": "0 missões concluídas"
-  },
-  "progress": {
-    "title": "Meu lutador",
-    "noClass": "O treinador ainda não definiu sua classe de lutador.",
-    "yourClass": "Sua classe",
-    "missions": "Missões",
-    "noMissions": "Nenhuma missão disponível agora.",
-    "complete": "Concluí!",
-    "pending": "Aguardando o treinador",
-    "approved": "Concluída",
-    "rejected": "Não aprovada",
-    "timesCompleted_one": "Feita {{count}} vez",
-    "timesCompleted_other": "Feita {{count}} vezes",
-    "until": "até {{date}}"
+    "absences_zero": "0 faltas"
   },
   "studentProfile": {
     "notFound": "Aluno não encontrado.",
@@ -550,6 +511,8 @@
     "notPublishedYet": "detalhes quando o treinador publicar"
   },
   "studentRanking": {
-    "you": "você"
+    "you": "você",
+    "yourClass": "Sua classe",
+    "noClass": "O treinador ainda não definiu sua classe de lutador."
   }
 }

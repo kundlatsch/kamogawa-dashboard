@@ -1,29 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
 import { useFighterClasses } from "../../api/hooks";
-import type { LeaderboardEntry, Mission, MissionCompletion } from "../../api/types";
+import type { LeaderboardEntry } from "../../api/types";
 import Avatar from "../../components/Avatar";
 import FighterClassArt from "../../components/FighterClassArt";
-import { Button, Input, PageHeader } from "../../components/ui";
-import { sortLeaderboard, type RankingOrder } from "../../lib/ranking";
-import { formatDate } from "../../lib/dates";
+import { PageHeader } from "../../components/ui";
+import { sortLeaderboard } from "../../lib/ranking";
 import StudentLink from "../../components/StudentLink";
 
 const field = "rounded-md border border-rope bg-ring px-2 py-1.5 text-sm text-chalk outline-none focus:border-glove";
 
-/** Coach hub for ranking (attendance, missions), fighter classes and missions (weekly goals). */
+/** Coach view of the attendance ranking, where the coach also sets each student's fighter class. */
 export default function RankingPage() {
   const { t } = useTranslation();
   return (
     <section className="flex flex-col gap-6">
       <PageHeader title={t("ranking.title")} />
       <p className="-mt-4 text-sm text-smoke">{t("ranking.hint")}</p>
-      <PendingCompletions />
       <Leaderboard />
-      <Missions />
     </section>
   );
 }
@@ -31,12 +27,11 @@ export default function RankingPage() {
 function Leaderboard() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const [order, setOrder] = useState<RankingOrder>("attendance");
   const { data = [], isLoading, isError } = useQuery({
     queryKey: ["leaderboard"],
     queryFn: async () => (await api.get<LeaderboardEntry[]>("/leaderboard/")).data,
   });
-  const entries = sortLeaderboard(data, order);
+  const entries = sortLeaderboard(data);
   const { data: classes = [] } = useFighterClasses();
   const setClass = useMutation({
     mutationFn: async ({ student, fighterClass }: { student: number; fighterClass: number | null }) =>
@@ -49,21 +44,6 @@ function Leaderboard() {
 
   return (
     <div className="rounded-xl border border-rope bg-canvas p-5">
-      <div role="tablist" className="mb-3 flex gap-2">
-        {(["attendance", "missions"] as const).map((key) => (
-          <button
-            key={key}
-            role="tab"
-            aria-selected={order === key}
-            onClick={() => setOrder(key)}
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold ${
-              order === key ? "bg-glove text-chalk" : "border border-rope text-smoke hover:text-chalk"
-            }`}
-          >
-            {t(`ranking.by.${key}`)}
-          </button>
-        ))}
-      </div>
       {isLoading && <p className="text-smoke">{t("common.loading")}</p>}
       {isError && <p className="text-glove">{t("ranking.loadError")}</p>}
       {!isLoading && !isError && entries.length === 0 && <p className="text-smoke">{t("ranking.empty")}</p>}
@@ -81,21 +61,10 @@ function Leaderboard() {
                   <StudentLink id={entry.student.id}>
                     <Avatar person={entry.student} /> {entry.student.display_name}
                   </StudentLink>
-                  {(entry.pending_missions ?? 0) > 0 && (
-                    <span className="rounded-full bg-glove px-1.5 text-xs" title={t("ranking.pending")}>
-                      {entry.pending_missions}
-                    </span>
-                  )}
                 </span>
                 <span className="text-xs text-smoke">
-                  <span className={order === "attendance" ? "font-semibold text-belt" : ""}>
-                    ✓ {t("ranking.attended", { count: entry.attended })}
-                  </span>{" "}
-                  · <span className={entry.absences > 0 ? "text-glove" : ""}>✗ {t("ranking.absences", { count: entry.absences })}</span>{" "}
-                  ·{" "}
-                  <span className={order === "missions" ? "font-semibold text-belt" : ""}>
-                    🎯 {t("ranking.missionsCompleted", { count: entry.missions_completed })}
-                  </span>
+                  <span className="font-semibold text-belt">✓ {t("ranking.attended", { count: entry.attended })}</span> ·{" "}
+                  <span className={entry.absences > 0 ? "text-glove" : ""}>✗ {t("ranking.absences", { count: entry.absences })}</span>
                 </span>
               </div>
               <select
@@ -117,169 +86,6 @@ function Leaderboard() {
           );
         })}
       </ol>
-    </div>
-  );
-}
-
-function PendingCompletions() {
-  const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const { data: pending = [] } = useQuery({
-    queryKey: ["mission-completions", "PENDING"],
-    queryFn: async () =>
-      (await api.get<MissionCompletion[]>("/mission-completions/", { params: { status: "PENDING" } })).data,
-  });
-  const { data: leaderboard = [] } = useQuery({
-    queryKey: ["leaderboard"],
-    queryFn: async () => (await api.get<LeaderboardEntry[]>("/leaderboard/")).data,
-  });
-  const review = useMutation({
-    mutationFn: async ({ id, approve }: { id: number; approve: boolean }) =>
-      api.post(`/mission-completions/${id}/${approve ? "approve" : "reject"}/`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mission-completions"] });
-      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
-    },
-  });
-  if (pending.length === 0) return null;
-  const studentOf = (id: number) => leaderboard.find((e) => e.student.id === id)?.student;
-
-  return (
-    <div className="rounded-xl border border-glove bg-glove/10 p-5">
-      <h2 className="mb-3 font-display text-2xl tracking-wide uppercase">{t("ranking.pending")}</h2>
-      <ul className="flex flex-col gap-2">
-        {pending.map((completion) => {
-          const student = studentOf(completion.student);
-          return (
-            <li key={completion.id} className="flex flex-wrap items-center gap-2 rounded-lg bg-ring p-3 text-sm">
-              {student && <Avatar person={student} />}
-              {student && (
-                <StudentLink id={student.id} className="font-semibold">
-                  {student.display_name}
-                </StudentLink>
-              )}
-              <span>
-                {completion.mission_detail.emoji} {completion.mission_detail.title}
-              </span>
-              {completion.note && <span className="w-full text-smoke">💬 {completion.note}</span>}
-              <span className="flex-1" />
-              <Button className="!py-1" onClick={() => review.mutate({ id: completion.id, approve: true })}>
-                {t("ranking.approve")}
-              </Button>
-              <Button variant="ghost" className="!py-1" onClick={() => review.mutate({ id: completion.id, approve: false })}>
-                {t("ranking.reject")}
-              </Button>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-function Missions() {
-  const { t, i18n } = useTranslation();
-  const queryClient = useQueryClient();
-  const { data: missions = [] } = useQuery({
-    queryKey: ["missions"],
-    queryFn: async () => (await api.get<Mission[]>("/missions/")).data,
-  });
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [startsOn, setStartsOn] = useState("");
-  const [endsOn, setEndsOn] = useState("");
-  const [repeatable, setRepeatable] = useState(false);
-  const refresh = () => queryClient.invalidateQueries({ queryKey: ["missions"] });
-  const create = useMutation({
-    mutationFn: async () =>
-      api.post("/missions/", {
-        title: title.trim(),
-        description,
-        starts_on: startsOn || null,
-        ends_on: endsOn || null,
-        repeatable,
-        active: true,
-      }),
-    onSuccess: () => {
-      setTitle("");
-      setDescription("");
-      refresh();
-    },
-  });
-  const toggle = useMutation({
-    mutationFn: async (mission: Mission) => api.patch(`/missions/${mission.id}/`, { active: !mission.active }),
-    onSuccess: refresh,
-  });
-  const remove = useMutation({
-    mutationFn: async (mission: Mission) => api.delete(`/missions/${mission.id}/`),
-    onSuccess: refresh,
-  });
-  const short = (value: string) => formatDate(value, i18n.language, { day: "numeric", month: "short" });
-
-  return (
-    <div className="rounded-xl border border-rope bg-canvas p-5">
-      <h2 className="mb-3 font-display text-2xl tracking-wide uppercase">{t("ranking.missions")}</h2>
-      {missions.length === 0 && <p className="mb-3 text-sm text-smoke">{t("ranking.noMissions")}</p>}
-      <ul className="mb-4 flex flex-col gap-2">
-        {missions.map((mission) => (
-          <li
-            key={mission.id}
-            className={`flex flex-wrap items-center gap-2 rounded-lg border border-rope bg-ring p-3 text-sm ${
-              mission.active ? "" : "opacity-60"
-            }`}
-          >
-            <span className="text-xl">{mission.emoji}</span>
-            <div className="min-w-40 flex-1">
-              <p className="font-semibold">{mission.title}</p>
-              {mission.description && <p className="text-smoke">{mission.description}</p>}
-              <p className="text-xs text-smoke">
-                {[
-                  mission.starts_on && `${t("ranking.startsOn")} ${short(mission.starts_on)}`,
-                  mission.ends_on && `${t("ranking.endsOn")} ${short(mission.ends_on)}`,
-                  mission.repeatable && t("ranking.repeatable"),
-                  !mission.active && t("ranking.paused"),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-            </div>
-            <Button variant="ghost" className="!px-2 !py-1 text-xs" onClick={() => toggle.mutate(mission)}>
-              {mission.active ? t("ranking.pause") : t("ranking.activate")}
-            </Button>
-            <button className="text-smoke hover:text-glove" aria-label={t("common.delete")} onClick={() => remove.mutate(mission)}>
-              ✕
-            </button>
-          </li>
-        ))}
-      </ul>
-      <form
-        className="flex flex-col gap-3 border-t border-rope pt-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (title.trim()) create.mutate();
-        }}
-      >
-        <h3 className="font-semibold">{t("ranking.newMission")}</h3>
-        <Input label={t("ranking.missionTitle")} value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-smoke">{t("ranking.missionDescription")}</span>
-          <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} className={field} />
-        </label>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <Input label={t("ranking.startsOn")} type="date" value={startsOn} onChange={(e) => setStartsOn(e.target.value)} />
-          <Input label={t("ranking.endsOn")} type="date" value={endsOn} onChange={(e) => setEndsOn(e.target.value)} />
-        </div>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={repeatable} onChange={(e) => setRepeatable(e.target.checked)} />
-          {t("ranking.repeatable")}
-        </label>
-        {create.isError && <p className="text-sm text-glove">{t("cycles.saveError")}</p>}
-        <div>
-          <Button type="submit" disabled={create.isPending}>
-            + {t("ranking.addMission")}
-          </Button>
-        </div>
-      </form>
     </div>
   );
 }

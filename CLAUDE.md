@@ -33,7 +33,7 @@ See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
 
 - Backend: Django apps under `backend/` (`accounts`, `training`,
   `notifications`, `progress` for assessments/focuses/notes/homework,
-  `gamification` for XP, missions and fighter classes). DRF viewsets +
+  `gamification` for fighter classes and the ranking). DRF viewsets +
   serializers; permissions enforce that only the coach can write. Tests with
   pytest-django.
 - Coach-editable starter lists (valences, phases, class blocks, metrics,
