@@ -22,6 +22,17 @@ export interface Gym extends GymSummary {
 
 export type Handedness = "UNSPECIFIED" | "RIGHT" | "LEFT";
 
+/** Skill level the coach sets for a student; "" = not set yet. */
+export type Level = "" | "BEGINNER" | "BEGINNER_INTERMEDIATE" | "INTERMEDIATE" | "INTERMEDIATE_ADVANCED" | "ADVANCED";
+
+export const LEVELS: Exclude<Level, "">[] = [
+  "BEGINNER",
+  "BEGINNER_INTERMEDIATE",
+  "INTERMEDIATE",
+  "INTERMEDIATE_ADVANCED",
+  "ADVANCED",
+];
+
 export interface User {
   id: number;
   username: string;
@@ -33,6 +44,8 @@ export interface User {
   limitations: string;
   /** Classes a week the student committed to (weekly absences); null = not tracked. */
   weekly_classes: number | null;
+  /** Coach-assigned skill level. */
+  level: Level;
   /** Coach-assigned fighting style (id of a FighterClass). */
   fighter_class: number | null;
   role: Role;
@@ -312,6 +325,15 @@ export interface LeaderboardEntry {
   /** Classes with attendance taken where the student was marked present / not present. */
   attended: number;
   absences: number;
+}
+
+/** A strength or weakness the coach wrote for a student (free text, visible to the student). */
+export interface StudentPoint {
+  id: number;
+  student: number;
+  kind: "STRENGTH" | "WEAKNESS";
+  text: string;
+  created_at: string;
 }
 
 /** A day in the student calendar: published classes carry details; planned ones only date and time. */

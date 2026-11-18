@@ -5,10 +5,11 @@ import { Link, useParams } from "react-router-dom";
 
 import { api } from "../../api/client";
 import { useFighterClasses, useMetrics } from "../../api/hooks";
-import type { Assessment, CoachNote, LeaderboardEntry, User, WeeklyFocus } from "../../api/types";
+import { LEVELS, type Assessment, type CoachNote, type FighterClass, type Level, type LeaderboardEntry, type User, type WeeklyFocus } from "../../api/types";
 import { useAuth } from "../../auth/AuthContext";
 import Avatar from "../../components/Avatar";
 import FighterClassArt from "../../components/FighterClassArt";
+import { EditableStudentPoints } from "../../components/StudentPoints";
 import { latestScores } from "../../lib/assessments";
 import { scaleOf } from "../../lib/scale";
 import { formatDate, startOfWeek, toISODate } from "../../lib/dates";
@@ -71,6 +72,7 @@ export default function StudentProfilePage() {
             {student.handedness !== "UNSPECIFIED" && ` · ${t(`handedness.${student.handedness}`)}`}
           </p>
           {student.limitations && <p className="text-sm text-belt">⚠ {student.limitations}</p>}
+          <LevelField student={student} />
           <WeeklyClassesField student={student} />
           {entry && (
             <>
@@ -81,12 +83,37 @@ export default function StudentProfilePage() {
             </>
           )}
         </div>
-        {fighterClass && (
-          <Link to="/ranking" className="flex flex-col items-center gap-1 text-center text-xs hover:text-glove">
-            <FighterClassArt fighterClass={fighterClass} size="md" />
-            {fighterClass.name}
+      </div>
+
+      <div className={card} style={fighterClass ? { background: `radial-gradient(circle at 10% 50%, ${fighterClass.color}33, transparent 60%)` } : undefined}>
+        <div className="flex items-baseline justify-between">
+          <h2 className={heading}>{t("studentProfile.fighterStyle")}</h2>
+          <Link to="/settings?tab=fighters" className="text-xs text-smoke hover:text-glove">
+            {t("studentProfile.manageStyles")} →
           </Link>
-        )}
+        </div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          {fighterClass && <FighterClassArt fighterClass={fighterClass} size="md" />}
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            {fighterClass ? (
+              <div>
+                <p className="font-display text-2xl tracking-wide uppercase" style={{ color: fighterClass.color }}>
+                  {fighterClass.name}
+                </p>
+                {fighterClass.description && <p className="text-sm text-smoke">{fighterClass.description}</p>}
+              </div>
+            ) : (
+              <p className="text-sm text-smoke">{t("studentProfile.noStyle")}</p>
+            )}
+            <FighterStyleField student={student} classes={classes.filter((c) => !c.archived || c.id === student.fighter_class)} />
+          </div>
+        </div>
+      </div>
+
+      <div className={card}>
+        <h2 className={heading}>{t("studentProfile.points")}</h2>
+        <p className="-mt-2 mb-3 text-xs text-smoke">{t("studentProfile.pointsHint")}</p>
+        <EditableStudentPoints studentId={student.id} />
       </div>
 
       <div className={card}>
@@ -168,6 +195,66 @@ export default function StudentProfilePage() {
       </div>
 
     </section>
+  );
+}
+
+const selectClass = "rounded-md border border-rope bg-ring px-2 py-1 text-sm text-chalk";
+
+/** Patch one coach-only field of the student and refresh the profile. */
+function useStudentPatch(student: User) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (fields: Partial<User>) => api.patch(`/students/${student.id}/`, fields),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/students/"] });
+      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+    },
+  });
+}
+
+/** Skill level; saved as soon as the coach picks it. */
+function LevelField({ student }: { student: User }) {
+  const { t } = useTranslation();
+  const save = useStudentPatch(student);
+  return (
+    <label className="flex flex-wrap items-center gap-2 text-sm">
+      <span className="text-smoke">{t("studentProfile.level")}</span>
+      <select
+        value={student.level}
+        disabled={save.isPending}
+        onChange={(event) => save.mutate({ level: event.target.value as Level })}
+        className={selectClass}
+      >
+        <option value="">{t("level.UNSPECIFIED")}</option>
+        {LEVELS.map((level) => (
+          <option key={level} value={level}>
+            {t(`level.${level}`)}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+/** Fighter style (one of the gym's fighter classes); saved as soon as the coach picks it. */
+function FighterStyleField({ student, classes }: { student: User; classes: FighterClass[] }) {
+  const { t } = useTranslation();
+  const save = useStudentPatch(student);
+  return (
+    <select
+      aria-label={t("studentProfile.styleFor", { name: student.display_name })}
+      value={student.fighter_class ?? ""}
+      disabled={save.isPending}
+      onChange={(event) => save.mutate({ fighter_class: event.target.value ? Number(event.target.value) : null })}
+      className={`${selectClass} w-full sm:w-64`}
+    >
+      <option value="">{t("studentProfile.noStyleOption")}</option>
+      {classes.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.name}
+        </option>
+      ))}
+    </select>
   );
 }
 

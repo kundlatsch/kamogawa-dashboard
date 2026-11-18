@@ -489,7 +489,18 @@
     "editScores": "Avaliar",
     "noScores": "Ainda sem avaliação.",
     "addNote": "Nova observação na Semana",
-    "noXp": "Ainda sem XP."
+    "noXp": "Ainda sem XP.",
+    "level": "Nível",
+    "fighterStyle": "Estilo do Lutador",
+    "noStyle": "Nenhum estilo definido ainda.",
+    "styleFor": "Estilo de {{name}}",
+    "noStyleOption": "Sem estilo",
+    "manageStyles": "Gerenciar estilos",
+    "points": "Pontos fortes e fracos",
+    "pointsHint": "Escreva livremente: tarefas de casa, metas da semana, o que treinar. O aluno vê essas listas.",
+    "addPoint": "Adicionar",
+    "newPoint": "Novo item…",
+    "removePoint": "Remover {{text}}"
   },
   "traits": {
     "strengths": "Fortes",
@@ -513,5 +524,18 @@
     "you": "você",
     "yourClass": "Sua classe",
     "noClass": "O treinador ainda não definiu sua classe de lutador."
+  },
+  "level": {
+    "UNSPECIFIED": "Não definido",
+    "BEGINNER": "Iniciante",
+    "BEGINNER_INTERMEDIATE": "Iniciante/Intermediário",
+    "INTERMEDIATE": "Intermediário",
+    "INTERMEDIATE_ADVANCED": "Intermediário/Avançado",
+    "ADVANCED": "Avançado"
+  },
+  "points": {
+    "STRENGTH": "Pontos fortes",
+    "WEAKNESS": "Pontos fracos",
+    "empty": "Nada ainda."
   }
 }
