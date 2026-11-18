@@ -5,7 +5,7 @@ from progress.models import Assessment, Metric
 
 def test_new_gym_gets_physical_and_technical_metrics(gym):
     groups = list(Metric.objects.filter(gym=gym).values_list("group", flat=True))
-    assert groups.count("PHYSICAL") == 4 and groups.count("TECHNICAL") == 4
+    assert groups.count("PHYSICAL") == 4 and groups.count("TECHNICAL") == 7
 
 
 def test_coach_sets_updates_and_clears_a_monthly_score(coach, api_as, gym, make_user):
@@ -55,7 +55,7 @@ def test_student_sees_only_own_history_and_cannot_score(coach, api_as, gym, make
     assert client.get("/api/assessments/").status_code == 403
     payload = {"student": ana.id, "metric": metric.id, "period": "2026-11-01", "score": 5}
     assert client.post("/api/assessments/set/", payload).status_code == 403
-    assert len(client.get("/api/metrics/").json()) == 8
+    assert len(client.get("/api/metrics/").json()) == 11
 
 
 def test_assessments_are_isolated_between_gyms(coach, api_as, gym, other_gym, make_user):

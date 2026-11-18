@@ -121,6 +121,21 @@
       "name": "Defesa",
       "group": "TECHNICAL",
       "color": "#118ab2"
+    },
+    {
+      "name": "QI de Luta",
+      "group": "TECHNICAL",
+      "color": "#ef476f"
+    },
+    {
+      "name": "Adaptação",
+      "group": "TECHNICAL",
+      "color": "#8ecae6"
+    },
+    {
+      "name": "Esquiva",
+      "group": "TECHNICAL",
+      "color": "#a7c957"
     }
   ],
   "fighter_classes": [
