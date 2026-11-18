@@ -14,12 +14,15 @@ export default function DrillCard({
   drill,
   compact = false,
   categoryName,
+  categoryColor,
   footer,
   onClick,
 }: {
   drill: CardDrill;
   compact?: boolean;
   categoryName?: string;
+  /** Tints the category label as a small pill when given. */
+  categoryColor?: string;
   footer?: ReactNode;
   onClick?: () => void;
 }) {
@@ -55,7 +58,7 @@ export default function DrillCard({
         <div className="min-w-0 flex-1">
           <h3 className="truncate font-semibold">{drill.name || t("drills.untitled")}</h3>
           <div className="flex flex-wrap gap-x-2 text-xs text-smoke">
-            {categoryName && <span>{categoryName}</span>}
+            {categoryName && <CategoryLabel name={categoryName} color={categoryColor} />}
             {drill.default_rounds ? <span>{t("drills.roundsCount", { count: drill.default_rounds })}</span> : null}
             {drill.default_duration_minutes ? (
               <span>{t("drills.minutesCount", { count: drill.default_duration_minutes })}</span>
@@ -69,5 +72,15 @@ export default function DrillCard({
       </div>
       {footer}
     </article>
+  );
+}
+
+/** Category name shown on drill cards; a colored pill when the category has a color. */
+export function CategoryLabel({ name, color }: { name: string; color?: string }) {
+  if (!color) return <span>{name}</span>;
+  return (
+    <span className="truncate rounded-full px-1.5 text-chalk" style={{ backgroundColor: `${color}44` }}>
+      {name}
+    </span>
   );
 }

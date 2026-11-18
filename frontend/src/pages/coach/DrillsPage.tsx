@@ -82,6 +82,7 @@ export default function DrillsPage() {
               key={drill.id}
               drill={drill}
               categoryName={categoryName(drill.category)}
+              categoryColor={categories.find((c) => c.id === drill.category)?.color}
               onClick={() => setEditing(drill)}
             />
           ))}
@@ -129,7 +130,11 @@ function DrillFormModal({ draft: initial, onClose }: { draft: DrillDraft; onClos
     <Modal title={draft.id ? t("drills.edit") : t("drills.new")} onClose={onClose}>
       <form onSubmit={submit} className="flex max-h-[75vh] flex-col gap-4 overflow-y-auto pr-1">
         <div className="mx-auto w-48">
-          <DrillCard drill={draft} categoryName={categories.find((c) => c.id === draft.category)?.name} />
+          <DrillCard
+            drill={draft}
+            categoryName={categories.find((c) => c.id === draft.category)?.name}
+            categoryColor={categories.find((c) => c.id === draft.category)?.color}
+          />
         </div>
         <Input label={t("drills.name")} value={draft.name} onChange={(e) => set("name", e.target.value)} required />
         <label className="flex flex-col gap-1 text-sm">

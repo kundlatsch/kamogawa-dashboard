@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 
+import { useCategories } from "../../../api/hooks";
 import type { Assignment, CheckIn, User } from "../../../api/types";
+import { CategoryLabel } from "../../../components/DrillCard";
 import type { ColumnKey } from "../../../lib/board";
 import { Draggable, Droppable } from "./dnd";
 import Avatar from "../../../components/Avatar";
@@ -34,6 +36,7 @@ export default function BoardColumn({
 }) {
   const { t } = useTranslation();
   const isBroadcast = column === "broadcast";
+  const { data: categories = [] } = useCategories();
 
   return (
     <Droppable
@@ -89,6 +92,7 @@ export default function BoardColumn({
             .map((id) => studentsById.get(id))
             .filter(Boolean) as User[];
           const drill = assignment.drill_detail;
+          const category = categories.find((c) => c.id === drill.category);
           return (
             <Droppable
               key={assignment.id}
@@ -112,19 +116,22 @@ export default function BoardColumn({
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold">{drill.name}</p>
-                      <p className="text-xs text-smoke">
-                        {[
-                          assignment.rounds ?? drill.default_rounds
-                            ? t("drills.roundsCount", { count: assignment.rounds ?? drill.default_rounds ?? 0 })
-                            : null,
-                          assignment.duration_minutes ?? drill.default_duration_minutes
-                            ? t("drills.minutesCount", {
-                                count: assignment.duration_minutes ?? drill.default_duration_minutes ?? 0,
-                              })
-                            : null,
-                        ]
-                          .filter(Boolean)
-                          .join(" · ")}
+                      <p className="flex flex-wrap gap-x-2 text-xs text-smoke">
+                        {category && <CategoryLabel name={category.name} color={category.color} />}
+                        <span>
+                          {[
+                            assignment.rounds ?? drill.default_rounds
+                              ? t("drills.roundsCount", { count: assignment.rounds ?? drill.default_rounds ?? 0 })
+                              : null,
+                            assignment.duration_minutes ?? drill.default_duration_minutes
+                              ? t("drills.minutesCount", {
+                                  count: assignment.duration_minutes ?? drill.default_duration_minutes ?? 0,
+                                })
+                              : null,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </span>
                       </p>
                     </div>
                     <button

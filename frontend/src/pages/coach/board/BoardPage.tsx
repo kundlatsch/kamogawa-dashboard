@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { api } from "../../../api/client";
-import { useDrills, useFighterClasses, useMetrics, useSessionBlocks, useSessions, useStudents } from "../../../api/hooks";
+import { useCategories, useDrills, useFighterClasses, useMetrics, useSessionBlocks, useSessions, useStudents } from "../../../api/hooks";
 import type { Assessment, Assignment, CheckIn, SessionBlock, TrainingSession, User } from "../../../api/types";
 import FighterTraits from "../../../components/FighterTraits";
 import { strengthsAndWeaknesses } from "../../../lib/fighterProfile";
@@ -40,6 +40,12 @@ export default function BoardPage() {
   const { data: sessions = [] } = useSessions(from, to);
   const { data: students = [] } = useStudents();
   const { data: drills = [] } = useDrills();
+  const { data: categories = [] } = useCategories();
+  const categoriesById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
+  const categoryProps = (categoryId: number | null) => {
+    const category = categoryId == null ? undefined : categoriesById.get(categoryId);
+    return { categoryName: category?.name, categoryColor: category?.color };
+  };
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [dragging, setDragging] = useState<DragData | null>(null);
@@ -201,14 +207,18 @@ export default function BoardPage() {
     if (!dragging) return null;
     if (dragging.type === "drill") {
       const drill = drills.find((d) => d.id === dragging.drillId);
-      return drill && <DrillCard drill={drill} compact />;
+      return drill && <DrillCard drill={drill} compact {...categoryProps(drill.category)} />;
     }
     if (dragging.type === "student") {
       const student = studentsById.get(dragging.studentId);
       return student && <Avatar person={student} size="lg" ring />;
     }
     const assignment = assignments.find((a) => a.id === dragging.assignmentId);
-    return assignment && <DrillCard drill={assignment.drill_detail} compact />;
+    return (
+      assignment && (
+        <DrillCard drill={assignment.drill_detail} compact {...categoryProps(assignment.drill_detail.category)} />
+      )
+    );
   })();
 
   if (!session) {
@@ -319,7 +329,7 @@ export default function BoardPage() {
             <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-y-auto lg:pr-1">
               {visibleDrills.map((drill) => (
                 <Draggable key={drill.id} id={`drill:${drill.id}`} data={{ type: "drill", drillId: drill.id }} className="w-48 shrink-0 cursor-grab lg:w-auto">
-                  <DrillCard drill={drill} compact />
+                  <DrillCard drill={drill} compact {...categoryProps(drill.category)} />
                 </Draggable>
               ))}
               {drills.length === 0 && <p className="text-sm text-smoke">{t("drills.empty")}</p>}
