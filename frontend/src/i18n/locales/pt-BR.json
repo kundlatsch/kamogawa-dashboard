@@ -2,9 +2,10 @@
   "brand": {
     "name": "Kamogawa Dashboard",
     "tagline": "Painel de treinos",
-    "footer": "{{name}} v{{version}}, desenvolvido por Taguma"
+    "footer": "{{name}} <version />, desenvolvido por Taguma"
   },
   "common": {
+    "close": "Fechar",
     "loading": "Carregando…",
     "cancel": "Cancelar",
     "create": "Criar",
@@ -541,5 +542,12 @@
     "STRENGTH": "Pontos fortes",
     "WEAKNESS": "Pontos fracos",
     "empty": "Nada ainda."
+  },
+  "releaseNotes": {
+    "open": "Ver as novidades desta versão",
+    "title": "Novidades da versão {{version}}",
+    "releasedOn": "Lançada em {{date}}",
+    "previous": "Versões anteriores",
+    "none": "Ainda não há notas para esta versão."
   }
 }

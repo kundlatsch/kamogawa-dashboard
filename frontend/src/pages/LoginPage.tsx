@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext";
+import { VersionButton } from "../components/ReleaseNotes";
 import { Button, Input, PasswordInput } from "../components/ui";
 
 export default function LoginPage() {
@@ -66,7 +67,7 @@ export default function LoginPage() {
         </form>
       </div>
       <footer className="pt-4 text-center text-xs text-smoke">
-        {t("brand.footer", { name: t("brand.name"), version: __APP_VERSION__ })}
+        <Trans i18nKey="brand.footer" values={{ name: t("brand.name") }} components={{ version: <VersionButton /> }} />
       </footer>
     </div>
   );

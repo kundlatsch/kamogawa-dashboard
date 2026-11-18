@@ -8,6 +8,7 @@ import type { Handedness } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
 import Avatar from "../components/Avatar";
 import { ColorPicker, EmojiPicker, AVATAR_EMOJIS } from "../components/pickers";
+import { VersionButton } from "../components/ReleaseNotes";
 import { Button, Input, PageHeader, PasswordInput } from "../components/ui";
 
 const MIN_LENGTH = 8;
@@ -93,6 +94,10 @@ export default function ProfilePage() {
           {t("auth.logout")}
         </Button>
       )}
+
+      <p className="text-center text-xs text-smoke">
+        {t("brand.name")} <VersionButton />
+      </p>
     </section>
   );
 }
