@@ -1,0 +1,64 @@
+[
+  {
+    "version": "0.1.0",
+    "date": "2026-11-18",
+    "sections": [
+      {
+        "title": "Ranking",
+        "items": [
+          "As missões foram removidas, incluindo a aba Missões. O ranking agora considera apenas a presença nos treinos.",
+          "Os alunos veem a própria classe de lutador na página do ranking."
+        ]
+      },
+      {
+        "title": "Planejamento",
+        "items": ["Os cards de exercício mostram a categoria de cada exercício."]
+      },
+      {
+        "title": "Estatísticas do Aluno",
+        "items": [
+          "As avaliações mensais viraram \"Estatísticas do Aluno\": o treinador atualiza o valor atual de cada habilidade quando quiser, sem escolher mês.",
+          "Novas habilidades padrão: QI de Luta, Adaptação e Esquiva."
+        ]
+      },
+      {
+        "title": "Perfil do aluno",
+        "items": [
+          "Nível do aluno, de Iniciante a Avançado, em cinco etapas.",
+          "Estilo do Lutador no perfil.",
+          "Listas livres de Pontos Fortes e Pontos Fracos, que também servem para tarefas e metas da semana.",
+          "O aluno vê o nível, o estilo e os pontos fortes e fracos em Minhas estatísticas."
+        ]
+      },
+      {
+        "title": "Celular",
+        "items": [
+          "Alunos navegam por uma barra de abas na parte de baixo da tela e um cabeçalho em uma linha.",
+          "No calendário do aluno, os próximos treinos aparecem primeiro, com cards mais claros.",
+          "Botões maiores e telas de ranking e notificações mais organizadas."
+        ]
+      },
+      {
+        "title": "Geral",
+        "items": [
+          "A versão do app aparece no rodapé do login e no perfil. Clique nela para ver estas novidades."
+        ]
+      }
+    ]
+  },
+  {
+    "version": "0.0.1",
+    "date": "2026-11-17",
+    "sections": [
+      {
+        "title": "Primeira versão",
+        "items": [
+          "Quadro do treinador com planejamento de treinos, exercícios e presença.",
+          "Calendário de treinos, check-in e ranking para os alunos.",
+          "Classes de lutador, avaliações e perfis de usuário.",
+          "Várias academias, cada uma com seus treinadores, alunos e cor."
+        ]
+      }
+    ]
+  }
+]
