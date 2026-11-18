@@ -411,7 +411,11 @@
     "updatedAt": "Atualizado em {{date}}",
     "delta_up": "+{{count}} desde a avaliação anterior",
     "delta_down": "{{count}} desde a avaliação anterior",
-    "history": "Histórico"
+    "history": "Histórico",
+    "fighterStyle": "Estilo do lutador",
+    "noStyle": "O treinador ainda não definiu seu estilo.",
+    "level": "Nível",
+    "points": "Pontos fortes e fracos"
   },
   "week": {
     "title": "Semana dos alunos",

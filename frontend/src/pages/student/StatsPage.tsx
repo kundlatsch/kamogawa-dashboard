@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
-import { useMetrics } from "../../api/hooks";
-import type { Assessment, MetricGroup, MyWeek } from "../../api/types";
+import { useFighterClasses, useMetrics } from "../../api/hooks";
+import type { Assessment, MetricGroup, MyWeek, StudentPoint, User } from "../../api/types";
 import { useAuth } from "../../auth/AuthContext";
+import FighterClassArt from "../../components/FighterClassArt";
+import { StudentPointLists } from "../../components/StudentPoints";
 import { PageHeader } from "../../components/ui";
 import { formatDate } from "../../lib/dates";
 import { latestScores } from "../../lib/assessments";
@@ -26,6 +28,17 @@ export default function StatsPage() {
     queryKey: ["me", "week"],
     queryFn: async () => (await api.get<MyWeek>("/me/week/")).data,
   });
+  // Fresh copy of the profile: the coach may have changed the level or style since login.
+  const { data: me = user } = useQuery({
+    queryKey: ["me", "profile"],
+    queryFn: async () => (await api.get<User>("/auth/me/")).data,
+  });
+  const { data: points = [] } = useQuery({
+    queryKey: ["me", "points"],
+    queryFn: async () => (await api.get<StudentPoint[]>("/me/points/")).data,
+  });
+  const { data: classes = [] } = useFighterClasses();
+  const fighterClass = classes.find((c) => c.id === me?.fighter_class);
   const latest = latestScores(history ?? []);
   const lastUpdate = (history ?? []).reduce<string | null>(
     (latestSoFar, a) => (a.updated_at && (!latestSoFar || a.updated_at > latestSoFar) ? a.updated_at : latestSoFar),
@@ -35,6 +48,30 @@ export default function StatsPage() {
   return (
     <section className="mx-auto flex max-w-2xl flex-col gap-6">
       <PageHeader title={t("stats.title")} />
+      <div
+        className="flex items-center gap-4 overflow-hidden rounded-xl border border-rope bg-canvas p-4"
+        style={fighterClass ? { background: `radial-gradient(circle at 15% 50%, ${fighterClass.color}44, transparent 60%)` } : undefined}
+      >
+        {fighterClass && <FighterClassArt fighterClass={fighterClass} />}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <p className="text-xs tracking-wider text-smoke uppercase">{t("stats.fighterStyle")}</p>
+          {fighterClass ? (
+            <h2 className="font-display text-2xl tracking-wide uppercase" style={{ color: fighterClass.color }}>
+              {fighterClass.name}
+            </h2>
+          ) : (
+            <p className="text-sm text-smoke">{t("stats.noStyle")}</p>
+          )}
+          <p className="text-sm">
+            <span className="text-smoke">{t("stats.level")}:</span>{" "}
+            <span className="font-semibold">{t(`level.${me?.level || "UNSPECIFIED"}`)}</span>
+          </p>
+        </div>
+      </div>
+      <div className="rounded-xl border border-rope bg-canvas p-5">
+        <h2 className="mb-3 font-display text-2xl tracking-wide uppercase">{t("stats.points")}</h2>
+        <StudentPointLists points={points} />
+      </div>
       {isLoading && <p className="text-smoke">{t("common.loading")}</p>}
       {history && history.length === 0 && (
         <div className="rounded-xl border border-rope bg-canvas p-8 text-center text-smoke">{t("stats.empty")}</div>
