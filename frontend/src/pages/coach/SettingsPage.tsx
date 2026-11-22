@@ -55,13 +55,6 @@ export default function SettingsPage() {
           <>
             <BlockSettings />
             <CategorySettings />
-            <NamedListSettings
-              path="/focus-options/"
-              title={t("settings.focuses")}
-              hint={t("settings.focusesHint")}
-              nameLabel={t("settings.focusName")}
-              addLabel={t("settings.addFocus")}
-            />
           </>
         )}
         {tab === "periodization" && (

@@ -13,6 +13,7 @@ const student: User = {
   avatar_url: null,
   fighter_class: null,
   secondary_fighter_class: null,
+  focus_text: "",
   level: "",
   color: "#d62828",
   handedness: "UNSPECIFIED",

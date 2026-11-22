@@ -5,7 +5,7 @@ import { api } from "../api/client";
 import { useCurrentCycle } from "../api/hooks";
 import type { MyWeek } from "../api/types";
 
-/** Student's week at a glance: the week's objective and phase, their two focuses and homework. */
+/** Student's week at a glance: the week's objective and phase, the coach's focuses for them and homework. */
 export default function WeekCard() {
   const { t } = useTranslation();
   const { data: cycle } = useCurrentCycle();
@@ -16,7 +16,7 @@ export default function WeekCard() {
 
   const mesocycle = cycle?.macrocycle?.mesocycles.find((m) => m.id === cycle.mesocycle);
   const microcycle = mesocycle?.microcycles.find((m) => m.id === cycle?.microcycle);
-  const hasContent = Boolean(microcycle || week?.focuses.length || week?.homework.length);
+  const hasContent = Boolean(microcycle || week?.focus_text || week?.homework.length);
   if (!hasContent) return null;
 
   return (
@@ -38,21 +38,10 @@ export default function WeekCard() {
           <span className="font-semibold text-belt">🎯 {t("student.weekObjective")}:</span> {microcycle.objective}
         </p>
       )}
-      {week && week.focuses.length > 0 && (
+      {week?.focus_text && (
         <div>
           <p className="mb-1 text-xs tracking-wider text-smoke uppercase">{t("student.yourFocuses")}</p>
-          <ul className="flex flex-wrap gap-2">
-            {week.focuses.map((focus) => (
-              <li
-                key={focus.id}
-                className="rounded-lg border px-3 py-1.5 text-sm font-semibold"
-                style={{ borderColor: focus.focus_detail.color, backgroundColor: `${focus.focus_detail.color}22` }}
-              >
-                {focus.position}. {focus.focus_detail.name}
-                {focus.note && <span className="block text-xs font-normal text-smoke">{focus.note}</span>}
-              </li>
-            ))}
-          </ul>
+          <p className="rounded-lg border border-glove/60 bg-glove/10 px-3 py-2 text-sm whitespace-pre-line">{week.focus_text}</p>
         </div>
       )}
       {week && week.homework.length > 0 && (

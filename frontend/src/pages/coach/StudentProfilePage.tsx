@@ -5,14 +5,15 @@ import { Link, useParams } from "react-router-dom";
 
 import { api } from "../../api/client";
 import { useFighterClasses, useMetrics } from "../../api/hooks";
-import { LEVELS, type Assessment, type CoachNote, type FighterClass, type Level, type LeaderboardEntry, type User, type WeeklyFocus } from "../../api/types";
+import { LEVELS, type Assessment, type CoachNote, type FighterClass, type Level, type LeaderboardEntry, type User } from "../../api/types";
 import { useAuth } from "../../auth/AuthContext";
 import Avatar from "../../components/Avatar";
 import FighterClassArt from "../../components/FighterClassArt";
+import FocusTextField from "../../components/FocusTextField";
 import { EditableStudentPoints } from "../../components/StudentPoints";
 import { latestScores } from "../../lib/assessments";
 import { scaleOf } from "../../lib/scale";
-import { formatDate, startOfWeek, toISODate } from "../../lib/dates";
+import { formatDate } from "../../lib/dates";
 
 const card = "rounded-xl border border-rope bg-canvas p-5";
 const heading = "mb-3 font-display text-2xl tracking-wide uppercase";
@@ -22,7 +23,6 @@ export default function StudentProfilePage() {
   const { t, i18n } = useTranslation();
   const { user: coach } = useAuth();
   const id = Number(useParams().studentId);
-  const week = toISODate(startOfWeek(new Date()));
   const scaleMax = scaleOf(coach?.gym).max;
 
   const { data: student, isError } = useQuery({
@@ -41,10 +41,6 @@ export default function StudentProfilePage() {
     queryKey: ["coach-notes", id],
     queryFn: async () => (await api.get<CoachNote[]>("/coach-notes/", { params: { student: id } })).data,
   });
-  const { data: focuses = [] } = useQuery({
-    queryKey: ["weekly-focuses", week],
-    queryFn: async () => (await api.get<WeeklyFocus[]>("/weekly-focuses/", { params: { week } })).data,
-  });
   const { data: classes = [] } = useFighterClasses();
   const { data: metrics = [] } = useMetrics();
 
@@ -55,7 +51,6 @@ export default function StudentProfilePage() {
   const fighterClass = classes.find((c) => c.id === student.fighter_class);
   const secondaryClass = classes.find((c) => c.id === student.secondary_fighter_class);
   const latest = latestScores(assessments);
-  const myFocuses = focuses.filter((f) => f.student === id);
   const short = (value: string) => formatDate(value.slice(0, 10), i18n.language, { day: "numeric", month: "short" });
 
   return (
@@ -135,27 +130,9 @@ export default function StudentProfilePage() {
       </div>
 
       <div className={card}>
-        <div className="flex items-baseline justify-between">
-          <h2 className={heading}>{t("week.focuses")}</h2>
-          <Link to="/week" className="text-xs text-smoke hover:text-glove">
-            {t("studentProfile.editInWeek")} →
-          </Link>
-        </div>
-        {myFocuses.length === 0 ? (
-          <p className="text-sm text-smoke">{t("studentProfile.noFocuses")}</p>
-        ) : (
-          <ul className="flex flex-wrap gap-2">
-            {myFocuses.map((focus) => (
-              <li
-                key={focus.id}
-                className="rounded-lg border px-3 py-1.5 text-sm font-semibold"
-                style={{ borderColor: focus.focus_detail.color }}
-              >
-                {focus.position}. {focus.focus_detail.name}
-              </li>
-            ))}
-          </ul>
-        )}
+        <h2 className={heading}>{t("week.focuses")}</h2>
+        <p className="-mt-2 mb-3 text-xs text-smoke">{t("studentProfile.focusesHint")}</p>
+        <FocusTextField student={student} />
       </div>
 
       <div className={card}>

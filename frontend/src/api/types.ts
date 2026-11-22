@@ -50,6 +50,8 @@ export interface User {
   fighter_class: number | null;
   /** Optional second style the fighter mixes in; never the same as fighter_class. */
   secondary_fighter_class: number | null;
+  /** What the student should work on, written freely by the coach. */
+  focus_text: string;
   role: Role;
   gym: GymSummary | null;
   is_active: boolean;
@@ -274,16 +276,6 @@ export interface Assessment {
   updated_at: string;
 }
 
-export interface WeeklyFocus {
-  id: number;
-  student: number;
-  week_start: string;
-  position: 1 | 2;
-  focus: number;
-  focus_detail: NamedItem;
-  note: string;
-}
-
 export interface CoachNote {
   id: number;
   student: number;
@@ -307,7 +299,7 @@ export interface Homework {
 
 export interface MyWeek {
   week_start: string;
-  focuses: WeeklyFocus[];
+  focus_text: string;
   homework: Omit<Homework, "participants">[];
   notes: CoachNote[];
 }

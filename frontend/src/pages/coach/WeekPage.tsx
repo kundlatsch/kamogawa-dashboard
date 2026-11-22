@@ -3,16 +3,17 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../../api/client";
-import { useDrills, useNamedList, useStudents } from "../../api/hooks";
-import type { CoachNote, Homework, User, WeeklyFocus } from "../../api/types";
+import { useDrills, useStudents } from "../../api/hooks";
+import type { CoachNote, Homework, User } from "../../api/types";
 import Avatar from "../../components/Avatar";
 import { Button, Input, Modal, PageHeader } from "../../components/ui";
 import { addDays, formatDate, fromISODate, startOfWeek, toISODate } from "../../lib/dates";
 import StudentLink from "../../components/StudentLink";
+import FocusTextField from "../../components/FocusTextField";
 
 const field = "rounded-md border border-rope bg-ring px-2 py-1.5 text-sm text-chalk outline-none focus:border-glove";
 
-/** Coach view of one week: each student's two focuses and notes, plus the week's homework. */
+/** Coach view of one week: each student's focuses and notes, plus the week's homework. */
 export default function WeekPage() {
   const { t, i18n } = useTranslation();
   const [week, setWeek] = useState(toISODate(startOfWeek(new Date())));
@@ -37,69 +38,35 @@ export default function WeekPage() {
         }
       />
       <p className="-mt-4 text-sm text-smoke">{t("week.hint")}</p>
-      <FocusTable week={week} />
+      <FocusTable />
       <HomeworkSection week={week} />
     </section>
   );
 }
 
-function FocusTable({ week }: { week: string }) {
+function FocusTable() {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
   const { data: students = [] } = useStudents();
-  const { data: options = [] } = useNamedList("/focus-options/");
   const [notesFor, setNotesFor] = useState<User | null>(null);
-  const key = ["weekly-focuses", week];
-  const { data: focuses = [] } = useQuery({
-    queryKey: key,
-    queryFn: async () => (await api.get<WeeklyFocus[]>("/weekly-focuses/", { params: { week } })).data,
-  });
-  const set = useMutation({
-    mutationFn: async (input: { student: number; position: 1 | 2; focus: number | null }) =>
-      api.post("/weekly-focuses/set/", { ...input, week }),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: key }),
-  });
-  const current = (student: number, position: 1 | 2) =>
-    focuses.find((f) => f.student === student && f.position === position);
 
   return (
     <div className="rounded-xl border border-rope bg-canvas p-5">
-      <h2 className="mb-3 font-display text-2xl tracking-wide uppercase">{t("week.focuses")}</h2>
-      {options.length === 0 && <p className="mb-3 text-sm text-belt">{t("week.noFocusOptions")}</p>}
+      <h2 className="mb-1 font-display text-2xl tracking-wide uppercase">{t("week.focuses")}</h2>
+      <p className="mb-3 text-xs text-smoke">{t("studentProfile.focusesHint")}</p>
       <ul className="flex flex-col divide-y divide-rope">
         {students.map((student) => (
-          <li key={student.id} className="flex flex-wrap items-center gap-2 py-2">
-            <StudentLink id={student.id} className="flex min-w-40 flex-1 items-center gap-2 font-medium">
-              <Avatar person={student} /> {student.display_name}
-            </StudentLink>
-            {([1, 2] as const).map((position) => {
-              const focus = current(student.id, position);
-              const choices = focus && !options.some((o) => o.id === focus.focus) ? [focus.focus_detail, ...options] : options;
-              return (
-                <select
-                  key={position}
-                  aria-label={t("week.focusFor", { position, student: student.display_name })}
-                  value={focus?.focus ?? ""}
-                  onChange={(e) =>
-                    set.mutate({ student: student.id, position, focus: e.target.value ? Number(e.target.value) : null })
-                  }
-                  className={`${field} w-44`}
-                  style={focus ? { borderColor: focus.focus_detail.color } : undefined}
-                >
-                  <option value="">
-                    {t(`week.focus${position}`)}: {t("week.noFocus")}
-                  </option>
-                  {choices.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.name}
-                    </option>
-                  ))}
-                </select>
-              );
-            })}
-            <Button variant="ghost" className="!px-2 !py-1 text-xs" onClick={() => setNotesFor(student)}>
-              📝 {t("week.notes")}
-            </Button>
+          <li key={student.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-start">
+            <div className="flex items-center justify-between gap-2 sm:w-48 sm:flex-col sm:items-start">
+              <StudentLink id={student.id} className="flex items-center gap-2 font-medium">
+                <Avatar person={student} /> {student.display_name}
+              </StudentLink>
+              <Button variant="ghost" className="!px-2 !py-1 text-xs" onClick={() => setNotesFor(student)}>
+                📝 {t("week.notes")}
+              </Button>
+            </div>
+            <div className="flex-1">
+              <FocusTextField student={student} rows={2} />
+            </div>
           </li>
         ))}
       </ul>
