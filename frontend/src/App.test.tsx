@@ -3,6 +3,19 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import App from "./App";
 
 describe("App", () => {
+  beforeEach(() => window.history.pushState({}, "", "/login"));
+
+  it("shows the landing page at the root when signed out, with a way to the login", () => {
+    window.history.pushState({}, "", "/");
+    render(<App />);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("o treino de boxe em um só lugar");
+    expect(screen.getByRole("heading", { name: "Para o treinador" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Para o aluno" })).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("link", { name: "Entrar" })[0]);
+    expect(screen.getByLabelText("Usuário")).toBeInTheDocument();
+    expect(window.location.pathname).toBe("/login");
+  });
+
   it("shows the login screen when signed out", () => {
     render(<App />);
     expect(screen.getByRole("button", { name: "Entrar" })).toBeInTheDocument();

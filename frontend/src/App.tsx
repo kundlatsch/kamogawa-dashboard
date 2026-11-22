@@ -5,6 +5,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { isCoach } from "./api/types";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import AppShell, { type NavItem } from "./components/AppShell";
+import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import GymDetailPage from "./pages/admin/GymDetailPage";
@@ -36,6 +37,7 @@ function AppRoutes() {
   if (!user) {
     return (
       <Routes>
+        <Route index element={<LandingPage />} />
         <Route path="*" element={<LoginPage />} />
       </Routes>
     );

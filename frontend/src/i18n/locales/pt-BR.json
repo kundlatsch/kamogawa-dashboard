@@ -16,6 +16,33 @@
     "done": "Pronto",
     "comingSoon": "Em construção."
   },
+  "landing": {
+    "backHome": "Início",
+    "nav": "Navegação da página inicial",
+    "headline": "Do planejamento ao ringue, o treino de boxe em um só lugar.",
+    "subtitle": "O treinador monta cada treino em minutos e acompanha a evolução de cada lutador. O aluno confirma presença, vê o treino do dia e as próprias estatísticas.",
+    "cta": "Entrar",
+    "github": "Código no GitHub",
+    "heroAlt": "Planejamento do treino: blocos da aula e uma coluna para cada aluno confirmado",
+    "coachTitle": "Para o treinador",
+    "studentTitle": "Para o aluno",
+    "features": {
+      "board": { "title": "Planejamento do treino", "text": "Arraste exercícios para um aluno, uma dupla, um grupo ou todos, bloco a bloco da aula." },
+      "calendar": { "title": "Calendário e ciclos", "text": "Treinos regulares, sparrings, treinos extras e cancelados, organizados em macro, meso e microciclos." },
+      "profile": { "title": "Perfil do lutador", "text": "Nível, estilo principal e secundário, pontos fortes e fracos, focos e observações." },
+      "stats": { "title": "Estatísticas do aluno", "text": "Uma nota para cada habilidade, com um guia que vai de iniciante a nível de competição." },
+      "attendance": { "title": "Presenças e ranking", "text": "Check-ins, faltas fechadas automaticamente todo domingo e ranking de presença." },
+      "checkin": { "title": "Confirme presença", "text": "Avise que vai ao treino e conte se está com alguma dor ou lesão." },
+      "today": { "title": "Treino do dia", "text": "Veja o treino publicado, o objetivo da semana e os focos que o treinador escreveu para você." },
+      "progress": { "title": "Sua evolução", "text": "Acompanhe suas estatísticas, seu estilo de luta e sua posição no ranking." }
+    },
+    "showcaseTitle": "Feito para o dia a dia da academia",
+    "showcaseProfileAlt": "Perfil do aluno com estilo principal e secundário",
+    "showcaseStatsAlt": "Tabela de estatísticas dos alunos com o guia de notas",
+    "showcaseMyStatsAlt": "Página Minhas estatísticas do aluno",
+    "finalTitle": "Pronto para o treino?",
+    "finalText": "Entre com o usuário e a senha que o seu treinador passou."
+  },
   "auth": {
     "username": "Usuário",
     "password": "Senha",

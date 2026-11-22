@@ -1,13 +1,10 @@
 import { useState, type FormEvent } from "react";
-import { Trans, useTranslation } from "react-i18next";
-import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Link, Navigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext";
-import { VersionButton } from "../components/ReleaseNotes";
+import AppFooter from "../components/AppFooter";
 import { Button, Input, PasswordInput } from "../components/ui";
-
-/** The author's GitHub profile, linked from the footer. */
-const AUTHOR_URL = "https://github.com/kundlatsch";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -34,6 +31,11 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-[radial-gradient(circle_at_top,_#3a0b0b_0%,_#0a0a0a_60%)] p-4">
+      <div className="w-full max-w-sm pt-2">
+        <Link to="/" className="text-sm text-smoke hover:text-glove">
+          ← {t("landing.backHome")}
+        </Link>
+      </div>
       <div className="flex w-full flex-1 items-center justify-center">
         <form
           onSubmit={onSubmit}
@@ -69,12 +71,7 @@ export default function LoginPage() {
           </Button>
         </form>
       </div>
-      <footer className="pt-4 text-center text-xs text-smoke">
-        <Trans i18nKey="brand.footer" values={{ name: t("brand.name") }} components={{
-            version: <VersionButton />,
-            author: <a href={AUTHOR_URL} target="_blank" rel="noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-glove" />,
-          }} />
-      </footer>
+      <AppFooter />
     </div>
   );
 }
