@@ -39,6 +39,7 @@ export default function StatsPage() {
   });
   const { data: classes = [] } = useFighterClasses();
   const fighterClass = classes.find((c) => c.id === me?.fighter_class);
+  const secondaryClass = classes.find((c) => c.id === me?.secondary_fighter_class);
   const latest = latestScores(history ?? []);
   const lastUpdate = (history ?? []).reduce<string | null>(
     (latestSoFar, a) => (a.updated_at && (!latestSoFar || a.updated_at > latestSoFar) ? a.updated_at : latestSoFar),
@@ -61,6 +62,14 @@ export default function StatsPage() {
             </h2>
           ) : (
             <p className="text-sm text-smoke">{t("stats.noStyle")}</p>
+          )}
+          {secondaryClass && (
+            <p className="text-sm" title={secondaryClass.description}>
+              <span className="text-smoke">{t("stats.secondaryStyle")}:</span>{" "}
+              <span className="font-semibold" style={{ color: secondaryClass.color }}>
+                {secondaryClass.name}
+              </span>
+            </p>
           )}
           <p className="text-sm">
             <span className="text-smoke">{t("stats.level")}:</span>{" "}

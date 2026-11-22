@@ -102,6 +102,7 @@ export default function BoardPage() {
       <FighterTraits
         student={student}
         fighterClass={fighterClasses.find((c) => c.id === student.fighter_class)}
+        secondaryClass={fighterClasses.find((c) => c.id === student.secondary_fighter_class)}
         strengths={strengths}
         weaknesses={weaknesses}
       />

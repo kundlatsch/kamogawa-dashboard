@@ -8,11 +8,13 @@ import FighterClassArt from "./FighterClassArt";
 export default function FighterTraits({
   student,
   fighterClass,
+  secondaryClass,
   strengths,
   weaknesses,
 }: {
   student: User;
   fighterClass?: FighterClass;
+  secondaryClass?: FighterClass;
   strengths: ScoredMetric[];
   weaknesses: ScoredMetric[];
 }) {
@@ -26,6 +28,12 @@ export default function FighterTraits({
           <div className="min-w-0">
             <p className="truncate font-semibold" style={{ color: fighterClass.color }}>
               {fighterClass.name}
+              {secondaryClass && (
+                <span className="font-normal" style={{ color: secondaryClass.color }}>
+                  {" "}
+                  / {secondaryClass.name}
+                </span>
+              )}
             </p>
             {fighterClass.description && <p className="line-clamp-2 text-smoke">{fighterClass.description}</p>}
           </div>

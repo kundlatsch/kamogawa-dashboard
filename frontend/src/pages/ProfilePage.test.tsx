@@ -12,6 +12,7 @@ const user: User = {
   avatar_emoji: "🥊",
   avatar_url: null,
   fighter_class: null,
+  secondary_fighter_class: null,
   level: "",
   color: "#d62828",
   handedness: "UNSPECIFIED",

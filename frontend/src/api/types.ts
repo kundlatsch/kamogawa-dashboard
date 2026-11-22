@@ -48,6 +48,8 @@ export interface User {
   level: Level;
   /** Coach-assigned fighting style (id of a FighterClass). */
   fighter_class: number | null;
+  /** Optional second style the fighter mixes in; never the same as fighter_class. */
+  secondary_fighter_class: number | null;
   role: Role;
   gym: GymSummary | null;
   is_active: boolean;

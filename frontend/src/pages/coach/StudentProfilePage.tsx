@@ -53,6 +53,7 @@ export default function StudentProfilePage() {
 
   const entry = board.find((e) => e.student.id === id);
   const fighterClass = classes.find((c) => c.id === student.fighter_class);
+  const secondaryClass = classes.find((c) => c.id === student.secondary_fighter_class);
   const latest = latestScores(assessments);
   const myFocuses = focuses.filter((f) => f.student === id);
   const short = (value: string) => formatDate(value.slice(0, 10), i18n.language, { day: "numeric", month: "short" });
@@ -105,7 +106,24 @@ export default function StudentProfilePage() {
             ) : (
               <p className="text-sm text-smoke">{t("studentProfile.noStyle")}</p>
             )}
-            <FighterStyleField student={student} classes={classes.filter((c) => !c.archived || c.id === student.fighter_class)} />
+            {secondaryClass && (
+              <div className="flex items-center gap-3 rounded-lg border border-rope bg-ring/40 p-2" title={secondaryClass.description}>
+                <FighterClassArt fighterClass={secondaryClass} size="sm" />
+                <div className="min-w-0">
+                  <p className="text-[10px] tracking-wider text-smoke uppercase">{t("studentProfile.secondaryStyle")}</p>
+                  <p className="font-display text-lg leading-tight tracking-wide uppercase" style={{ color: secondaryClass.color }}>
+                    {secondaryClass.name}
+                  </p>
+                  {secondaryClass.description && <p className="text-xs text-smoke">{secondaryClass.description}</p>}
+                </div>
+              </div>
+            )}
+            <FighterStyleFields
+              student={student}
+              classes={classes.filter(
+                (c) => !c.archived || c.id === student.fighter_class || c.id === student.secondary_fighter_class,
+              )}
+            />
           </div>
         </div>
       </div>
@@ -236,25 +254,50 @@ function LevelField({ student }: { student: User }) {
   );
 }
 
-/** Fighter style (one of the gym's fighter classes); saved as soon as the coach picks it. */
-function FighterStyleField({ student, classes }: { student: User; classes: FighterClass[] }) {
+/** Main and optional secondary fighter style (gym fighter classes); saved as soon as the coach picks one. */
+function FighterStyleFields({ student, classes }: { student: User; classes: FighterClass[] }) {
   const { t } = useTranslation();
   const save = useStudentPatch(student);
+  const toId = (value: string) => (value ? Number(value) : null);
   return (
-    <select
-      aria-label={t("studentProfile.styleFor", { name: student.display_name })}
-      value={student.fighter_class ?? ""}
-      disabled={save.isPending}
-      onChange={(event) => save.mutate({ fighter_class: event.target.value ? Number(event.target.value) : null })}
-      className={`${selectClass} w-full sm:w-64`}
-    >
-      <option value="">{t("studentProfile.noStyleOption")}</option>
-      {classes.map((c) => (
-        <option key={c.id} value={c.id}>
-          {c.name}
-        </option>
-      ))}
-    </select>
+    <div className="flex flex-col gap-2 sm:flex-row">
+      <label className="flex flex-col gap-1 text-xs text-smoke">
+        {t("studentProfile.mainStyle")}
+        <select
+          aria-label={t("studentProfile.styleFor", { name: student.display_name })}
+          value={student.fighter_class ?? ""}
+          disabled={save.isPending}
+          onChange={(event) => save.mutate({ fighter_class: toId(event.target.value) })}
+          className={`${selectClass} w-full sm:w-56`}
+        >
+          <option value="">{t("studentProfile.noStyleOption")}</option>
+          {classes.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="flex flex-col gap-1 text-xs text-smoke">
+        {t("studentProfile.secondaryStyle")}
+        <select
+          aria-label={t("studentProfile.secondaryStyleFor", { name: student.display_name })}
+          value={student.secondary_fighter_class ?? ""}
+          disabled={save.isPending || student.fighter_class === null}
+          onChange={(event) => save.mutate({ secondary_fighter_class: toId(event.target.value) })}
+          className={`${selectClass} w-full disabled:opacity-50 sm:w-56`}
+        >
+          <option value="">{t("studentProfile.noSecondaryOption")}</option>
+          {classes
+            .filter((c) => c.id !== student.fighter_class)
+            .map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+        </select>
+      </label>
+    </div>
   );
 }
 

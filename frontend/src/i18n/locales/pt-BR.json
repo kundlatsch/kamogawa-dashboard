@@ -415,6 +415,7 @@
     "history": "Histórico",
     "fighterStyle": "Estilo do lutador",
     "noStyle": "O treinador ainda não definiu seu estilo.",
+    "secondaryStyle": "Secundário",
     "level": "Nível",
     "points": "Pontos fortes e fracos"
   },
@@ -500,6 +501,10 @@
     "noStyle": "Nenhum estilo definido ainda.",
     "styleFor": "Estilo de {{name}}",
     "noStyleOption": "Sem estilo",
+    "mainStyle": "Principal",
+    "secondaryStyle": "Secundário",
+    "secondaryStyleFor": "Estilo secundário de {{name}}",
+    "noSecondaryOption": "Sem estilo secundário",
     "manageStyles": "Gerenciar estilos",
     "points": "Pontos fortes e fracos",
     "pointsHint": "Escreva livremente: tarefas de casa, metas da semana, o que treinar. O aluno vê essas listas.",
