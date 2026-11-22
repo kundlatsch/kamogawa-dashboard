@@ -75,6 +75,7 @@ class UserSerializer(serializers.ModelSerializer):
             "weekly_classes",
             "level",
             "fighter_class",
+            "secondary_fighter_class",
             "role",
             "gym",
             "is_active",
@@ -89,6 +90,27 @@ class UserSerializer(serializers.ModelSerializer):
         if value is not None and (request is None or value.gym_id != request.user.gym_id):
             raise serializers.ValidationError("Unknown fighter class.")
         return value
+
+    def validate_secondary_fighter_class(self, value):
+        return self.validate_fighter_class(value)
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        main = attrs.get("fighter_class", getattr(self.instance, "fighter_class", None))
+        if "secondary_fighter_class" in attrs:
+            secondary = attrs["secondary_fighter_class"]
+            if secondary is not None and main is None:
+                raise serializers.ValidationError({"secondary_fighter_class": "Pick the main fighter style first."})
+            if secondary is not None and secondary == main:
+                raise serializers.ValidationError(
+                    {"secondary_fighter_class": "The secondary style must differ from the main one."}
+                )
+        elif "fighter_class" in attrs and self.instance is not None:
+            # Changing the main style drops a secondary that no longer makes sense (none, or the same style).
+            secondary = self.instance.secondary_fighter_class
+            if secondary is not None and (main is None or secondary == main):
+                attrs["secondary_fighter_class"] = None
+        return attrs
 
 
 class ProfileSerializer(serializers.ModelSerializer):

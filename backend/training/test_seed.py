@@ -27,6 +27,9 @@ def test_seed_test_creates_known_logins_and_a_planned_class(db, client):
         assert student.role == User.Role.STUDENT and student.check_password(f"aluno{n}")
         assert student.level
     assert User.objects.get(username="aluno1").points.count() == 4
+    aluno1 = User.objects.get(username="aluno1")
+    assert (aluno1.fighter_class.name, aluno1.secondary_fighter_class.name) == ("Out-Boxer", "Counterpuncher")
+    assert User.objects.get(username="aluno2").secondary_fighter_class is None
     assert Drill.objects.filter(gym=gym, name="Mobilidade articular").count() == 1
 
     session = TrainingSession.objects.get(gym=gym, status=TrainingSession.Status.PUBLISHED)

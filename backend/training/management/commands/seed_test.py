@@ -12,6 +12,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from accounts.models import Gym, User
+from gamification.models import FighterClass
 from progress.models import StudentPoint
 from training.models import Assignment, CheckIn, Drill, DrillCategory, SessionBlock, TrainingSession
 from training.scheduling import generate_regular_sessions
@@ -47,6 +48,9 @@ class Command(BaseCommand):
 
     def account(self, gym, item, role) -> User:
         fields = {key: value for key, value in item.items() if key not in {"password", "strengths", "weaknesses"}}
+        for key in ("fighter_class", "secondary_fighter_class"):
+            if key in fields:  # fixture names a style; the gym's starter classes are seeded on gym creation
+                fields[key] = FighterClass.objects.filter(gym=gym, name=fields[key]).first()
         user = User.objects.filter(username=item["username"]).first()
         if user:
             self.stdout.write(f"{item['username']} already exists, left unchanged.")

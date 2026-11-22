@@ -14,6 +14,8 @@
     {
       "username": "aluno1",
       "password": "aluno1",
+      "fighter_class": "Out-Boxer",
+      "secondary_fighter_class": "Counterpuncher",
       "display_name": "Aluno 1",
       "avatar_emoji": "🐯",
       "color": "#f77f00",
@@ -32,6 +34,7 @@
     {
       "username": "aluno2",
       "password": "aluno2",
+      "fighter_class": "Swarmer",
       "display_name": "Aluno 2",
       "avatar_emoji": "🦁",
       "color": "#3a86ff",
@@ -48,6 +51,8 @@
     {
       "username": "aluno3",
       "password": "aluno3",
+      "fighter_class": "Boxer-Puncher",
+      "secondary_fighter_class": "Slugger",
       "display_name": "Aluno 3",
       "avatar_emoji": "🐺",
       "color": "#2a9d8f",
@@ -60,6 +65,7 @@
     {
       "username": "aluno4",
       "password": "aluno4",
+      "fighter_class": "Counterpuncher",
       "display_name": "Aluno 4",
       "avatar_emoji": "🦅",
       "color": "#9b5de5",

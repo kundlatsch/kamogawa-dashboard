@@ -80,6 +80,14 @@ class User(AbstractUser):
     fighter_class = models.ForeignKey(
         "gamification.FighterClass", null=True, blank=True, on_delete=models.SET_NULL, related_name="students"
     )
+    # Optional second style the fighter mixes in (e.g. Out-Boxer with a Counter-Puncher side); never the same as the main one.
+    secondary_fighter_class = models.ForeignKey(
+        "gamification.FighterClass",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="secondary_students",
+    )
 
     class Meta:
         ordering = ["display_name", "username"]

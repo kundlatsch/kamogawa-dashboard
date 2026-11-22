@@ -33,6 +33,30 @@ def test_coach_assigns_a_class_but_students_cannot(coach, api_as, gym, other_gym
     assert ana.fighter_class == own
 
 
+def test_coach_sets_an_optional_secondary_style_that_differs_from_the_main_one(coach, api_as, gym, other_gym, make_user):
+    ana = make_user("ana")
+    out_boxer, counter, slugger = FighterClass.objects.filter(gym=gym)[:3]
+    rival = FighterClass.objects.filter(gym=other_gym).first()
+    client = api_as(coach)
+    url = f"/api/students/{ana.id}/"
+    assert client.patch(url, {"secondary_fighter_class": counter.id}).status_code == 400  # no main style yet
+    body = client.patch(url, {"fighter_class": out_boxer.id, "secondary_fighter_class": counter.id}).json()
+    assert (body["fighter_class"], body["secondary_fighter_class"]) == (out_boxer.id, counter.id)
+    assert client.patch(url, {"secondary_fighter_class": out_boxer.id}).status_code == 400
+    assert client.patch(url, {"secondary_fighter_class": rival.id}).status_code == 400
+    # Making the secondary style the main one drops it as secondary; a different main style keeps it.
+    assert client.patch(url, {"fighter_class": slugger.id}).json()["secondary_fighter_class"] == counter.id
+    assert client.patch(url, {"fighter_class": counter.id}).json()["secondary_fighter_class"] is None
+    client.patch(url, {"secondary_fighter_class": slugger.id})
+    assert client.patch(url, {"fighter_class": None}, format="json").json()["secondary_fighter_class"] is None
+    # Students cannot change it themselves.
+    client.patch(url, {"fighter_class": out_boxer.id, "secondary_fighter_class": counter.id})
+    ana.refresh_from_db()
+    api_as(ana).patch("/api/auth/me/", {"secondary_fighter_class": None}, format="json")
+    ana.refresh_from_db()
+    assert ana.secondary_fighter_class == counter
+
+
 def session_today(gym):
     return TrainingSession.objects.create(gym=gym, date=timezone.localdate(), status=TrainingSession.Status.PUBLISHED)
 
