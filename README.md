@@ -12,8 +12,9 @@ Plan periodized training, build each class from an exercise library, and follow 
 ![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-[Features](#features) · [Getting started](#getting-started) · [Deployment](#deployment) · [Contributing](#contributing)
+[Features](#features) · [Getting started](#getting-started) · [Deployment](#deployment) · [Contributing](#contributing) · [License](#license)
 
 <img src="docs/screenshots/planning-board.png" alt="Planning board: the next class split into blocks, with one column per student who checked in" width="100%">
 
@@ -105,3 +106,7 @@ To add a language, copy `frontend/src/i18n/locales/pt-BR.json` to a new file, tr
 ## Author
 
 Developed by **[Taguma](https://github.com/kundlatsch)**.
+
+## License
+
+Distributed under the MIT License. See [`LICENSE`](./LICENSE).
