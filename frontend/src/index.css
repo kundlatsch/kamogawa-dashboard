@@ -16,6 +16,15 @@
   --font-display: "Bebas Neue", "Impact", "Arial Narrow", sans-serif;
 }
 
+/* Rating guide levels, from iniciante (muted) to nível de competição (gold). */
+:root {
+  --rating-0: #6b7280;
+  --rating-1: #a3a3a3;
+  --rating-2: #f5f5f5;
+  --rating-3: #f77f00;
+  --rating-4: var(--color-belt);
+}
+
 /* Student area: AppShell sets --color-glove to the gym's color; derive the darker shade from it. */
 [data-theme="student"] {
   --color-glove-dark: color-mix(in srgb, var(--color-glove) 70%, black);

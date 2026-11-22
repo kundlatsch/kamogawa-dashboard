@@ -402,6 +402,19 @@
     "scoreFor": "Nota de {{student}} em {{metric}}",
     "noStudents": "Nenhum aluno cadastrado."
   },
+  "rating": {
+    "title": "Guia de notas",
+    "band0": "Iniciante",
+    "band0Hint": "Faz com muita dificuldade.",
+    "band1": "Básico",
+    "band1Hint": "Acerta, mas perde a qualidade rápido.",
+    "band2": "Bom",
+    "band2Hint": "Bom para um praticante regular.",
+    "band3": "Forte",
+    "band3Hint": "Mantém a qualidade sob cansaço e pressão.",
+    "band4": "Nível de competição",
+    "band4Hint": "A nota máxima é para quem de fato compete."
+  },
   "stats": {
     "title": "Minhas estatísticas",
     "empty": "O treinador ainda não fez sua avaliação.",

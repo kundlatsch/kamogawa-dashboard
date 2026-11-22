@@ -9,7 +9,8 @@ import Avatar from "../../components/Avatar";
 import { PageHeader } from "../../components/ui";
 import { todayISO } from "../../lib/dates";
 import { latestScores } from "../../lib/assessments";
-import { scaleOf, scaleSteps } from "../../lib/scale";
+import { ratingBand, scaleOf, scaleSteps } from "../../lib/scale";
+import RatingGuide from "../../components/RatingGuide";
 import StudentLink from "../../components/StudentLink";
 
 const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
@@ -58,6 +59,7 @@ export default function AssessmentsPage() {
     <section className="flex flex-col gap-6">
       <PageHeader title={t("assessments.title")} />
       <p className="-mt-4 text-sm text-smoke">{t("assessments.hint", scale)}</p>
+      <RatingGuide min={scale.min} max={scale.max} />
       {students.length === 0 ? (
         <p className="text-smoke">{t("assessments.noStudents")}</p>
       ) : (
@@ -145,6 +147,7 @@ function ScoreCell({
   return (
     <select
       aria-label={t("assessments.scoreFor", { student: student.display_name, metric: metric.name })}
+      title={value !== null ? t(`rating.band${ratingBand(value, min, max)}`) : undefined}
       value={value ?? ""}
       onChange={(event) => onChange(event.target.value ? Number(event.target.value) : null)}
       className="w-14 rounded-md border border-rope bg-ring py-1 text-center font-semibold text-chalk"

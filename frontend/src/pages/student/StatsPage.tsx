@@ -10,7 +10,7 @@ import { StudentPointLists } from "../../components/StudentPoints";
 import { PageHeader } from "../../components/ui";
 import { formatDate } from "../../lib/dates";
 import { latestScores } from "../../lib/assessments";
-import { scaleOf, scaleSteps } from "../../lib/scale";
+import { ratingBand, scaleOf, scaleSteps } from "../../lib/scale";
 
 const GROUPS: MetricGroup[] = ["PHYSICAL", "TECHNICAL"];
 
@@ -111,6 +111,7 @@ export default function StatsPage() {
                             {delta > 0 ? `▲ ${t("stats.delta_up", { count: delta })}` : `▼ ${t("stats.delta_down", { count: delta })}`}
                           </span>
                         )}
+                        <span className="text-xs text-smoke">{t(`rating.band${ratingBand(score, scale.min, scale.max)}`)}</span>
                         <span className="font-display text-2xl">{score}/{scale.max}</span>
                       </div>
                       <div className="flex gap-1" role="meter" aria-valuemin={scale.min} aria-valuemax={scale.max} aria-valuenow={score} aria-label={metric.name}>
