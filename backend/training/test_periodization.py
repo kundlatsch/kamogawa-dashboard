@@ -139,3 +139,13 @@ def test_cycles_are_isolated_between_gyms(coach, api_as, gym, rival_plan):
     assert client.get("/api/cycles/current/?date=2026-12-08").json()["macrocycle"] is None
     client.post("/api/mesocycles/", {"macrocycle": own_macro["id"], "valence": own_valence.id})
     assert client.get("/api/cycles/current/?date=2026-12-08").json()["macrocycle"]["name"] == "Own"
+
+
+def test_deleted_list_items_can_be_added_again(coach, api_as):
+    client = api_as(coach)
+    for path in ["/api/valences/", "/api/microcycle-phases/", "/api/session-blocks/", "/api/fighter-classes/"]:
+        item = client.post(path, {"name": "Repetido"}).json()
+        client.delete(f"{path}{item['id']}/")
+        again = client.post(path, {"name": "Repetido"})
+        assert again.status_code == 201, (path, again.json())
+        assert [i["name"] for i in client.get(path).json()].count("Repetido") == 1, path

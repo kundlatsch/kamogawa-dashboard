@@ -44,8 +44,30 @@ class ArchivableListViewSet(GymScopedViewSet):
             queryset = queryset.filter(archived=False)
         return queryset
 
+    def archived_named(self, name, exclude=None):
+        queryset = self.model.objects.filter(gym=self.gym, archived=True, name__iexact=name)
+        return queryset.exclude(pk=exclude.pk) if exclude else queryset
+
+    @transaction.atomic
     def perform_create(self, serializer):
-        serializer.save(gym=self.gym, order=self.model.objects.filter(gym=self.gym).count())
+        order = self.model.objects.filter(gym=self.gym).count()
+        deleted = self.archived_named(serializer.validated_data.get("name", "")).first()
+        if deleted is not None:
+            # The coach deleted an item and adds it again: bring the old one back (keeping its history).
+            serializer.instance = deleted
+            serializer.save(archived=False, order=order)
+            return
+        serializer.save(gym=self.gym, order=order)
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        name = serializer.validated_data.get("name")
+        if name:
+            # Renaming onto a deleted item's name: move the deleted one out of the way.
+            for deleted in self.archived_named(name, exclude=serializer.instance):
+                deleted.name = f"{deleted.name} ({deleted.pk})"[: deleted._meta.get_field("name").max_length]
+                deleted.save(update_fields=["name"])
+        serializer.save()
 
     def perform_destroy(self, instance):
         instance.archived = True

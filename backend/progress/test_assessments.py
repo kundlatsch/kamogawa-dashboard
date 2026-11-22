@@ -90,3 +90,26 @@ def test_score_without_period_lands_on_current_month_and_clearing_removes_histor
     payload = {"student": student.id, "metric": metric.id, "score": None}
     assert client.post("/api/assessments/set/", payload, format="json").status_code == 204
     assert not Assessment.objects.exists()
+
+
+def test_a_deleted_stat_can_be_added_again_with_the_same_name(coach, api_as, make_user):
+    client = api_as(coach)
+    created = client.post("/api/metrics/", {"name": "Ritmo", "group": "PHYSICAL", "color": "#3b82f6"}).json()
+    assert client.delete(f"/api/metrics/{created['id']}/").status_code == 204
+    again = client.post("/api/metrics/", {"name": "ritmo", "group": "PHYSICAL", "color": "#f77f00"})
+    assert again.status_code == 201, again.json()
+    # The deleted stat comes back (scores from before keep pointing at it) instead of a duplicate.
+    assert again.json()["id"] == created["id"] and again.json()["archived"] is False
+    assert again.json()["color"] == "#f77f00"
+    names = [m["name"] for m in client.get("/api/metrics/").json()]
+    assert names.count("ritmo") == 1
+    assert client.post("/api/metrics/", {"name": "Ritmo", "group": "PHYSICAL"}).status_code == 400
+
+
+def test_renaming_onto_a_deleted_stat_name_works(coach, api_as):
+    client = api_as(coach)
+    old = client.post("/api/metrics/", {"name": "Explosão", "group": "PHYSICAL"}).json()
+    client.delete(f"/api/metrics/{old['id']}/")
+    other = client.post("/api/metrics/", {"name": "Potência", "group": "PHYSICAL"}).json()
+    renamed = client.patch(f"/api/metrics/{other['id']}/", {"name": "Explosão"})
+    assert renamed.status_code == 200 and renamed.json()["name"] == "Explosão"

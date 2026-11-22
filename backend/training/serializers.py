@@ -188,10 +188,13 @@ class AssignmentSerializer(GymScopedSerializer):
 
 
 class NamedListSerializer(GymScopedSerializer):
-    """Coach-editable lists (valences, phases): names are unique per gym, ignoring case."""
+    """Coach-editable lists (valences, phases): names are unique per gym, ignoring case.
+
+    Deleted (archived) items do not count: adding one again restores it (see ArchivableListViewSet).
+    """
 
     def validate_name(self, value):
-        duplicates = self.Meta.model.objects.filter(gym=self.gym, name__iexact=value)
+        duplicates = self.Meta.model.objects.filter(gym=self.gym, name__iexact=value, archived=False)
         if self.instance:
             duplicates = duplicates.exclude(pk=self.instance.pk)
         if duplicates.exists():
