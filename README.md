@@ -1,160 +1,107 @@
+<div align="center">
+
 # 🥊 Kamogawa Dashboard
 
-A multi-gym boxing training dashboard. Coaches plan periodized training
-(macro, meso and microcycles), build each class from a library of exercises
-and assign them by class block to students who checked in: solo, in pairs, in
-groups or to everyone. Students check in before class (reporting pain or
-injuries), follow their routine, stats and weekly goals, and see the ranking.
-The first gym on the platform is **Chacão Boxing Team**.
+**Boxing training dashboard for coaches and their students.**
 
-The UI is in Brazilian Portuguese and fully internationalized (see
-[Adding a language](#adding-a-language)).
+Plan periodized training, build each class from an exercise library, and follow every fighter's progress.
 
-## Roles
+[![CI/CD](https://github.com/kundlatsch/kamogawa-dashboard/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/kundlatsch/kamogawa-dashboard/actions/workflows/ci-cd.yml)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 
-| Role | Can do |
-|---|---|
-| Account admin (`ACCOUNT_ADMIN`) | Create and deactivate gyms, add coaches, reset coach passwords |
-| Coach (`COACH`) | Everything about their gym: planning, students, assessments, settings |
-| Student (`STUDENT`) | Check in, see their classes, routine, stats and the ranking |
+[Features](#features) · [Getting started](#getting-started) · [Deployment](#deployment) · [Contributing](#contributing)
 
-Every exercise, class and account belongs to one gym; gyms never see each
-other's data.
+<img src="docs/screenshots/planning-board.png" alt="Planning board: the next class split into blocks, with one column per student who checked in" width="100%">
+
+</div>
+
+## About
+
+Kamogawa Dashboard runs the day-to-day of a boxing gym. The coach plans the season in cycles, builds each class by dragging exercises onto the students who checked in, and keeps each fighter's style, stats and goals up to date. Students check in, see their class and follow their own progress.
+
+It supports several gyms on one install, each with its own coaches, students and data. The first gym using it is **Chacão Boxing Team**. The UI is in Brazilian Portuguese and ready for translation.
 
 ## Features
 
-**Coach**
-- **Planejamento**: the next class, split into blocks (mobility, warm-ups, boxing
-  school, combat, cool-down…). Only students who checked in get a column, each
-  showing their fighting style, strengths, weaknesses, stance, limitations and
-  pain reports. Drag exercises onto students, pairs, groups or everyone.
-- **Calendar**: click a day to open its class, turn it into sparring, cancel it
-  with a reason (holiday, trip…) or add an extra class.
-- **Cycles**: macrocycle → mesocycles (one valence each, reorderable) →
-  microcycles (phase and objective); every class inherits its week's objective.
-- **Week**: two weekly focuses per student, coach notes and homework.
-- **Assessments**: monthly scores per metric on a configurable scale (1–10 by default).
-- **Ranking**: attendance and absences, and each student's fighter class with
-  artwork (or a custom image).
-- **Settings** (tabs): gym, class times per weekday, check-in deadline, class
-  blocks, categories, focuses, valences, phases, metrics, fighter classes.
+**For coaches**
+- **Planning board:** the next class split into blocks (mobility, warm-up, boxing school, combat, cool-down). Drag exercises onto one student, a pair, a group or everyone. Each column shows the fighter's style, strengths, weaknesses, stance and limitations.
+- **Calendar and cycles:** regular classes from the weekly schedule, sparring days, extra or cancelled classes, and macro, meso and microcycles that give every class its objective.
+- **Student profile:** level, main and secondary fighter style, free-text strengths, weaknesses and focuses, and coach notes.
+- **Student stats:** a score per skill on a configurable scale, with a rating guide from beginner to competition level.
+- **Attendance and ranking:** check-ins, weekly absences closed automatically every Sunday, and an attendance ranking.
 
-**Student**
-- **Hoje**: today's class with check-in, the week's objective, focuses and homework.
-- **Calendário**: every class day; check in ahead of time on any class, open
-  published classes to see the exercises.
-- **Plano, Estatísticas, Ranking**: the training plan, monthly scores and coach
-  notes, and the gym ranking with their own fighter class.
-- **Profile**: photo, stance, limitations and classes per week.
+**For students**
+- Check in to any upcoming class and report pain or injuries.
+- See today's class, the training plan, their stats with history, and the ranking.
 
-**Automation**
-- Every Sunday at 23:00 the `scheduler` service closes the week: absences are the
-  classes a student committed to minus their check-ins (cancelled classes do not count).
+<table>
+  <tr>
+    <td><img src="docs/screenshots/student-profile.png" alt="Coach view of a student profile with main and secondary fighter style"></td>
+    <td><img src="docs/screenshots/student-stats.png" alt="Student stats grid with the rating guide"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/calendar.png" alt="Class calendar"></td>
+    <td><img src="docs/screenshots/student-my-stats.png" alt="A student's own stats page"></td>
+  </tr>
+</table>
 
-## Tech stack
+## Built with
 
-- **Frontend:** React 18, TypeScript, Vite, Tailwind CSS 4, dnd-kit, TanStack Query, react-i18next
-- **Backend:** Django 5.2, Django REST Framework, SimpleJWT, Pillow
-- **Database:** PostgreSQL 16
-- **Infrastructure:** Docker Compose — development profile with hot reload,
-  production stack with nginx + gunicorn; GitHub Actions CI/CD to GHCR, Watchtower updates
+| Layer | Stack |
+|---|---|
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS 4, TanStack Query, dnd-kit, react-i18next |
+| Backend | Django 5.2, Django REST Framework, SimpleJWT |
+| Database | PostgreSQL 16 |
+| Infrastructure | Docker Compose, nginx, gunicorn, GitHub Actions, GHCR, Watchtower |
 
-Everything runs in Docker; the host only needs Docker (with Compose v2.24+).
+## Getting started
 
-## Local development
+You only need [Docker](https://docs.docker.com/get-docker/) with Compose v2.24 or newer.
 
 ```bash
+git clone https://github.com/kundlatsch/kamogawa-dashboard.git
+cd kamogawa-dashboard
 cp .env.example .env          # set passwords and a secret key
 docker compose up -d --build
 ```
 
-| Service | URL / role |
-|---|---|
-| `frontend` | http://localhost:5180 (Vite, hot reload) |
-| `backend` | http://localhost:8010/api/ (Django dev server) |
-| `db` | PostgreSQL, data in the `postgres-data` volume |
-| `scheduler` | Weekly jobs (absences every Sunday at 23:00) |
-
-Migrations run automatically on start. On first boot an **account admin** is
-created from `ADMIN_USERNAME` / `ADMIN_PASSWORD` in `.env`.
+Open **http://localhost:5180**. The API runs on http://localhost:8010/api/, and migrations run on start. On first boot, an account admin is created from `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env`.
 
 ### Test data
-
-Load a gym with known logins — coach `treinador`/`treinador`, students
-`aluno1`/`aluno1` … `aluno4`/`aluno4` — plus exercises and the next class
-already planned with everyone checked in:
 
 ```bash
 docker compose exec backend python manage.py seed_test
 ```
 
-It never changes accounts or classes that already exist. Use it only on test
-installs: the passwords are public. (`seed_demo` loads a similar demo gym with
-generated passwords instead.)
+This creates a gym with known logins: the coach `treinador` / `treinador` and the students `aluno1` / `aluno1` to `aluno4` / `aluno4`. It also adds exercises and plans the next class. Use it only on test installs, because these passwords are public.
 
-### Tests
+### Running the tests
 
 ```bash
 docker compose exec backend pytest
 docker compose exec frontend npm test
-docker compose exec frontend npm run typecheck
 ```
 
-The backend suite also runs `seed_test`, so the seed keeps working as models change.
+## Deployment
 
-## Production (home server)
+Every push to `main` runs the tests and publishes the backend and frontend images to GitHub Container Registry. The server runs [`docker-compose.prod.yml`](./docker-compose.prod.yml), and Watchtower pulls new images on its own. The server needs no source code and no inbound connection from GitHub.
 
-Deployment is continuous and pull-based:
+See the step-by-step **[server setup guide](./docs/server-setup.md)**.
 
-1. Every push to `main` runs the tests on GitHub Actions
-   ([`.github/workflows/ci-cd.yml`](./.github/workflows/ci-cd.yml)). If they pass, the
-   backend (gunicorn) and frontend (nginx serving the built app) images are published to
-   GitHub Container Registry, tagged `latest` and `sha-<commit>`, for x86-64 and ARM64.
-2. The server runs [`docker-compose.prod.yml`](./docker-compose.prod.yml) with those images.
-   Watchtower checks GHCR hourly (configurable) and recreates the app containers when a new
-   image appears; the backend applies migrations on start.
+## Contributing
 
-The server needs only Docker, `docker-compose.prod.yml` and a `.env` based on
-[`.env.prod.example`](./.env.prod.example): no source code, no build, and no inbound
-connection from GitHub. Optional services: nightly database and uploads backups, and a
-Cloudflare Tunnel for public HTTPS access.
+Issues and pull requests are welcome. Before opening a pull request:
 
-Step-by-step instructions: **[docs/server-setup.md](./docs/server-setup.md)**.
+1. Keep commits small and focused, with [conventional](https://www.conventionalcommits.org/) messages (`feat:`, `fix:`, `docs:`).
+2. Write code, comments and docs in English. UI text goes in `frontend/src/i18n/locales/`, never in components.
+3. Make sure both test suites pass.
 
-## Useful commands
+To add a language, copy `frontend/src/i18n/locales/pt-BR.json` to a new file, translate the values, and register it in `frontend/src/i18n/index.ts`.
 
-```bash
-docker compose exec backend python manage.py migrate
-docker compose exec backend python manage.py seed_test
-docker compose exec backend python manage.py record_weekly_absences --previous   # re-close last week
-docker compose logs -f scheduler
-```
+## Author
 
-## Project layout
-
-```
-backend/
-  accounts/        gyms (tenants), users and roles, profile photos
-  training/        exercises, schedule, classes and blocks, assignments, cycles, check-ins,
-                   weekly absences, student endpoints, scheduler commands
-  progress/        metrics and monthly assessments, weekly focuses, coach notes, homework
-  gamification/    fighter classes, ranking
-  notifications/   in-app notifications
-frontend/src/
-  pages/admin/     account admin: gyms and their coaches
-  pages/coach/     planning board, calendar, cycles, week, assessments, ranking, settings
-  pages/student/   today, calendar, class, plan, stats, ranking
-  i18n/locales/    UI translations (pt-BR)
-  assets/          fighter class artwork
-```
-
-## Adding a language
-
-1. Copy `frontend/src/i18n/locales/pt-BR.json` to `<code>.json` and translate the values.
-2. Register it in `frontend/src/i18n/index.ts`.
-3. Optionally add `backend/training/fixtures/demo_<code>.json` and run `seed_demo --locale <code>`.
-
-## Project docs
-
-- [`plan.md`](./plan.md): implementation plan, data model and product decisions
-- [`CLAUDE.md`](./CLAUDE.md): rules for AI agents working in this repository
+Developed by **[Taguma](https://github.com/kundlatsch)**.
