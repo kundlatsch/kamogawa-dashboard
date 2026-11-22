@@ -1,5 +1,38 @@
 [
   {
+    "version": "0.2.0",
+    "date": "2026-11-22",
+    "sections": [
+      {
+        "title": "Estilo do Lutador",
+        "items": [
+          "Além do estilo principal, o treinador pode escolher um estilo secundário (ex.: principal Out-Boxer, secundário Counterpuncher).",
+          "O estilo secundário aparece no perfil do aluno, em Minhas estatísticas e no Planejamento."
+        ]
+      },
+      {
+        "title": "Focos",
+        "items": [
+          "Os focos agora são um texto livre que só o treinador escreve, no perfil do aluno ou na Semana dos alunos. O aluno lê, mas não edita.",
+          "As opções de foco em Configurações foram removidas. Os focos da última semana de cada aluno viraram o texto inicial."
+        ]
+      },
+      {
+        "title": "Estatísticas do Aluno",
+        "items": [
+          "Guia de notas na tela de avaliação: 1–2 iniciante, 3–4 básico, 5–6 bom, 7–8 forte e 9–10 nível de competição.",
+          "O aluno vê o nível de cada nota em Minhas estatísticas."
+        ]
+      },
+      {
+        "title": "Correções",
+        "items": [
+          "Excluir um item (como uma estatística) e adicioná-lo de novo com o mesmo nome não dá mais o erro \"Já existe um item com esse nome\": o item volta."
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.1.0",
     "date": "2026-11-18",
     "sections": [
