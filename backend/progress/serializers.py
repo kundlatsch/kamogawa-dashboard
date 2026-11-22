@@ -4,7 +4,7 @@ from accounts.models import User
 from training.models import Drill
 from training.serializers import DrillSerializer, GymScopedSerializer, NamedListSerializer
 
-from .models import Assessment, CoachNote, FocusOption, Homework, Metric, StudentPoint, WeeklyFocus, week_start
+from .models import Assessment, CoachNote, Homework, Metric, StudentPoint, week_start
 
 
 class MetricSerializer(NamedListSerializer):
@@ -51,39 +51,6 @@ class SetAssessmentSerializer(serializers.Serializer):
         if value is not None and not low <= value <= high:
             raise serializers.ValidationError(f"Scores go from {low} to {high}.")
         return value
-
-
-class FocusOptionSerializer(NamedListSerializer):
-    class Meta:
-        model = FocusOption
-        fields = ["id", "name", "color", "order", "archived"]
-
-
-class WeeklyFocusSerializer(serializers.ModelSerializer):
-    focus_detail = FocusOptionSerializer(source="focus", read_only=True)
-
-    class Meta:
-        model = WeeklyFocus
-        fields = ["id", "student", "week_start", "position", "focus", "focus_detail", "note"]
-
-
-class SetWeeklyFocusSerializer(serializers.Serializer):
-    """Upsert one of a student's two weekly focuses; `focus: null` clears that slot."""
-
-    student = serializers.PrimaryKeyRelatedField(queryset=User.objects.none())
-    week = serializers.DateField()
-    position = serializers.ChoiceField(choices=[1, 2])
-    focus = serializers.PrimaryKeyRelatedField(queryset=FocusOption.objects.none(), allow_null=True)
-    note = serializers.CharField(required=False, allow_blank=True, max_length=200, default="")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        gym = self.context["request"].user.gym
-        self.fields["student"].queryset = User.objects.filter(gym=gym, role=User.Role.STUDENT)
-        self.fields["focus"].queryset = FocusOption.objects.filter(gym=gym)
-
-    def validate_week(self, value):
-        return week_start(value)
 
 
 class CoachNoteSerializer(GymScopedSerializer):

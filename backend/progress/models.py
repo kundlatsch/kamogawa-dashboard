@@ -62,7 +62,7 @@ def week_start(day):
 
 
 class FocusOption(models.Model):
-    """A possible weekly focus (e.g. "keep the guard up"). Coach-editable list, like drill categories."""
+    """Legacy: a weekly focus option. Focuses are now free text (User.focus_text); kept as history."""
 
     gym = models.ForeignKey("accounts.Gym", on_delete=models.CASCADE, related_name="focus_options")
     name = models.CharField(max_length=80)
@@ -79,7 +79,7 @@ class FocusOption(models.Model):
 
 
 class WeeklyFocus(models.Model):
-    """One of the two things a student should focus on during a week."""
+    """Legacy: one of a student's two weekly focuses, replaced by User.focus_text; kept as history."""
 
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="weekly_focuses")
     week_start = models.DateField()

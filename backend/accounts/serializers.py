@@ -76,6 +76,7 @@ class UserSerializer(serializers.ModelSerializer):
             "level",
             "fighter_class",
             "secondary_fighter_class",
+            "focus_text",
             "role",
             "gym",
             "is_active",

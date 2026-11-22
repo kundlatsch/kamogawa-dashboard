@@ -7,17 +7,14 @@ from accounts.permissions import IsCoach, IsGymMember
 from training.cycle_views import ArchivableListViewSet
 from training.views import GymScopedViewSet, parse_date
 
-from .models import Assessment, CoachNote, FocusOption, Homework, Metric, StudentPoint, WeeklyFocus, week_start
+from .models import Assessment, CoachNote, Homework, Metric, StudentPoint, week_start
 from .serializers import (
     AssessmentSerializer,
     CoachNoteSerializer,
-    FocusOptionSerializer,
     HomeworkSerializer,
     MetricSerializer,
     SetAssessmentSerializer,
-    SetWeeklyFocusSerializer,
     StudentPointSerializer,
-    WeeklyFocusSerializer,
     month_start,
 )
 
@@ -70,39 +67,11 @@ def my_assessments(request):
     return Response(AssessmentSerializer(gym_assessments(request.user.gym).filter(student=request.user), many=True).data)
 
 
-class FocusOptionViewSet(ArchivableListViewSet):
-    serializer_class = FocusOptionSerializer
-    model = FocusOption
-
-
 def requested_week(request):
     """Monday of `?week=` (any day of that week), defaulting to the current week."""
     if "week" in request.query_params:
         return week_start(parse_date(request.query_params["week"], "week"))
     return week_start(timezone.localdate())
-
-
-@api_view(["GET"])
-@permission_classes([IsCoach])
-def weekly_focuses(request):
-    focuses = WeeklyFocus.objects.filter(
-        student__gym=request.user.gym, week_start=requested_week(request)
-    ).select_related("focus")
-    return Response(WeeklyFocusSerializer(focuses, many=True).data)
-
-
-@api_view(["POST"])
-@permission_classes([IsCoach])
-def set_weekly_focus(request):
-    serializer = SetWeeklyFocusSerializer(data=request.data, context={"request": request})
-    serializer.is_valid(raise_exception=True)
-    data = serializer.validated_data
-    key = {"student": data["student"], "week_start": data["week"], "position": data["position"]}
-    if data["focus"] is None:
-        WeeklyFocus.objects.filter(**key).delete()
-        return Response(status=204)
-    focus, _ = WeeklyFocus.objects.update_or_create(**key, defaults={"focus": data["focus"], "note": data["note"]})
-    return Response(WeeklyFocusSerializer(focus).data)
 
 
 class CoachNoteViewSet(GymScopedViewSet):
@@ -158,10 +127,9 @@ class HomeworkViewSet(GymScopedViewSet):
 @api_view(["GET"])
 @permission_classes([IsGymMember])
 def my_week(request):
-    """What the student needs this week (or `?week=`): their two focuses, homework and visible notes."""
+    """What the student needs this week (or `?week=`): the coach's focus text, homework and visible notes."""
     user = request.user
     week = requested_week(request)
-    focuses = WeeklyFocus.objects.filter(student=user, week_start=week, focus__gym=user.gym).select_related("focus")
     homework = (
         Homework.objects.filter(gym=user.gym, week_start=week)
         .filter(Q(is_broadcast=True) | Q(participants=user))
@@ -172,7 +140,7 @@ def my_week(request):
     return Response(
         {
             "week_start": week,
-            "focuses": WeeklyFocusSerializer(focuses, many=True).data,
+            "focus_text": user.focus_text,
             "homework": [
                 {key: value for key, value in item.items() if key != "participants"}
                 for item in HomeworkSerializer(homework, many=True, context={"request": request}).data

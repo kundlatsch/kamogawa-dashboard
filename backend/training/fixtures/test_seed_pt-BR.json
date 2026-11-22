@@ -14,6 +14,7 @@
     {
       "username": "aluno1",
       "password": "aluno1",
+      "focus_text": "Guarda alta depois do direto\nJab duplo antes de entrar",
       "fighter_class": "Out-Boxer",
       "secondary_fighter_class": "Counterpuncher",
       "display_name": "Aluno 1",
@@ -51,6 +52,7 @@
     {
       "username": "aluno3",
       "password": "aluno3",
+      "focus_text": "Trabalhar a esquiva lateral",
       "fighter_class": "Boxer-Puncher",
       "secondary_fighter_class": "Slugger",
       "display_name": "Aluno 3",

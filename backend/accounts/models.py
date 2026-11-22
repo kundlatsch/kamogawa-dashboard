@@ -80,6 +80,8 @@ class User(AbstractUser):
     fighter_class = models.ForeignKey(
         "gamification.FighterClass", null=True, blank=True, on_delete=models.SET_NULL, related_name="students"
     )
+    # What the student should work on, written freely by the coach (students read it, cannot change it).
+    focus_text = models.TextField(blank=True, max_length=1000)
     # Optional second style the fighter mixes in (e.g. Out-Boxer with a Counter-Puncher side); never the same as the main one.
     secondary_fighter_class = models.ForeignKey(
         "gamification.FighterClass",
