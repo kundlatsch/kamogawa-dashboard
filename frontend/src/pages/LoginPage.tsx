@@ -6,6 +6,9 @@ import { useAuth } from "../auth/AuthContext";
 import { VersionButton } from "../components/ReleaseNotes";
 import { Button, Input, PasswordInput } from "../components/ui";
 
+/** The author's GitHub profile, linked from the footer. */
+const AUTHOR_URL = "https://github.com/kundlatsch";
+
 export default function LoginPage() {
   const { t } = useTranslation();
   const { user, login } = useAuth();
@@ -67,7 +70,10 @@ export default function LoginPage() {
         </form>
       </div>
       <footer className="pt-4 text-center text-xs text-smoke">
-        <Trans i18nKey="brand.footer" values={{ name: t("brand.name") }} components={{ version: <VersionButton /> }} />
+        <Trans i18nKey="brand.footer" values={{ name: t("brand.name") }} components={{
+            version: <VersionButton />,
+            author: <a href={AUTHOR_URL} target="_blank" rel="noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-glove" />,
+          }} />
       </footer>
     </div>
   );

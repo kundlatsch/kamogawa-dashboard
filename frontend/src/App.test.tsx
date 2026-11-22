@@ -13,6 +13,7 @@ describe("App", () => {
     render(<App />);
     const footer = screen.getByRole("contentinfo");
     expect(footer).toHaveTextContent(`Kamogawa Dashboard v${__APP_VERSION__}, desenvolvido por Taguma`);
+    expect(screen.getByRole("link", { name: "Taguma" })).toHaveAttribute("href", "https://github.com/kundlatsch");
   });
 
   it("opens the release notes when the version in the login footer is clicked", () => {
