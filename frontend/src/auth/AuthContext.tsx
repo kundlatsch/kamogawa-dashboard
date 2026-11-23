@@ -4,6 +4,7 @@ import { isAxiosError } from "axios";
 
 import { api, tokens } from "../api/client";
 import type { User } from "../api/types";
+import { chooseLanguage, matchLanguage } from "../i18n";
 
 interface AuthState {
   user: User | null;
@@ -19,6 +20,11 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(Boolean(tokens.access));
+  // A language saved on the profile follows the user to every device.
+  const profileLanguage = matchLanguage(user?.language);
+  useEffect(() => {
+    if (profileLanguage) chooseLanguage(profileLanguage);
+  }, [profileLanguage]);
 
   const logout = useCallback(() => {
     tokens.clear();

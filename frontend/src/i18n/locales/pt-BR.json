@@ -605,5 +605,16 @@
     "releasedOn": "Lançada em {{date}}",
     "previous": "Versões anteriores",
     "none": "Ainda não há notas para esta versão."
+  },
+  "language": {
+    "title": "Idioma",
+    "hint": "O idioma do app neste e nos seus outros aparelhos. No automático, usamos o idioma do navegador.",
+    "auto": "Automático (idioma do navegador)",
+    "saved": "Idioma salvo!",
+    "switch": "Mudar idioma",
+    "names": {
+      "en": "English",
+      "pt-BR": "Português"
+    }
   }
 }

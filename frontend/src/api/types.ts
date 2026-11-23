@@ -52,6 +52,8 @@ export interface User {
   secondary_fighter_class: number | null;
   /** What the student should work on, written freely by the coach. */
   focus_text: string;
+  /** UI language picked on the profile ("en", "pt-BR"); blank = automatic. */
+  language: string;
   role: Role;
   gym: GymSummary | null;
   is_active: boolean;

@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { api } from "../api/client";
 import type { User } from "../api/types";
+import i18n from "../i18n";
 import ProfilePage from "./ProfilePage";
 
 const user: User = {
@@ -14,6 +15,7 @@ const user: User = {
   fighter_class: null,
   secondary_fighter_class: null,
   focus_text: "",
+  language: "",
   level: "",
   color: "#d62828",
   handedness: "UNSPECIFIED",
@@ -71,5 +73,14 @@ describe("ProfilePage photo", () => {
     fireEvent.change(screen.getByLabelText("Enviar foto"), { target: { files: [file] } });
     await waitFor(() => expect(post).toHaveBeenCalledWith("/auth/me/avatar/", expect.any(FormData)));
     expect((post.mock.calls[0][1] as FormData).get("avatar")).toBe(file);
+  });
+
+  it("lets any user pick the app language, saved on their account", async () => {
+    const patch = vi.spyOn(api, "patch").mockResolvedValue({ data: {} });
+    renderPage();
+    fireEvent.change(screen.getByRole("combobox", { name: "Idioma" }), { target: { value: "en" } });
+    await waitFor(() => expect(patch).toHaveBeenCalledWith("/auth/me/", { language: "en" }));
+    await waitFor(() => expect(i18n.language).toBe("en"));
+    expect(screen.getByRole("heading", { name: "My profile" })).toBeInTheDocument();
   });
 });

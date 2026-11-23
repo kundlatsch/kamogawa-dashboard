@@ -14,6 +14,7 @@ const student: User = {
   fighter_class: null,
   secondary_fighter_class: null,
   focus_text: "",
+  language: "",
   level: "",
   color: "#d62828",
   handedness: "UNSPECIFIED",

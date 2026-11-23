@@ -6,6 +6,7 @@ import studentMyStats from "../assets/landing/student-my-stats.webp";
 import studentProfile from "../assets/landing/student-profile.webp";
 import studentStats from "../assets/landing/student-stats.webp";
 import AppFooter from "../components/AppFooter";
+import LanguageToggle from "../components/LanguageToggle";
 
 const REPO_URL = "https://github.com/kundlatsch/kamogawa-dashboard";
 
@@ -40,9 +41,12 @@ export default function LandingPage() {
             <span aria-hidden>🥊 </span>
             <span className="text-glove">{first}</span> {rest.join(" ")}
           </span>
-          <Link to="/login" className="rounded-md bg-glove px-4 py-2 text-sm font-semibold text-chalk hover:bg-glove-dark">
-            {t("landing.cta")}
-          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <LanguageToggle />
+            <Link to="/login" className="rounded-md bg-glove px-4 py-2 text-sm font-semibold text-chalk hover:bg-glove-dark">
+              {t("landing.cta")}
+            </Link>
+          </div>
         </header>
 
         <section className="mx-auto flex max-w-6xl flex-col items-center px-4 pt-10 pb-16 text-center sm:pt-16">

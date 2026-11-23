@@ -7,6 +7,7 @@ import { api } from "../api/client";
 import type { Handedness } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
 import Avatar from "../components/Avatar";
+import LanguageSettings from "../components/LanguageSettings";
 import { ColorPicker, EmojiPicker, AVATAR_EMOJIS } from "../components/pickers";
 import { VersionButton } from "../components/ReleaseNotes";
 import { Button, Input, PageHeader, PasswordInput } from "../components/ui";
@@ -54,6 +55,8 @@ export default function ProfilePage() {
       <PageHeader title={t("profile.title")} />
 
       <ProfileDetails />
+
+      <LanguageSettings />
 
       <form onSubmit={submit} className="flex flex-col gap-4 rounded-xl border border-rope bg-canvas p-5">
         <h2 className="font-display text-2xl tracking-wide uppercase">{t("profile.changePassword")}</h2>

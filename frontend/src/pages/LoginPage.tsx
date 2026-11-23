@@ -4,6 +4,7 @@ import { Link, Navigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext";
 import AppFooter from "../components/AppFooter";
+import LanguageToggle from "../components/LanguageToggle";
 import { Button, Input, PasswordInput } from "../components/ui";
 
 export default function LoginPage() {
@@ -31,10 +32,11 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-[radial-gradient(circle_at_top,_#3a0b0b_0%,_#0a0a0a_60%)] p-4">
-      <div className="w-full max-w-sm pt-2">
+      <div className="flex w-full max-w-sm items-center justify-between pt-2">
         <Link to="/" className="text-sm text-smoke hover:text-glove">
           ← {t("landing.backHome")}
         </Link>
+        <LanguageToggle />
       </div>
       <div className="flex w-full flex-1 items-center justify-center">
         <form
