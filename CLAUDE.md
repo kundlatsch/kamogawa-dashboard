@@ -7,7 +7,7 @@ Guidance for AI agents (Claude Code and others) working in this repository.
 Boxing training dashboard: a coach (admin) plans training sessions and assigns
 drills to students (solo, pairs, groups, or broadcast to all). React frontend,
 Django REST backend, PostgreSQL, fully containerized with Docker Compose.
-See [`plan.md`](./plan.md) for architecture, data model, and delivery phases.
+See [`README.md`](./README.md) for features, setup and deployment.
 
 ## Mandatory rules
 
