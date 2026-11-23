@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import password_validation
 from rest_framework import serializers
 
@@ -77,11 +78,12 @@ class UserSerializer(serializers.ModelSerializer):
             "fighter_class",
             "secondary_fighter_class",
             "focus_text",
+            "language",
             "role",
             "gym",
             "is_active",
         ]
-        read_only_fields = ["id", "role", "gym"]
+        read_only_fields = ["id", "role", "gym", "language"]
 
     def get_avatar_url(self, user):
         return avatar_url(user)
@@ -123,7 +125,12 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["display_name", "avatar_emoji", "color", "handedness", "limitations", "weekly_classes"]
+        fields = ["display_name", "avatar_emoji", "color", "handedness", "limitations", "weekly_classes", "language"]
+
+    def validate_language(self, value):
+        if value and value not in settings.UI_LANGUAGES:
+            raise serializers.ValidationError(f"Pick one of {', '.join(settings.UI_LANGUAGES)}, or leave it blank.")
+        return value
 
 
 class PublicUserSerializer(serializers.ModelSerializer):

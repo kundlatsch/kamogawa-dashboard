@@ -208,3 +208,17 @@ def test_coach_sees_student_handedness_and_limitations(coach, api_as, make_user)
     student = next(s for s in students if s["username"] == "ana")
     assert student["handedness"] == "LEFT"
     assert student["limitations"] == "Sem sparring."
+
+
+def test_users_pick_their_ui_language_and_anyone_reads_the_install_default(api_as, coach, make_user, client, settings):
+    ana = make_user("ana")
+    assert api_as(ana).get("/api/auth/me/").json()["language"] == ""
+    assert api_as(ana).patch("/api/auth/me/", {"language": "en"}, format="json").json()["language"] == "en"
+    assert api_as(ana).patch("/api/auth/me/", {"language": "fr"}, format="json").status_code == 400
+    assert api_as(coach).patch("/api/auth/me/", {"language": "pt-BR"}, format="json").json()["language"] == "pt-BR"
+    # A coach cannot change a student's language for them.
+    api_as(coach).patch(f"/api/students/{ana.id}/", {"language": "pt-BR"}, format="json")
+    ana.refresh_from_db()
+    assert ana.language == "en"
+    settings.DEFAULT_LANGUAGE = "pt-BR"
+    assert client.get("/api/config/").json() == {"default_language": "pt-BR", "languages": ["en", "pt-BR"]}

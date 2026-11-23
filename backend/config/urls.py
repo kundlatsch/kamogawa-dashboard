@@ -9,9 +9,15 @@ def health(_request):
     return JsonResponse({"status": "ok"})
 
 
+def public_config(_request):
+    """Install-wide settings the frontend needs before anyone logs in."""
+    return JsonResponse({"default_language": settings.DEFAULT_LANGUAGE, "languages": settings.UI_LANGUAGES})
+
+
 urlpatterns = [
     path("django-admin/", admin.site.urls),
     path("api/health/", health, name="health"),
+    path("api/config/", public_config, name="public-config"),
     path("api/", include("accounts.urls")),
     path("api/", include("training.urls")),
     path("api/", include("notifications.urls")),

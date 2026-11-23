@@ -6,6 +6,8 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -92,7 +94,14 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# Internationalization: Portuguese is the default; more languages can be added here.
+# UI languages the frontend ships (codes match frontend/src/i18n/locales). DEFAULT_LANGUAGE is used
+# when the browser's language is not one of them; each user can also pick one on their profile.
+UI_LANGUAGES = ["en", "pt-BR"]
+DEFAULT_LANGUAGE = os.environ.get("DEFAULT_LANGUAGE", "en")
+if DEFAULT_LANGUAGE not in UI_LANGUAGES:
+    raise ImproperlyConfigured(f"DEFAULT_LANGUAGE must be one of {', '.join(UI_LANGUAGES)}.")
+
+# Internationalization (Django's own messages)
 LANGUAGE_CODE = "pt-br"
 LANGUAGES = [("pt-br", "Português (Brasil)"), ("en", "English")]
 LOCALE_PATHS = [BASE_DIR / "locale"]
