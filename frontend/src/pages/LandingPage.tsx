@@ -36,7 +36,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-ring">
       <div className="bg-[radial-gradient(circle_at_top,_#3a0b0b_0%,_#0a0a0a_65%)]">
         <header className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4" aria-label={t("landing.nav")}>
-          <span className="font-display text-2xl tracking-wide uppercase sm:text-3xl">
+          <span className="min-w-0 font-display text-2xl tracking-wide uppercase sm:text-3xl">
             <span aria-hidden>🥊 </span>
             <span className="text-glove">{first}</span> {rest.join(" ")}
           </span>
@@ -46,7 +46,7 @@ export default function LandingPage() {
         </header>
 
         <section className="mx-auto flex max-w-6xl flex-col items-center px-4 pt-10 pb-16 text-center sm:pt-16">
-          <h1 className="max-w-4xl font-display text-5xl leading-none tracking-wide uppercase sm:text-7xl">
+          <h1 className="max-w-4xl font-display text-5xl leading-none tracking-wide break-words uppercase sm:text-7xl">
             {t("landing.headline")}
           </h1>
           <p className="mt-6 max-w-2xl text-base text-smoke sm:text-lg">{t("landing.subtitle")}</p>

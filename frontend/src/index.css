@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Display font, bundled so headings look the same on every device (phones have neither Bebas Neue
+   nor Impact). Bebas Neue by Dharma Type, SIL Open Font License 1.1. Latin subset (covers pt-BR). */
+@font-face {
+  font-family: "Bebas Neue";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/bebas-neue-latin.woff2") format("woff2");
+}
+
 /* Chacão Boxing Team theme tokens. Use these (e.g. bg-ring, text-glove) instead of raw hex values. */
 @theme {
   --color-ring: #0a0a0a;        /* page background: the ring at night */
