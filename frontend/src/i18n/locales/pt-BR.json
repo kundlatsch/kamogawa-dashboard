@@ -13,8 +13,7 @@
     "delete": "Excluir",
     "edit": "Editar",
     "copy": "Copiar",
-    "done": "Pronto",
-    "comingSoon": "Em construção."
+    "done": "Pronto"
   },
   "landing": {
     "backHome": "Início",
@@ -27,14 +26,38 @@
     "coachTitle": "Para o treinador",
     "studentTitle": "Para o aluno",
     "features": {
-      "board": { "title": "Planejamento do treino", "text": "Arraste exercícios para um aluno, uma dupla, um grupo ou todos, bloco a bloco da aula." },
-      "calendar": { "title": "Calendário e ciclos", "text": "Treinos regulares, sparrings, treinos extras e cancelados, organizados em macro, meso e microciclos." },
-      "profile": { "title": "Perfil do lutador", "text": "Nível, estilo principal e secundário, pontos fortes e fracos, focos e observações." },
-      "stats": { "title": "Estatísticas do aluno", "text": "Uma nota para cada habilidade, com um guia que vai de iniciante a nível de competição." },
-      "attendance": { "title": "Presenças e ranking", "text": "Check-ins, faltas fechadas automaticamente todo domingo e ranking de presença." },
-      "checkin": { "title": "Confirme presença", "text": "Avise que vai ao treino e conte se está com alguma dor ou lesão." },
-      "today": { "title": "Treino do dia", "text": "Veja o treino publicado, o objetivo da semana e os focos que o treinador escreveu para você." },
-      "progress": { "title": "Sua evolução", "text": "Acompanhe suas estatísticas, seu estilo de luta e sua posição no ranking." }
+      "board": {
+        "title": "Planejamento do treino",
+        "text": "Arraste exercícios para um aluno, uma dupla, um grupo ou todos, bloco a bloco da aula."
+      },
+      "calendar": {
+        "title": "Calendário e ciclos",
+        "text": "Treinos regulares, sparrings, treinos extras e cancelados, organizados em macro, meso e microciclos."
+      },
+      "profile": {
+        "title": "Perfil do lutador",
+        "text": "Nível, estilo principal e secundário, pontos fortes e fracos, focos e observações."
+      },
+      "stats": {
+        "title": "Estatísticas do aluno",
+        "text": "Uma nota para cada habilidade, com um guia que vai de iniciante a nível de competição."
+      },
+      "attendance": {
+        "title": "Presenças e ranking",
+        "text": "Check-ins, faltas fechadas automaticamente todo domingo e ranking de presença."
+      },
+      "checkin": {
+        "title": "Confirme presença",
+        "text": "Avise que vai ao treino e conte se está com alguma dor ou lesão."
+      },
+      "today": {
+        "title": "Treino do dia",
+        "text": "Veja o treino publicado, o objetivo da semana e os focos que o treinador escreveu para você."
+      },
+      "progress": {
+        "title": "Sua evolução",
+        "text": "Acompanhe suas estatísticas, seu estilo de luta e sua posição no ranking."
+      }
     },
     "showcaseTitle": "Feito para o dia a dia da academia",
     "showcaseProfileAlt": "Perfil do aluno com estilo principal e secundário",
@@ -58,7 +81,6 @@
     "calendar": "Calendário",
     "drills": "Exercícios",
     "students": "Alunos",
-    "coaches": "Treinadores",
     "gyms": "Academias",
     "settings": "Configurações",
     "today": "Hoje",
@@ -121,7 +143,6 @@
     "publishSparring": "Publicar e avisar todos",
     "unpublish": "Voltar para rascunho",
     "noSessions": "Nenhum treino marcado. Confira os dias de treino em Configurações ou crie um treino no",
-    "noStudents": "Nenhum aluno ainda. Cadastre em",
     "objective": "Objetivo da aula",
     "objectivePlaceholder": "Deixe em branco para usar o objetivo da semana",
     "noObjective": "Sem objetivo (monte os ciclos em Ciclos)",
@@ -162,7 +183,6 @@
     "restDay": "Sem treino hoje. Descansa e volta mais forte!",
     "noDrills": "O treinador ainda não definiu seus exercícios para este treino.",
     "everyone": "Todos",
-    "upcomingHint": "Os exercícios aparecem quando o treinador publica o treino.",
     "noUpcoming": "Nenhum treino marcado por enquanto.",
     "weekObjective": "Objetivo da semana",
     "blockAt": "às {{time}}",
@@ -448,7 +468,6 @@
     "updatedAt": "Atualizado em {{date}}",
     "delta_up": "+{{count}} desde a avaliação anterior",
     "delta_down": "{{count}} desde a avaliação anterior",
-    "history": "Histórico",
     "fighterStyle": "Estilo do lutador",
     "noStyle": "O treinador ainda não definiu seu estilo.",
     "secondaryStyle": "Secundário",
@@ -511,8 +530,6 @@
   "ranking": {
     "title": "Ranking",
     "hint": "Presenças são os check-ins (menos os que você marcou como falta). Faltas são fechadas todo domingo às 23h: treinos por semana do aluno menos os check-ins, e as faltas que você marcar no painel de presenças.",
-    "position": "#",
-    "student": "Aluno",
     "class": "Classe",
     "noClass": "Sem classe",
     "classFor": "Classe de {{name}}",
@@ -531,7 +548,6 @@
     "editScores": "Avaliar",
     "noScores": "Ainda sem avaliação.",
     "addNote": "Nova observação na Semana",
-    "noXp": "Ainda sem XP.",
     "level": "Nível",
     "fighterStyle": "Estilo do Lutador",
     "noStyle": "Nenhum estilo definido ainda.",
@@ -559,7 +575,6 @@
     "class": "Treino",
     "legendPublished": "Treino publicado (clique para ver)",
     "legendPlanned": "Treino previsto, ainda sem detalhes",
-    "published": "Próximos treinos publicados",
     "seeExercises": "ver exercícios",
     "notFound": "Treino não encontrado ou ainda não publicado.",
     "upcoming": "Próximos treinos",
