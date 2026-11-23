@@ -1,0 +1,134 @@
+[
+  {
+    "version": "0.2.1",
+    "date": "2026-11-23",
+    "sections": [
+      {
+        "title": "Home page",
+        "items": [
+          "New home page with the features for coaches and students, and a Log in button that leads to the login.",
+          "The login now lives at /login, with a link back to the home page."
+        ]
+      },
+      {
+        "title": "Languages",
+        "items": [
+          "The app is available in English and Portuguese.",
+          "By default it uses the browser's language. If that isn't supported, it uses the server's default language (DEFAULT_LANGUAGE variable, English when not set).",
+          "Any user can pick the language in My profile, and the choice follows them to every device.",
+          "The home and login pages have an EN | PT switch."
+        ]
+      },
+      {
+        "title": "Look and feel",
+        "items": [
+          "The heading font now ships with the app, so headings look the same everywhere and fit on phone screens."
+        ]
+      },
+      {
+        "title": "Project",
+        "items": [
+          "The author's name in the footer links to their GitHub.",
+          "New README with screenshots, and an MIT license."
+        ]
+      }
+    ]
+  },
+  {
+    "version": "0.2.0",
+    "date": "2026-11-22",
+    "sections": [
+      {
+        "title": "Fighter style",
+        "items": [
+          "Besides the main style, the coach can pick a secondary style (e.g. main Out-Boxer, secondary Counterpuncher).",
+          "The secondary style shows on the student profile, in My stats and on the Planning board."
+        ]
+      },
+      {
+        "title": "Focuses",
+        "items": [
+          "Focuses are now free text that only the coach writes, on the student profile or in the Students' week. Students read it but can't edit it.",
+          "The focus options in Settings were removed. Each student's focuses from their latest week became the starting text."
+        ]
+      },
+      {
+        "title": "Student stats",
+        "items": [
+          "Rating guide on the rating screen: 1–2 beginner, 3–4 basic, 5–6 good, 7–8 strong and 9–10 competition level.",
+          "Students see the level of each score in My stats."
+        ]
+      },
+      {
+        "title": "Fixes",
+        "items": [
+          "Deleting an item (such as a stat) and adding it again with the same name no longer fails with \"An item with this name already exists\": the item comes back."
+        ]
+      }
+    ]
+  },
+  {
+    "version": "0.1.0",
+    "date": "2026-11-18",
+    "sections": [
+      {
+        "title": "Ranking",
+        "items": [
+          "Missions were removed, including the Missions tab. The ranking now counts class attendance only.",
+          "Students see their own fighter class on the ranking page."
+        ]
+      },
+      {
+        "title": "Planning",
+        "items": [
+          "Exercise cards show each exercise's category."
+        ]
+      },
+      {
+        "title": "Student stats",
+        "items": [
+          "Monthly assessments became \"Student stats\": the coach updates each skill's current value whenever they want, without picking a month.",
+          "New default skills: Fight IQ, Adaptation and Evasion."
+        ]
+      },
+      {
+        "title": "Student profile",
+        "items": [
+          "Student level, from Beginner to Advanced, in five steps.",
+          "Fighter style on the profile.",
+          "Free-text Strengths and Weaknesses lists, which also work for homework and weekly goals.",
+          "Students see their level, style, strengths and weaknesses in My stats."
+        ]
+      },
+      {
+        "title": "Phones",
+        "items": [
+          "Students navigate with a tab bar at the bottom of the screen and a one-line header.",
+          "On the student calendar, upcoming classes come first, with clearer cards.",
+          "Bigger buttons and tidier ranking and notification screens."
+        ]
+      },
+      {
+        "title": "General",
+        "items": [
+          "The app version shows in the login footer and on the profile. Click it to see these notes."
+        ]
+      }
+    ]
+  },
+  {
+    "version": "0.0.1",
+    "date": "2026-11-17",
+    "sections": [
+      {
+        "title": "First version",
+        "items": [
+          "Coach board with class planning, exercises and attendance.",
+          "Class calendar, check-in and ranking for students.",
+          "Fighter classes, assessments and user profiles.",
+          "Multiple gyms, each with its own coaches, students and color."
+        ]
+      }
+    ]
+  }
+]

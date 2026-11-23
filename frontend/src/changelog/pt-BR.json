@@ -1,5 +1,40 @@
 [
   {
+    "version": "0.2.1",
+    "date": "2026-11-23",
+    "sections": [
+      {
+        "title": "Página inicial",
+        "items": [
+          "Nova página inicial com as funcionalidades para treinador e aluno, e um botão Entrar que leva ao login.",
+          "O login agora fica em /login, com um link para voltar à página inicial."
+        ]
+      },
+      {
+        "title": "Idiomas",
+        "items": [
+          "O app está disponível em inglês e português.",
+          "Por padrão, o idioma é o do navegador. Se ele não for suportado, vale o idioma padrão do servidor (variável DEFAULT_LANGUAGE, inglês se não for definida).",
+          "Qualquer usuário pode escolher o idioma em Meu perfil, e a escolha vale em todos os aparelhos.",
+          "A página inicial e o login têm um botão EN | PT."
+        ]
+      },
+      {
+        "title": "Visual",
+        "items": [
+          "A fonte dos títulos agora vem junto com o app, então os títulos aparecem iguais e cabem na tela do celular."
+        ]
+      },
+      {
+        "title": "Projeto",
+        "items": [
+          "O nome do autor no rodapé leva ao GitHub dele.",
+          "README novo com capturas de tela e licença MIT."
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.2.0",
     "date": "2026-11-22",
     "sections": [
@@ -45,7 +80,9 @@
       },
       {
         "title": "Planejamento",
-        "items": ["Os cards de exercício mostram a categoria de cada exercício."]
+        "items": [
+          "Os cards de exercício mostram a categoria de cada exercício."
+        ]
       },
       {
         "title": "Estatísticas do Aluno",

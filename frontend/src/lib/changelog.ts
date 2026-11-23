@@ -1,3 +1,4 @@
+import en from "../changelog/en.json";
 import ptBR from "../changelog/pt-BR.json";
 
 export interface ReleaseSection {
@@ -15,10 +16,11 @@ export interface Release {
 // Release notes live in `src/changelog/<language>.json`, newest first.
 // To add a language, create the file with the same shape and register it here.
 const changelogs: Record<string, Release[]> = {
+  en,
   "pt-BR": ptBR,
 };
 
-const FALLBACK_LANGUAGE = "pt-BR";
+const FALLBACK_LANGUAGE = "en";
 
 export function releasesFor(language: string): Release[] {
   return changelogs[language] ?? changelogs[FALLBACK_LANGUAGE];

@@ -21,12 +21,15 @@ describe("notesForVersion", () => {
 });
 
 describe("releasesFor", () => {
-  it("falls back to Portuguese for a language without a changelog", () => {
-    expect(releasesFor("xx")).toBe(releasesFor("pt-BR"));
+  it("falls back to English for a language without a changelog", () => {
+    expect(releasesFor("xx")).toBe(releasesFor("en"));
   });
 
-  it("has notes for the current app version", () => {
-    const { current } = notesForVersion(releasesFor("pt-BR"), __APP_VERSION__);
-    expect(current?.sections.length).toBeGreaterThan(0);
+  it("has notes for the current app version in every language, for the same versions", () => {
+    for (const language of ["en", "pt-BR"]) {
+      const { current } = notesForVersion(releasesFor(language), __APP_VERSION__);
+      expect(current?.sections.length, language).toBeGreaterThan(0);
+    }
+    expect(releasesFor("en").map((r) => r.version)).toEqual(releasesFor("pt-BR").map((r) => r.version));
   });
 });
