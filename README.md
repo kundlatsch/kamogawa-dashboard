@@ -24,7 +24,7 @@ Plan periodized training, build each class from an exercise library, and follow 
 
 Kamogawa Dashboard runs the day-to-day of a boxing gym. The coach plans the season in cycles, builds each class by dragging exercises onto the students who checked in, and keeps each fighter's style, stats and goals up to date. Students check in, see their class and follow their own progress.
 
-It supports several gyms on one install, each with its own coaches, students and data. The first gym using it is **Chacão Boxing Team**. The UI is in Brazilian Portuguese and ready for translation.
+It supports several gyms on one install, each with its own coaches, students and data. The first gym using it is **Chacão Boxing Team**. The UI is in English and Brazilian Portuguese.
 
 ## Features
 
@@ -38,6 +38,12 @@ It supports several gyms on one install, each with its own coaches, students and
 **For students**
 - Check in to any upcoming class and report pain or injuries.
 - See today's class, the training plan, their stats with history, and the ranking.
+
+**Languages**
+- The interface is available in English and Portuguese and follows the browser's language by default.
+- Every user (account admin, coach or student) can pick a language in **My profile**, and the choice follows them to any device.
+- The home and login pages have an EN | PT switch.
+- When the browser's language isn't supported, the install default from `DEFAULT_LANGUAGE` is used.
 
 <table>
   <tr>
@@ -72,6 +78,15 @@ docker compose up -d --build
 
 Open **http://localhost:5180**. The API runs on http://localhost:8010/api/, and migrations run on start. On first boot, an account admin is created from `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env`.
 
+### Configuration
+
+All settings live in `.env` (see [`.env.example`](./.env.example)). Besides passwords and the secret key:
+
+| Variable | Default | What it does |
+|---|---|---|
+| `DEFAULT_LANGUAGE` | `en` | Interface language when the browser's language isn't supported and the user hasn't picked one. Supported: `en`, `pt-BR`. |
+| `TZ` | | Server time zone, used by the weekly absence job. |
+
 ### Test data
 
 ```bash
@@ -101,7 +116,12 @@ Issues and pull requests are welcome. Before opening a pull request:
 2. Write code, comments and docs in English. UI text goes in `frontend/src/i18n/locales/`, never in components.
 3. Make sure both test suites pass.
 
-To add a language, copy `frontend/src/i18n/locales/pt-BR.json` to a new file, translate the values, and register it in `frontend/src/i18n/index.ts`.
+To add a language:
+
+1. Copy `frontend/src/i18n/locales/en.json` to `<code>.json` (for example `es.json`) and translate the values.
+2. Register it in `frontend/src/i18n/index.ts`.
+3. Add release notes in `frontend/src/changelog/<code>.json` and register them in `frontend/src/lib/changelog.ts`.
+4. Add the code to `UI_LANGUAGES` in `backend/config/settings.py`.
 
 ## Author
 

@@ -15,8 +15,10 @@ See [`README.md`](./README.md) for features, setup and deployment.
    docstrings, commit messages, README, docs, plan files, test names, and API
    field names must be written in English — even when the conversation with the
    user happens in Portuguese. The only exception is user-facing UI copy, which
-   is pt-BR and lives exclusively in i18n locale files — never hardcode UI
-   strings in components; translation keys are English.
+   lives exclusively in the i18n locale files (`frontend/src/i18n/locales/en.json`
+   and `pt-BR.json`, kept in sync key for key; a test checks this) — never
+   hardcode UI strings in components; translation keys are English. Release
+   notes live in `frontend/src/changelog/<language>.json`, one per language.
 2. **Commits use only the user's git identity** configured on the machine.
    - Never add `Co-Authored-By` trailers, "Generated with Claude Code" lines,
      or any other AI attribution to commit messages.
