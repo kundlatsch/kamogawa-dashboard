@@ -123,6 +123,9 @@
     "confirmArchive": "Arquivar este exercício? Ele some da biblioteca, mas continua no histórico."
   },
   "board": {
+    "drillView": "Ordem da lista de exercícios",
+    "sortByName": "A–Z",
+    "groupByCategory": "Por categoria",
     "broadcast": "Todos",
     "broadcastHint": "Aparece na rotina de todos os alunos.",
     "dropHere": "Arraste um exercício para cá",

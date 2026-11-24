@@ -123,6 +123,9 @@
     "confirmArchive": "Archive this exercise? It leaves the library but stays in the history."
   },
   "board": {
+    "drillView": "Exercise list order",
+    "sortByName": "A–Z",
+    "groupByCategory": "By category",
     "broadcast": "Everyone",
     "broadcastHint": "Shows up in every student's routine.",
     "dropHere": "Drag an exercise here",

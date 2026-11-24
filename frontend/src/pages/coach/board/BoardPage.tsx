@@ -11,7 +11,7 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -23,13 +23,33 @@ import { strengthsAndWeaknesses } from "../../../lib/fighterProfile";
 import DrillCard from "../../../components/DrillCard";
 import { KindBadge, StatusBadge } from "../../../components/SessionBadge";
 import { Button, PageHeader } from "../../../components/ui";
-import { columnAssignments, columnStudentId, dropTargets, moveBefore, studentColumn } from "../../../lib/board";
+import {
+  columnAssignments,
+  columnStudentId,
+  dropTargets,
+  groupByCategory,
+  moveBefore,
+  sortByName,
+  studentColumn,
+} from "../../../lib/board";
 import { addDays, blockStartTime, formatDate, toISODate, todayISO } from "../../../lib/dates";
 import AssignmentModal, { type AssignmentChanges } from "./AssignmentModal";
 import BoardColumn from "./BoardColumn";
 import CheckInPanel from "./CheckInPanel";
 import { Draggable, type DragData, type DropData } from "./dnd";
 import Avatar from "../../../components/Avatar";
+
+type DrillView = "name" | "category";
+const DRILL_VIEW_KEY = "cbt.drillView";
+
+/** The coach's last choice for the exercise list: A to Z, or grouped by category. */
+function readDrillView(): DrillView {
+  try {
+    return localStorage.getItem(DRILL_VIEW_KEY) === "category" ? "category" : "name";
+  } catch {
+    return "name";
+  }
+}
 
 export default function BoardPage() {
   const { t, i18n } = useTranslation();
@@ -47,6 +67,15 @@ export default function BoardPage() {
     return { categoryName: category?.name, categoryColor: category?.color };
   };
   const [search, setSearch] = useState("");
+  const [drillView, setDrillView] = useState<DrillView>(readDrillView);
+  const changeDrillView = (view: DrillView) => {
+    setDrillView(view);
+    try {
+      localStorage.setItem(DRILL_VIEW_KEY, view);
+    } catch {
+      // Private mode or blocked storage: the choice just isn't remembered.
+    }
+  };
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [dragging, setDragging] = useState<DragData | null>(null);
   const [editing, setEditing] = useState<Assignment | null>(null);
@@ -110,7 +139,11 @@ export default function BoardPage() {
   };
 
   const studentsById = useMemo(() => new Map(students.map((s) => [s.id, s])), [students]);
-  const visibleDrills = drills.filter((d) => d.name.toLowerCase().includes(search.toLowerCase()));
+  const matchingDrills = drills.filter((d) => d.name.toLowerCase().includes(search.toLowerCase()));
+  const drillGroups =
+    drillView === "category"
+      ? groupByCategory(matchingDrills, categories, i18n.language)
+      : [{ categoryId: null, drills: sortByName(matchingDrills, i18n.language) }];
   const refresh = () => queryClient.invalidateQueries({ queryKey: assignmentsKey });
 
   const mutation = useMutation({
@@ -327,11 +360,40 @@ export default function BoardPage() {
               onChange={(event) => setSearch(event.target.value)}
               className="rounded-md border border-rope bg-canvas px-3 py-2 text-sm"
             />
+            <div role="group" aria-label={t("board.drillView")} className="flex rounded-md border border-rope p-0.5 text-xs">
+              {(["name", "category"] as const).map((view) => (
+                <button
+                  key={view}
+                  type="button"
+                  aria-pressed={drillView === view}
+                  onClick={() => changeDrillView(view)}
+                  className={`flex-1 rounded px-2 py-1 ${drillView === view ? "bg-glove font-semibold text-chalk" : "text-smoke hover:text-chalk"}`}
+                >
+                  {t(view === "name" ? "board.sortByName" : "board.groupByCategory")}
+                </button>
+              ))}
+            </div>
             <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-y-auto lg:pr-1">
-              {visibleDrills.map((drill) => (
-                <Draggable key={drill.id} id={`drill:${drill.id}`} data={{ type: "drill", drillId: drill.id }} className="w-48 shrink-0 cursor-grab lg:w-auto">
-                  <DrillCard drill={drill} compact {...categoryProps(drill.category)} />
-                </Draggable>
+              {drillGroups.map((group) => (
+                <Fragment key={group.categoryId ?? "none"}>
+                  {drillView === "category" && (
+                    <h3 className="flex shrink-0 items-center gap-1.5 self-center text-xs font-semibold tracking-wide text-smoke uppercase lg:self-stretch lg:pt-2 first:lg:pt-0">
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-full"
+                        style={{ backgroundColor: categoryProps(group.categoryId).categoryColor ?? "#6b7280" }}
+                      />
+                      <span className="whitespace-nowrap">
+                        {categoryProps(group.categoryId).categoryName ?? t("drills.noCategory")}
+                      </span>
+                      <span className="font-normal">({group.drills.length})</span>
+                    </h3>
+                  )}
+                  {group.drills.map((drill) => (
+                    <Draggable key={drill.id} id={`drill:${drill.id}`} data={{ type: "drill", drillId: drill.id }} className="w-48 shrink-0 cursor-grab lg:w-auto">
+                      <DrillCard drill={drill} compact {...categoryProps(drill.category)} />
+                    </Draggable>
+                  ))}
+                </Fragment>
               ))}
               {drills.length === 0 && <p className="text-sm text-smoke">{t("drills.empty")}</p>}
             </div>
