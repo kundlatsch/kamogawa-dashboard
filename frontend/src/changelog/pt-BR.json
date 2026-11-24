@@ -7,7 +7,7 @@
         "title": "Planejamento",
         "items": [
           "A lista de exercícios fica em ordem alfabética.",
-          "Novo seletor A–Z | Por categoria agrupa os exercícios sob a categoria, com a quantidade de cada uma. O quadro lembra a sua escolha."
+          "Novo seletor A–Z | Por categoria agrupa os exercícios sob a categoria, com a quantidade de cada uma. O quadro lembra a sua escolha. Clique numa categoria para recolher ou abrir."
         ]
       },
       {
@@ -26,6 +26,12 @@
         "title": "Perfil do aluno",
         "items": [
           "\"Pontos fracos\" agora se chama \"Ajustes técnicos\"."
+        ]
+      },
+      {
+        "title": "Projeto",
+        "items": [
+          "As capturas de tela do README estão em inglês, e a página inicial mostra capturas no idioma de quem visita."
         ]
       }
     ]

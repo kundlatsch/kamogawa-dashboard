@@ -7,7 +7,7 @@
         "title": "Class planning",
         "items": [
           "The exercise list is in alphabetical order.",
-          "New A–Z | By category switch groups the exercises under their category, with a count for each. The board remembers your choice."
+          "New A–Z | By category switch groups the exercises under their category, with a count for each. The board remembers your choice. Click a category to fold or unfold it."
         ]
       },
       {
@@ -26,6 +26,12 @@
         "title": "Student profile",
         "items": [
           "\"Weaknesses\" is now called \"Technical adjustments\"."
+        ]
+      },
+      {
+        "title": "Project",
+        "items": [
+          "The README screenshots are in English, and the home page shows screenshots in the visitor's language."
         ]
       }
     ]
