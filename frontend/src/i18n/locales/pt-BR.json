@@ -36,7 +36,7 @@
       },
       "profile": {
         "title": "Perfil do lutador",
-        "text": "Nível, estilo principal e secundário, pontos fortes e fracos, focos e observações."
+        "text": "Nível, estilo principal e secundário, pontos fortes e ajustes técnicos, focos e observações."
       },
       "stats": {
         "title": "Estatísticas do aluno",
@@ -472,7 +472,7 @@
     "noStyle": "O treinador ainda não definiu seu estilo.",
     "secondaryStyle": "Secundário",
     "level": "Nível",
-    "points": "Pontos fortes e fracos"
+    "points": "Pontos fortes e ajustes técnicos"
   },
   "focus": {
     "for": "Focos de {{name}}",
@@ -558,7 +558,7 @@
     "secondaryStyleFor": "Estilo secundário de {{name}}",
     "noSecondaryOption": "Sem estilo secundário",
     "manageStyles": "Gerenciar estilos",
-    "points": "Pontos fortes e fracos",
+    "points": "Pontos fortes e ajustes técnicos",
     "pointsHint": "Escreva livremente: tarefas de casa, metas da semana, o que treinar. O aluno vê essas listas.",
     "addPoint": "Adicionar",
     "newPoint": "Novo item…",
@@ -596,7 +596,7 @@
   },
   "points": {
     "STRENGTH": "Pontos fortes",
-    "WEAKNESS": "Pontos fracos",
+    "WEAKNESS": "Ajustes técnicos",
     "empty": "Nada ainda."
   },
   "releaseNotes": {

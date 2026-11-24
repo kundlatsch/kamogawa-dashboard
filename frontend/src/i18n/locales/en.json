@@ -36,7 +36,7 @@
       },
       "profile": {
         "title": "Fighter profile",
-        "text": "Level, main and secondary style, strengths and weaknesses, focuses and notes."
+        "text": "Level, main and secondary style, strengths, technical adjustments, focuses and notes."
       },
       "stats": {
         "title": "Student stats",
@@ -472,7 +472,7 @@
     "noStyle": "Your coach hasn't set your style yet.",
     "secondaryStyle": "Secondary",
     "level": "Level",
-    "points": "Strengths and weaknesses"
+    "points": "Strengths and technical adjustments"
   },
   "focus": {
     "for": "{{name}}'s focuses",
@@ -558,7 +558,7 @@
     "secondaryStyleFor": "{{name}}'s secondary style",
     "noSecondaryOption": "No secondary style",
     "manageStyles": "Manage styles",
-    "points": "Strengths and weaknesses",
+    "points": "Strengths and technical adjustments",
     "pointsHint": "Write freely: homework, weekly goals, what to train. The student sees these lists.",
     "addPoint": "Add",
     "newPoint": "New item…",
@@ -596,7 +596,7 @@
   },
   "points": {
     "STRENGTH": "Strengths",
-    "WEAKNESS": "Weaknesses",
+    "WEAKNESS": "Technical adjustments",
     "empty": "Nothing yet."
   },
   "releaseNotes": {
