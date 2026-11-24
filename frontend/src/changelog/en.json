@@ -1,5 +1,36 @@
 [
   {
+    "version": "0.3.0",
+    "date": "2026-11-24",
+    "sections": [
+      {
+        "title": "Class planning",
+        "items": [
+          "The exercise list is in alphabetical order.",
+          "New A–Z | By category switch groups the exercises under their category, with a count for each. The board remembers your choice."
+        ]
+      },
+      {
+        "title": "Exercise library",
+        "items": [
+          "The gym's library of about 380 exercises can be imported in one step, grouped into 8 categories (Mobility, Warm-up, Boxing school, Sparring and more). Exercises the gym already has are skipped."
+        ]
+      },
+      {
+        "title": "Fighter styles",
+        "items": [
+          "Nine new artworks to pick for fighter classes, the same size as the existing ones."
+        ]
+      },
+      {
+        "title": "Student profile",
+        "items": [
+          "\"Weaknesses\" is now called \"Technical adjustments\"."
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.2.1",
     "date": "2026-11-23",
     "sections": [

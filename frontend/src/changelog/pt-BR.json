@@ -1,5 +1,36 @@
 [
   {
+    "version": "0.3.0",
+    "date": "2026-11-24",
+    "sections": [
+      {
+        "title": "Planejamento",
+        "items": [
+          "A lista de exercícios fica em ordem alfabética.",
+          "Novo seletor A–Z | Por categoria agrupa os exercícios sob a categoria, com a quantidade de cada uma. O quadro lembra a sua escolha."
+        ]
+      },
+      {
+        "title": "Biblioteca de exercícios",
+        "items": [
+          "A biblioteca da academia, com cerca de 380 exercícios, pode ser importada de uma vez, separada em 8 categorias (Mobilidade, Aquecimento, Escola de Boxe, Sparring e outras). Exercícios que a academia já tem são pulados."
+        ]
+      },
+      {
+        "title": "Estilos de lutador",
+        "items": [
+          "Nove novas artes para escolher nas classes de lutador, do mesmo tamanho das que já existiam."
+        ]
+      },
+      {
+        "title": "Perfil do aluno",
+        "items": [
+          "\"Pontos fracos\" agora se chama \"Ajustes técnicos\"."
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.2.1",
     "date": "2026-11-23",
     "sections": [
