@@ -95,6 +95,14 @@ docker compose exec backend python manage.py seed_test
 
 This creates a gym with known logins: the coach `treinador` / `treinador` and the students `aluno1` / `aluno1` to `aluno4` / `aluno4`. It also adds exercises and plans the next class. Use it only on test installs, because these passwords are public.
 
+To add the bundled library of about 380 exercises (in Portuguese, grouped into 8 categories) to any gym:
+
+```bash
+docker compose exec backend python manage.py import_exercises --gym <gym-slug>
+```
+
+It skips exercises the gym already has, so it is safe to run again. `--file` loads another library in the same format.
+
 ### Running the tests
 
 ```bash

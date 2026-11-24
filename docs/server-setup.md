@@ -124,6 +124,7 @@ generated passwords.
 | Update right now | `docker compose pull && docker compose up -d` |
 | Pause automatic updates | `docker compose stop watchtower` (`start` to resume) |
 | Restart everything | `docker compose restart` |
+| Import the bundled exercise library into a gym | `docker compose exec backend python manage.py import_exercises --gym <gym-slug>` (safe to repeat: exercises already there are skipped; an unknown slug lists the existing ones) |
 | Stop everything | `docker compose down` (data stays in the volumes) |
 
 **Rolling back.** Every image is also tagged with its commit, e.g. `sha-1a2b3c4` (see the
