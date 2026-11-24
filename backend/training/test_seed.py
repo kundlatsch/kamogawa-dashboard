@@ -32,6 +32,7 @@ def test_seed_test_creates_known_logins_and_a_planned_class(db, client):
     assert User.objects.get(username="aluno2").secondary_fighter_class is None
     assert aluno1.focus_text.startswith("Guarda alta")
     assert Drill.objects.filter(gym=gym, name="Mobilidade articular").count() == 1
+    assert Drill.objects.filter(gym=gym, category__name="Escola de Boxe").count() > 100  # bundled library
 
     session = TrainingSession.objects.get(gym=gym, status=TrainingSession.Status.PUBLISHED)
     assert session.date.weekday() in WeeklySchedule.for_gym(gym).training_weekdays

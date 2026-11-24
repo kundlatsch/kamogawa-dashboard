@@ -14,6 +14,7 @@ from django.utils import timezone
 from accounts.models import Gym, User
 from gamification.models import FighterClass
 from progress.models import StudentPoint
+from training.exercise_import import import_exercises
 from training.models import Assignment, CheckIn, Drill, DrillCategory, SessionBlock, TrainingSession
 from training.scheduling import generate_regular_sessions
 
@@ -40,6 +41,8 @@ class Command(BaseCommand):
             fields = {**item, "category": categories.get(item.get("category"))}
             drill, _ = Drill.objects.get_or_create(gym=gym, name=item["name"], defaults=fields)
             drills[drill.name] = drill
+        library_file = FIXTURES / "exercise_library_pt-BR.json"
+        import_exercises(gym, json.loads(library_file.read_text(encoding="utf-8")))
 
         coach = self.account(gym, data["coach"], User.Role.COACH)
         students = [self.account(gym, item, User.Role.STUDENT) for item in data["students"]]
