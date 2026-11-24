@@ -68,6 +68,15 @@ export default function BoardPage() {
   };
   const [search, setSearch] = useState("");
   const [drillView, setDrillView] = useState<DrillView>(readDrillView);
+  // Categories folded in the grouped exercise list (null = without category).
+  const [collapsed, setCollapsed] = useState<Set<number | null>>(new Set());
+  const toggleCollapsed = (categoryId: number | null) =>
+    setCollapsed((current) => {
+      const next = new Set(current);
+      if (next.has(categoryId)) next.delete(categoryId);
+      else next.add(categoryId);
+      return next;
+    });
   const changeDrillView = (view: DrillView) => {
     setDrillView(view);
     try {
@@ -377,18 +386,28 @@ export default function BoardPage() {
               {drillGroups.map((group) => (
                 <Fragment key={group.categoryId ?? "none"}>
                   {drillView === "category" && (
-                    <h3 className="flex shrink-0 items-center gap-1.5 self-center text-xs font-semibold tracking-wide text-smoke uppercase lg:self-stretch lg:pt-2 first:lg:pt-0">
-                      <span
-                        className="h-2 w-2 shrink-0 rounded-full"
-                        style={{ backgroundColor: categoryProps(group.categoryId).categoryColor ?? "#6b7280" }}
-                      />
-                      <span className="whitespace-nowrap">
-                        {categoryProps(group.categoryId).categoryName ?? t("drills.noCategory")}
-                      </span>
-                      <span className="font-normal">({group.drills.length})</span>
+                    <h3 className="shrink-0 self-center lg:self-stretch lg:pt-2 first:lg:pt-0">
+                      <button
+                        type="button"
+                        aria-expanded={!collapsed.has(group.categoryId)}
+                        onClick={() => toggleCollapsed(group.categoryId)}
+                        className="flex w-full items-center gap-1.5 text-xs font-semibold tracking-wide text-smoke uppercase hover:text-chalk"
+                      >
+                        <span
+                          className="h-2 w-2 shrink-0 rounded-full"
+                          style={{ backgroundColor: categoryProps(group.categoryId).categoryColor ?? "#6b7280" }}
+                        />
+                        <span className="whitespace-nowrap">
+                          {categoryProps(group.categoryId).categoryName ?? t("drills.noCategory")}
+                        </span>
+                        <span className="font-normal">({group.drills.length})</span>
+                        <span aria-hidden className="ml-auto pl-1">
+                          {collapsed.has(group.categoryId) ? "▸" : "▾"}
+                        </span>
+                      </button>
                     </h3>
                   )}
-                  {group.drills.map((drill) => (
+                  {!(drillView === "category" && collapsed.has(group.categoryId)) && group.drills.map((drill) => (
                     <Draggable key={drill.id} id={`drill:${drill.id}`} data={{ type: "drill", drillId: drill.id }} className="w-48 shrink-0 cursor-grab lg:w-auto">
                       <DrillCard drill={drill} compact {...categoryProps(drill.category)} />
                     </Draggable>
