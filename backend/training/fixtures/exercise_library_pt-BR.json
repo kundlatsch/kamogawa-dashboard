@@ -1,0 +1,1577 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "categoria": "Mobilidade",
+      "exercicios": [
+        {
+          "exercicio": "Mobilidade geral",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Rotação Tornozelo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Rotação Joelho Fechado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Rotação Joelho Aberto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Agachar (Quadril)",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Mobilidade Quadriceps",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Mobilidade Quadriceps Lateral",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Rotação Cotovelo com Mãos no Chão",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Elevação das Mãos no chão",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Mão palma para cima, rotaciona cotovelo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Rotação de cotovelo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Rotação punho palma aberta",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Rotação quadril",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Rotação tronco",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Mobilidade ombro Giro para frente e trás",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Braços para frente e para trás",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Mobilidade pescoço Cima e Baixo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Mobilidade pescoço Rotação",
+          "tempo": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Aquecimento",
+      "exercicios": [
+        {
+          "exercicio": "Passos para os lados\nPara frente e para trás\nPendulando uma perna Jab direto\nAlternando a base Jab e direto\nAlternando a base esquivando",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "Passos para os lados\nMovimento para frente e trás\nPara frente e para trás\nPendulando uma perna Jab direto\nAlternando a base Jab e direto\nAlternando a base esquivando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Passos para os lados\nPendulando uma perna Jab direto\nAlternando a base Jab e direto\nAlternando a base esquivando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Parado Jab e direto\nAgilidade passo lateral\nPulando shuffle jogando golpes\nAlternando perna Jab e direto\nAlterando pernas Jab direto e depois esquivas",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Parado Jab e direto\nAgilidade passo lateral\nAlternando perna Jab e direto\nAlterando pernas Jab direto e depois esquivas",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Corrida\nPolichinelo\nParado Jab e Direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Corrida\nPolichinelo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Corrida\nPolichinelo\nEscada de agilidade geral",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Corrida vai e vem até o espelho e toque no chão.\nPolichinelo\nEscada de agilidade",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "Correr e voltar e toca no chão\nPular e alternar pernas para frente e para os lados",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Corrida e Polichinelo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Corrida em volta da quadra 3x",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Corrida envolta, comando poli chinelo e volta",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "Pulando Jab e direto",
+          "tempo": "30 seg"
+        },
+        {
+          "exercicio": "Pulandos pernas em pendulo Jab e direto",
+          "tempo": "30 seg"
+        },
+        {
+          "exercicio": "Corrida para frente jab direto e corrida para tras jab direto",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "Andando para os lados cruzado e cruzado",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "Parado jab direto",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "Correndo jogando golpes",
+          "tempo": "30 seg"
+        },
+        {
+          "exercicio": "Andando de lado jogando golpes",
+          "tempo": "30 seg"
+        },
+        {
+          "exercicio": "Corrida",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Corrida Jab e Direto",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Andando de lado",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Parado alternando as pernas jogando jab e direto",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Parado uper",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Polichinelo",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Parado jab e direto",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Polichinelo, frente e pra trás, abre e fecha",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Correndo",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Correndo jogando jab e direto",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Alternando",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Andando para os lados",
+          "tempo": "15 seg"
+        },
+        {
+          "exercicio": "Sombra só golpes retos",
+          "tempo": "30 seg"
+        },
+        {
+          "exercicio": "Sombra só esquivas laterais",
+          "tempo": "30 seg"
+        },
+        {
+          "exercicio": "Pular Corda",
+          "tempo": "3 min / 2 min"
+        }
+      ]
+    },
+    {
+      "categoria": "Aquecimento Específico",
+      "exercicios": [
+        {
+          "exercicio": "Esquiva do macarrão",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Toque no ombro",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "Cordinha Girando Jogando Jab e Jab Direto",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "L1 Controle jogando o braço pra frente, L2 vai ir para frente do nada e L1 recua",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sombra, movimentação de cabeça e defesa",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Passo pêndulo normal\nJab recua",
+          "tempo": ""
+        },
+        {
+          "exercicio": "papelzinho na boca apenas 1, outro tenta tirar",
+          "tempo": "3 round"
+        },
+        {
+          "exercicio": "Bolinha tempo de reação\nControle de distância tentando pegar no ombro quando avança",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Escadinha vídeo instagram",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Soco na testa",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Tapa banho",
+          "tempo": "2 min / 1min/2 rounds"
+        },
+        {
+          "exercicio": "Toque no ombro parado",
+          "tempo": "1 min troca a dupla 3x"
+        },
+        {
+          "exercicio": "Toque no ombro andando para os lados envolta do tatame",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Tirar o papel da boca",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Escada de agilidade",
+          "tempo": ""
+        },
+        {
+          "exercicio": "teto solo, saco de pancada, reflex ball",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Escadinha de agilidade",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Jab e direto nos ombros, aí o outro golpe desvia para um lado, e desvia para o outro",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Bolinha pingando no chão\nBolinha trocando de mão Jab e direto\nToque no ombro",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Escada de agilidade\nTeto solo, corda e saco de pancada",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Bolinha na mão do amiguinho, o outro tenta roubar com jab",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Bolinha reflex ball",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Tapa banho\nBolinha troca de mao",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "Sombra por comando foco velocidade",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Reação bolinha na mão",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Pinga bolinha no chão, pega com golpe",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "Em linha reta apenas Toque no ombro",
+          "tempo": "3 rounds 1 min cada"
+        },
+        {
+          "exercicio": "Em linha reta Toque no peito com luva",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "Sombra golpes rápidos (Sem cansar)",
+          "tempo": "2 rounds 3 min"
+        },
+        {
+          "exercicio": "Escada de agilidade mais rápido que conseguir apenas dentro e fora",
+          "tempo": "2 vezes ou mais"
+        },
+        {
+          "exercicio": "Tiros Golpes retos rápidos\nTiros Ganchos rapidos",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sombra com alguém puxando a borracha em volta",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sombra leve de golpes retos",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Jab+Esquiva Parados",
+          "tempo": "2 min troca a dupla 3x"
+        },
+        {
+          "exercicio": "Sombra avança golpeia e recua",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Soco no peito, só linha reta e um passo para frente apenas",
+          "tempo": "1 min troca a dupla 3x"
+        },
+        {
+          "exercicio": "Bolinha de Reação",
+          "tempo": "2x 1 min"
+        },
+        {
+          "exercicio": "Bolinha movimentação basquete",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "5 cones em circulos, rotaciona em volta dos cones e joga jab e direto",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Segurando o macarrão simulando jab e direto MOVIMENTANDO",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "Segurando o macarrão simulando cruzados",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "Sombra enquanto passo toque no joelho para os iniciantes",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "toque no joelho",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "Toque na testa",
+          "tempo": "1 min/2 rounds"
+        },
+        {
+          "exercicio": "Pendulo Andando na Corda",
+          "tempo": "3 idas"
+        },
+        {
+          "exercicio": "Toque no ombro e joelho",
+          "tempo": "1 min troca adversário"
+        },
+        {
+          "exercicio": "Sombra com pivô",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "Sombra leve, no comando aumenta a intensidade",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Sombra livre",
+          "tempo": "30 seg / 2 min"
+        },
+        {
+          "exercicio": "Sombra leve",
+          "tempo": "3 min"
+        }
+      ]
+    },
+    {
+      "categoria": "Escola de Boxe",
+      "exercicios": [
+        {
+          "exercicio": "L1 Chama o golpe\nL2 Jab direto\nL1 Apara, esquiva, gancho direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sequências na frente do espelho após apito\nJab direto Cruzado\nJab Jab Direto Embaixo Cruzado\nJab Upper Gancho\nCruzado Direto Gancho",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Jab\nL2 2 golpes e o último forte",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 2 macarrão\nL2 Avançando Jab e direto andando pra frente",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Macarrão\nL2 Recuando Jab direto faz um giro cubano ou pivô",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 bloqueia\nL2 Direto, Jab, direto, Gancho",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 bloqueia\nL2 Jab, direto avançando, cruzado, gancho",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 bloqueia\nL2 Direto e cruzado em baixo e direto ou cruzado em cima",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sequências na frente do espelho após apito",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Avançando jogando golpes diretos cubano",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Macarrão e manopla\nL2 Jab Jab rápido Cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Macarrão e manopla\nL2 Jab direto rápido e cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Macarrão e Manopla\nL2 Jab Direto rápido e Gancho",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Combinação rápido golpe forte no final",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Só direto",
+          "tempo": "5 Rounds"
+        },
+        {
+          "exercicio": "Controle de distância",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Macarrão Golpes laterais",
+          "tempo": ""
+        },
+        {
+          "exercicio": "1 ataca, o outro defende e livre contra ataque",
+          "tempo": ""
+        },
+        {
+          "exercicio": "1 segura o saco de pancadas\nBater e recuar",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Esquivas laterais macarrão, pêndulo macarrão",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Jab L2 Golpe de encontro no peito L1 direto L2 direto de contra no peito L1 Cruzado L2 pendula e recua",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sequência",
+          "tempo": "1:30"
+        },
+        {
+          "exercicio": "Movimentação cone frente e trás sequência após apito",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Zig Zag lateral apito após sequência",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Rotaciona no cone e joga golpes, troca de cone após apito",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Escola de combate um ataca, e outro se defende até se fechar e o outro vai jogar sequência",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sombra conduzida\nParados fintando\n1 frente sequência livre\n2 trás sequência livre\n3 esquiva direita contra golpe\n4 esquerda contra holpe",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Circuito movimentação cone",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Movimentação\nTeto solo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Frente Jab e direto\nTraz Jab e direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-sombra macarrão jogando golpes\nL2-Segura dois macarrão, bate com, bate com outro\nL1-Defende os dois, pendula os dois, esquiva para trás",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Comando cognitivo\n1- frente\n2-esquerda\n3-Direita\n4-tras",
+          "tempo": ""
+        },
+        {
+          "exercicio": "1 Jab e direto\n2 Avança Jab, volta Jab e direto\n3 Jab, esquiva direto cruzado\n4 Jab pivô direto cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "1 L1 Bloqueia\nL2 Jab e direto\n\n2 L1 Esquiva direto direto esquiva para trás\nL2 Jab bloqueio, cruzado\n\n3 L1 pivô bloqueio cruzado cruzado\nL2 pivô cruzado cruzado bloqueio\n\n4 L1 Jab Esquiva atrás direto gancho\nL2 Esquiva Direto bloqueio",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1- Avançando, joga um golpe, esquiva e joga dois no ombro do oponente\nL2-Recuando, espera o Jab, e devolve um jab",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sombra conduzida Jab meio passo frente, direto meio passo para trás, cubano para trás",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Livre\nTeto solo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Macarrão nas laterais, bloqueios laterais",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab e Direto\nL2-Bloqueio só com uma mão",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Cruzados e ganhos\nL2-Bloqueios em cima e embaixo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Frente ao espelho\nEsquiva lateral, trás e pendulo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Pegar o papel parado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Meio passo golpe reto\nMeio passo cruzado e gancho\nMeio passo gancho, muda de ângulo joga sequência",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Braco esticado\nL2-Meio passo pro lado gancho ou cruzado sem luvas",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Trabalho de saco de pancada com mudança de ângulo\nTeto solo com mudança de ângulo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Controle de distância, um movimenta, o outro reage",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Surpreende Avançando\nL2 -Direto e cruzado recuando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Cruzado isolado, inclina o corpo, cruzado mão da frente\nTrás\nGancho inclinando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Bater jornal",
+          "tempo": "50 vezes cada braço"
+        },
+        {
+          "exercicio": "L1-Jab direto, passo para um lado, gancho\nL2-Bloqueia",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Cruzado em cima, gancho",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Deslocamento Zig Zag cone",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Deslocamento normal Jab e direto\nDeslocamento alternado Jab e direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab\nL2-Parada joga jab e direto\nL1- bloqueia",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Mesma coisa, mas o L2-tenta contra golpear",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Meio passo com jab e direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Só cruzado frente espelho",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Jab direto cruzado frente ao espelho",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Braço esticado do direto, joga cruzado\nBraço esticado do Jab, joga cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Frente ao espelho,\nMeio passo\nMeio passo frente e trás jab\nMeio passo frente e trás dieto\nPasso para frente Jab e direto\nAtrás Jab e direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Jab e direto jab\nL2- paradas de mão e esquiva",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Meio passo Jab em baixo, Meio passo passo Jab em baixo, Finta embaixo direto cruzado direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Pêndulo com golpes retos 3x1min\n2 dentro 2 fora frente e lateral 3x1min\nPulo pra frente faça uma rotação e pula pra trás 4x30sec\nLateral cruzado 50x4\nLateral upper\nhttps://vt.tiktok.com/ZSqwE8BP8/",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Giro cubano",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 joga jab e direto, passo para direita direto cruzado\nL2 defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Joga golpes retos\nL2-Defesa de pernas meio passo, Atrás, lateral esquerda, direita, Passo diagonal, Passo lateral, Cubano",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Joga jab direto parado\nJoga jab direto jab parado\nDeslocamento para trás Jab Jab direto, lateral e frente mesma sequência\nDeslocamento Jab direto jab",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Jab com meio passo frente e traz\nDireto com meio passo para frente e traz\nDois juntos",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Jab direto sequência alternando perna",
+          "tempo": "30 segundos"
+        },
+        {
+          "exercicio": "Andar e jogar golpes frente e trás",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Andar em volta, após apito 1 passo para trás joga sequência, para e continua andando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Andando em volta do tatame Esquivas laterais e para trás",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Em grupo desviar dos golpes",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Teto solo, ou bate saco de pancada e desvia do macarrão",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 segura uma mão L2 defende dos golpes",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Segura a mão L2 defende e devolve",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Girando a cordinha batendo no saco de pancada",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Golpes de encontro\nJab, direto em cima, Jab direto em baixo, Cruzados em cima, Cruzados saindo para os lados",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Jab, direto, upper\nSequências completas",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sequências livres, com um segurando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Jab L2 - Apara e joga cruzado L1 - esquiva para trás L2 - esquiva para a lateral e joga Upper L1 - Defende Uper",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Toque no ombro envolta de 1 tatame",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Frente ao espelho Jab direto e cruzados",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Esquiva, Pisa para o lado com cone, gancho cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Cones em círculo, movimenta em volta, entra Jab, direto, cruzado, recua e circula",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Corda no chão:\nPasso pendulo\nShuffle\nDois frente dois trás\nTroca de base pulando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Golpes direcionados",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Bater jornal\nJab e direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Braço esquivado do direto, joga cruzado\nBraço esticado do Jab, joga cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Bater jornal\nJab e direto com velocidade\nCruzados com velocidade\nCruzado cubano",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "L1 joga 1 golpe livre\nL2 Esquiva e devolve 1 ou dois golpes livre",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Junto com a outra turma\nJab direto sequência alternando perna",
+          "tempo": "30 segundos"
+        },
+        {
+          "exercicio": "Velocidade segue o comando e sequência",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Combinação rápida outro segura o saco de pancada",
+          "tempo": "30 segundos"
+        },
+        {
+          "exercicio": "Diz números de golpes (Foco Velocidade)",
+          "tempo": "2 Rounds 2 min"
+        },
+        {
+          "exercicio": "20 segundos Velocidade outro segura o saco de pancada",
+          "tempo": "5 rounds"
+        },
+        {
+          "exercicio": "L1-2 golpes\nL2-Responde 2 golpes",
+          "tempo": "30 segundos intensos\n5 rounds"
+        },
+        {
+          "exercicio": "Frente ao espelho\nAvança Jab e direto e volta\nAvança Jab embaixo, Jab em cima Direto\nMistura os dois",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sequência de três golpes rapidos",
+          "tempo": "5 Rounds"
+        },
+        {
+          "exercicio": "L1 - Jab, Jab e direto, Jab e direto 2x\nL2 - Mesma combinação sombra com elástico",
+          "tempo": "30 segundos"
+        },
+        {
+          "exercicio": "Movimentação com macarrão, vai jogar golpes com macarrão e o lutador que movimenta vai defender, recuar e movimentar sem perder a distancia",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Com luva, movimentação com macarrão, quando ver oportunidade vai jogar sequência e pressionar sem encostar",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Circuito saco e combate",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Frente ao espelho:\nJab tração perna de trás joga 1 Jab e volta\nApara e cruzado\nTira para trás direto e cruzado\nJab Jab tira direto cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Jab Jab em cima, gancho em baixo no fígado\nL2 - Defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - vai travar o L2 com golpe no peito e jogar um gancho\nL2 vai movimentar ou esquivar",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Frente ao espelho sequência após comando\nJab direto embaixo cruzado e direto em cima.\nJab direto em cima, cruzado e gancho em baixo.\nJab e direto esquiva e pivô cruzado e direto.\nJab esquiva, pivô, jab e direto pendula, cruzado e cruzado direto, esquiva e volta.",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Variação em baixo e em cima",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "L1 - Jab esquiva gancho direto cruzado\nL2 - Devolve jab após receber o primeiro Jab",
+          "tempo": "2 min cada"
+        },
+        {
+          "exercicio": "L1 - Jab esquiva para trás, direto gancho direto\nL2 - Jab após levar o primeiro golpe",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "L1 - Jab em cima, cruzado e cruzado em baixo, cruzado e cruzado em cima\nL2 - Defende",
+          "tempo": "1 vez cada 1\n15x"
+        },
+        {
+          "exercicio": "Jab sai Direto",
+          "tempo": "2 min 1x troca"
+        },
+        {
+          "exercicio": "Avança Jab sai Direto",
+          "tempo": "2 min 1x uma vez cada 1"
+        },
+        {
+          "exercicio": "L1 com 2 macarrão, vai escolher onde bater no L2 L2 com guarda alta",
+          "tempo": "3 min troca"
+        },
+        {
+          "exercicio": "L1-anda para frente ou trás L2-reage",
+          "tempo": "3 min troca"
+        },
+        {
+          "exercicio": "1 segura o papel e o joga outro cruzado",
+          "tempo": "1 min cada braço"
+        },
+        {
+          "exercicio": "Macarrão movimentando para cima e para baixo",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "Macarrão reflexo para os lados",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "L1-Bloqueio L2-Jab e direto",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "L1-Bloqueio 1 braço jab, Bloqueio 1 braço direto L2-Jab e Direto",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "L1-Apara jab e tirada o direto L2-Jab e direto",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "L1- Jab L2-Sai com 1 pé para tras",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "L1- Jab L2 - Devolve Jab L1 Esquiva para trás e joga Jab e Direto",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "L1- Jab L2 - Devolve Jab L1 Esquiva para o lado e joga Jab e Direto",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "L1 - Finta um avanço L2 - Joga um Jab L1- Jab e Direto",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "L1- Jogando jab em cima, aí finta em cima e joga embaixo um direto embaixo L2 - Defende",
+          "tempo": "1 vez cada"
+        },
+        {
+          "exercicio": "L1- Finta jab em cima e joga em baixo, aí finta embaixo e joga direto em cima e cruzado L2 - Defende",
+          "tempo": "1 min cada"
+        },
+        {
+          "exercicio": "Saco de Pancada - Jab + Movimentação",
+          "tempo": "3 Rounds - 2 min"
+        },
+        {
+          "exercicio": "Combinação 3 a 5 golpes (Retos)",
+          "tempo": "3 Rounds - 2 min"
+        },
+        {
+          "exercicio": "JAB+DIRETO+ESQUIVA+DIRETO",
+          "tempo": "1 ROUND"
+        },
+        {
+          "exercicio": "FINTA DIRETO+CRUZADO+PENDULO+GANCHO+DIRETO",
+          "tempo": "1 ROUND"
+        },
+        {
+          "exercicio": "Trabalho livre no saco de pancada",
+          "tempo": ""
+        },
+        {
+          "exercicio": "GANCHO DE ESQUERDA+CRUZADO+PENDULO+CRUZADO+JAB",
+          "tempo": "1 ROUND"
+        }
+      ]
+    },
+    {
+      "categoria": "Escola de Combate Dirigido",
+      "exercicios": [
+        {
+          "exercicio": "L1-Jab direto Jab rápido, pula para o lado, direto cruzado direto\nL2-Bloqueia",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sequência rápida Jab Jab em cima, passo para o lado, direto gancho direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 manopla\nL2 Cruzado com passo para a direita, direto gancho",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Macarrão, Jab direto, esquiva direto cruzado (Foco velocidade)",
+          "tempo": "15 vezes troca"
+        },
+        {
+          "exercicio": "Macarrão, Jab Jab Direto Esquiva Esquiva Cruzado Direto (Foco Velocidade)",
+          "tempo": "15 vezes"
+        },
+        {
+          "exercicio": "Macarrão, Jab Jab Puxada para trás, Direto Pendula Cruzado Cruzado (Foco Velocidade)",
+          "tempo": "15 vezes cada"
+        },
+        {
+          "exercicio": "L1- Jab e direto pula para tras\nL2- apara e pula pra frente",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Recua e sai do ângulo\nL2- Avança em linha reta",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Controla a distância esticando o braço a frente\nL2-Tenta entrar com golpes\nL1 recua só com jab",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-cruzado esquerda, direita, gancho esquerda, direita, 3 golpes retos\nL2-defesas, bloqueio",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Gancho esquerdo, direito\nL2-Defende, devolve cruzado direito esquerdo\nL1-Defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab na barriga, recua pulando direto em cima na mão",
+          "tempo": "1 vez troca"
+        },
+        {
+          "exercicio": "L1 Jab entrando, L2 contra ataca, L1 recua direto cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Jab L2 Esquiva L1 direto L2 Esquiva troca",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Jab direto cruzado\nL2 Esquiva e pendula",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Avanca com guarda alta\nL2- precisa reagir recuando jogando jab e direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Avanca Jab direto cruzado e recua\nL2-Bloqueia",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Quando L1 jogar Jab, L2 vai devolver Jab embaixo direto em cima",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Defesa só com a mão de trás, Jab, direto, Upper e cruzados",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Macarrão, joga macarrão, esquiva laterais, e pêndulo, joga um golpe",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab, direto\nL2- Esquiva, esquiva e joga jab e direto\nL1-Esquiva, Esquiva",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab, direto, Cruzado com braço pro lado, direto cruzado direto\nL2-Defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab Jab, Direto pisa para o lado,cruzado direto cruzado\nL2-Defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab Direto Cruzado\nL2-Apara e bloqueia o cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab para chamar o golpe\nL2-Devolve com jab\nL1-Direto, cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Jab e Direto\nL2 - Apara apenas com a mão da frente",
+          "tempo": "30 vezes cada"
+        },
+        {
+          "exercicio": "L1 - Jab e Direto\nL2 - Apara apenas com a mão de trás",
+          "tempo": "30 vezes cada"
+        },
+        {
+          "exercicio": "L1 - Jab e Direto\nL2 - Apara apenas com as duas mãos",
+          "tempo": "30 vezes cada"
+        },
+        {
+          "exercicio": "L1-Joga jab e apara o contra golpe\nL2-Joga Jab de contra ataque\nL1-Joga direta por cima",
+          "tempo": "30 vezes"
+        },
+        {
+          "exercicio": "L1 - Jab esquiva, Jab esquiva do Jab, Jab esquivado jab para um lado, esquiva do direto com passo diagonal, cruzado cruzado gancho",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Controle de distância com braço esticado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab direto cruzado passo para esquerda, direto cruzado\nL2-Defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Esquiva e joga cruzado L2-bate com macarrão",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Desvia do macarrão",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Dupla, um anda para frente joga jab desviando, o outro anda para trás joga direto desviando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Jab Jab Direto\nL2 Aparada, Passo atrás e golpe de encontro",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Esquivas macarrão, lateral, trás, lateral",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Jab L2 - Apara e joga cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Jab, esquiva, direto esquiva",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Meio passo para frente Jab, direto, esquiva direto recua",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1- Esquiva direto cruzado direto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1- Avança Jab jab\nL2 - Esquiva trás e esquiva para lateral",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Avanca Jab e direto\nL2-Recua e sai com cruzado cubano",
+          "tempo": "3 cada"
+        },
+        {
+          "exercicio": "L1 - Segue o comando de golpes\nL2 - Varia a defesa",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "L1 macarrão - L2 joga jab rápido, jab direto rápido, jab direto 2x rápido descansa",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "L1 - Escolhe um braço para atacar\nL2 - Reage e joga golpes rapido",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Bate esquiva",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Guarda fechada\nL2 - Puxar a guarda para baixo e bater",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "L1 - Apara do Jab e Joga cruzado\nL2 - Jab e Defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Jab, tira para trás e joga direto\nL2 - Apara joga jab e defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Jab e joga o Upper furar a guarda\nL2 - Defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 2 cruzados embaixo\nL2 2 cruzados em cima",
+          "tempo": "1 min 3 vezes"
+        },
+        {
+          "exercicio": "L1-Jab+Esquiva+Direto L2- Joga contragolpe na esquiva (L1 Esquiva para o lado, trás)",
+          "tempo": "3 min 1x troca"
+        },
+        {
+          "exercicio": "L1-Jab+Esquiva+Direto+Esquiva+Jab L2- Joga contragolpe nas esquivas",
+          "tempo": "3 min 1x troca"
+        },
+        {
+          "exercicio": "L1-Avança Jab em baixo+Direto em Cima+Cruzado+Saida L2- Defende",
+          "tempo": "3 min 1x troca"
+        },
+        {
+          "exercicio": "L1-Bate cruzado esquerda em Baixo, e direita em Baixo L2-Devolve sempre com a mesma mão",
+          "tempo": "2 min troca"
+        },
+        {
+          "exercicio": "L1-Jab e Recua L2-Com macarrão tenta bater após ele jogar o golpe",
+          "tempo": "2 min troca"
+        },
+        {
+          "exercicio": "L1-Bate Jab e Direto L2-Avança e recúa com macarrão",
+          "tempo": "2 min troca"
+        },
+        {
+          "exercicio": "L1 - Jab, direto e cruzado L2 - Parry jab e direto e esquiva do cruzado",
+          "tempo": "3 min troca"
+        },
+        {
+          "exercicio": "L1 - Upper e cruzado L2 - Apara upper e esquiva cruzado",
+          "tempo": "1 vez cada um, pegando o ritmo vai fazendo mais rapido"
+        },
+        {
+          "exercicio": "L1 - Jab, upper, cruzado, direto L2 - Apara todos",
+          "tempo": "1 vez cada um, pegando o ritmo vai fazendo mais rapido"
+        },
+        {
+          "exercicio": "L1 - Jab, jab, direto, cruzado L2 - Esquiva jab, jab, direto e pendula do cruzado, devolve 2 golpes na costela L1 - defende os dois golpes na costela",
+          "tempo": "1 vez cada um, pegando o ritmo vai fazendo mais rapido"
+        },
+        {
+          "exercicio": "L1 - Jab+Jab+Direto L2 - Esquiva lateral+esquiva atras+Esquiva lateral",
+          "tempo": "1 min / Acelera"
+        },
+        {
+          "exercicio": "L1-Jab L2-Defende e contra ataca com a mesma mão L1-Saí com 1 pé para atrás e devolve Jab e Direto",
+          "tempo": "15 vezes"
+        },
+        {
+          "exercicio": "L1-Jab e Direto L2-Bloqueio Normal e saí do alcance",
+          "tempo": "15 vezes"
+        },
+        {
+          "exercicio": "L1- Vai jogando Jab ou Fintando L2- escolhe o momento de Responder",
+          "tempo": "1 vez cada 1"
+        },
+        {
+          "exercicio": "L1- Chama de forma livre L2-Responde de forma Livre L1-Tenta Contra Atacar",
+          "tempo": "1 vez cada 1"
+        },
+        {
+          "exercicio": "Esgrima com sequencia no saco de pancada",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1- Esgrima com a sequencia treinada no saco de pancada L2 - Defende",
+          "tempo": "1 vez cada, troca adversário"
+        },
+        {
+          "exercicio": "L1 - SOMBRA Ataque em duas ondas, ataca com sequencia, volta e ataca novamenteL2 - De L2 - Apenas movimenta e recua",
+          "tempo": "1:30 min cada, troca adversário"
+        },
+        {
+          "exercicio": "L1 - Ataque em duas ondas, ataca com sequencia, volta e ataca novamente L2 - Defende",
+          "tempo": "1:30 min cada, troca adversário"
+        },
+        {
+          "exercicio": "L1 - Avança com a guarda alta, e vai lançar golpes isolados L2 - Recua e vai devolvendo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Avança com a guarda alta, e vai lançar golpes isolados mais devagar L2 - Recua e joga golpes saindo pelas laterais e procura angulos",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - SOMBRA Ataque em duas ondas, ataca com sequencia, volta e ataca novamente L2 - Apenas movimenta e recua",
+          "tempo": "1:30 min cada, troca adversário"
+        },
+        {
+          "exercicio": "L1 Jab+Jab+Direto L2 Defende+Saída do Direto",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "L1 Jab+Jab+Direto L2 Defende+Saída e volta com Jab e direto L1 Defende",
+          "tempo": "3 min"
+        }
+      ]
+    },
+    {
+      "categoria": "Escola de Combate Condicionado",
+      "exercicios": [
+        {
+          "exercicio": "Combinação rápida em cima com um gancho no final",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Escolhe um lugar para começar a sequência e termina a sequência com um golpe no sentido oposto",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Apenas Jab rápido",
+          "tempo": "5 Rounds"
+        },
+        {
+          "exercicio": "L1-Movimentando Golpes livres\nL2-Parado tenta acertar o cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - L1 persegue, L2 escapa defendendo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Recua\nL2- avança Defendendo até encurralar, aí ataca",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Jab recua avança novamente sequência livre\nL2 bloqueio",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 Parado\nL2 movimentando jogando golpes\nL1 esquiva",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Só golpe reto e esquivas",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Só golpes no corpo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Joga jab golpes retos para forçar o oponente a fechar a guarda, avançar com sequência rápida e sair",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Só golpe de encontro mirando o peito",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sequência livre, outro reage defendendo ou esquivando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1- Golpes isolados livres\nL2- Apenas bloqueios",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Sequencia livre rápida\nL2-Bloqueios",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Cruzado e defesa livre",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Joga 1 golpe\nL2-Esquiva e joga 1 golpe\nL1-Esquiva e devolve",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Livre golpes retos com foco na esquiva",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Movimentação\nL1-Jab Jab, escolhe um lado para ir, faz combinação rápida e sai\nL2-Defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Ataca com jab\nL2-Joga golpe de encontro passando para o lado, joga sequência\nL1-Defende",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Parado\nL2- movimenta, joga jab e sai\nL1-Tenta acertar o cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Surpreende dando 1 passo para frente Jab e direto\nL2- precisa reagir e recuar rapido",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Live só golpes retos na longa",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab cruzado ou gancho ou direto cruzado ou gancho cruzado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Livres golpes retos\nL2- Livre defesa saindo ou esquiva ou parada de mão",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Meio passo golpes em linha reta",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Combate condicionado livre",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 livre\nL2 golpes de encontro, ou contra ataque",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Apenas Jab",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1- Avança\nL2-Defende e esquiva recuando",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Livre apenas meio passo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Avaca com dois golpes\nL2-Recua e contra ataca saindo pela lateral",
+          "tempo": "3 min cada 3 rounds"
+        },
+        {
+          "exercicio": "L1 - Cruzado livre\nL2 - Recua ou pendula ou defende",
+          "tempo": "3 min troca"
+        },
+        {
+          "exercicio": "L1 Joga 1 golpe\nL2 Esquiva e devolve outro",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1 - Sequência rápida de golpes, esquiva 2 cruzados e joga outra sequência e sai\nL2 - Defende e joga 2 cruzados",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "L1 - Esquiva do primeiro golpe e joga sequência rápida\nL2 - Joga golpe rápido e defende",
+          "tempo": "1 vez cada 3 min"
+        },
+        {
+          "exercicio": "Parados\nL1-Golpe reto\nL2-Responde golpe reto\nL1-Devolve",
+          "tempo": "30 segundos intenso\n5 rounds"
+        },
+        {
+          "exercicio": "Livre sem guarda só golpes retos",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "L1 - Joga golpes retos\nL2 - Vai esquivar e jogar de encontro ou contra ataque\nL1 - Precisa escapar",
+          "tempo": "2 rounds 3 min"
+        },
+        {
+          "exercicio": "Sem guarda tenta acertar o outro e não ser acertado",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Tenta acertar o outro sem ser acertado livre com golpes retos",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Só Golpe no corpo",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Movimento limitado por um corredor",
+          "tempo": "2 min troca"
+        },
+        {
+          "exercicio": "Pés juntos golpes livres",
+          "tempo": "2 min troca"
+        },
+        {
+          "exercicio": "Combate livre, só pode começar a trocar com Jab+Esquiva",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Combate livre, pode começar com qualquer sequencia, porém sempre tem que ter uma esquiva no meio",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "L1-Finta a entrada, Jab em baixo+Direto em Cima+Saída L2-Defende",
+          "tempo": "3 min 1x troca"
+        },
+        {
+          "exercicio": "L1-Finta a entrada,Sequência Livre+Saída L2-Joga Jab antes da entrada e depois Defende",
+          "tempo": "3 min 1x troca"
+        },
+        {
+          "exercicio": "L1-Ataca com cruzado Livre L2-Defende e devolve com o mesmo braço",
+          "tempo": "3 min 1x troca"
+        },
+        {
+          "exercicio": "L1-Ataca com cruzado Livre L2-Defende, devolve com a mesma mão e joga combinação livre",
+          "tempo": "3 min 1x troca a dupla"
+        },
+        {
+          "exercicio": "Combate livre",
+          "tempo": "3 min 1x troca a dupla"
+        },
+        {
+          "exercicio": "L1-Ataca jab+jab e direto e sai L2-Defende e devolve",
+          "tempo": "3 min 1x troca"
+        },
+        {
+          "exercicio": "Ataca com golpes retos longa distância",
+          "tempo": "3 min 1x troca a dupla"
+        },
+        {
+          "exercicio": "L1-Parados trocação livre",
+          "tempo": "1 min"
+        },
+        {
+          "exercicio": "Movimentação, inicia com jab e só pode golpes cruzados",
+          "tempo": "2 min troca"
+        },
+        {
+          "exercicio": "L1-Joga Jab ou direto livre sequencias L2- Parado Esquivas livre",
+          "tempo": ""
+        },
+        {
+          "exercicio": "L1-Jab para chamar L2-Defende e devolve o contra golpe L1-Defesa livre e contra golpeia L2-Bloqueio",
+          "tempo": "2 min"
+        },
+        {
+          "exercicio": "L1 Jab+Jab+Direto L2 Livre Defende os Jabs, Saí do Direto, Volta com 2 a 3 golpes pelo menos um embaixo",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "L1 Começa com Jab+Jab+Direto L2 Saí dos 3 golpes e livre contra ataque",
+          "tempo": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Sparring",
+      "exercicios": [
+        {
+          "exercicio": "Nível leve",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sparring livre",
+          "tempo": "3 min"
+        },
+        {
+          "exercicio": "Soltinho",
+          "tempo": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Resfriamento",
+      "exercicios": [
+        {
+          "exercicio": "Resfriamento abdominal",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sombra - Pular Corda",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Teto solo - Bolinha - Bolinha basquete",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Escadinha leve",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Pular corda/Sombra",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sombra golpes retos",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sombra golpes cruzados",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Teto Solo/Bolinha",
+          "tempo": ""
+        },
+        {
+          "exercicio": "Sombra",
+          "tempo": "30 seg"
+        }
+      ]
+    }
+  ]
+}
