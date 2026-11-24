@@ -391,16 +391,16 @@ export default function BoardPage() {
                         type="button"
                         aria-expanded={!collapsed.has(group.categoryId)}
                         onClick={() => toggleCollapsed(group.categoryId)}
-                        className="flex w-full items-center gap-1.5 text-xs font-semibold tracking-wide text-smoke uppercase hover:text-chalk"
+                        className="flex w-full min-w-0 items-center gap-1.5 text-left text-xs font-semibold tracking-wide text-smoke uppercase hover:text-chalk"
                       >
                         <span
                           className="h-2 w-2 shrink-0 rounded-full"
                           style={{ backgroundColor: categoryProps(group.categoryId).categoryColor ?? "#6b7280" }}
                         />
-                        <span className="whitespace-nowrap">
+                        <span className="whitespace-nowrap lg:truncate" title={categoryProps(group.categoryId).categoryName}>
                           {categoryProps(group.categoryId).categoryName ?? t("drills.noCategory")}
                         </span>
-                        <span className="font-normal">({group.drills.length})</span>
+                        <span className="shrink-0 font-normal">({group.drills.length})</span>
                         <span aria-hidden className="ml-auto pl-1">
                           {collapsed.has(group.categoryId) ? "▸" : "▾"}
                         </span>
