@@ -5,7 +5,24 @@ from training.serializers import NamedListSerializer
 from .models import FighterClass
 
 
-ART_KEYS = ["out-boxer", "swarmer", "slugger", "boxer-puncher", "counterpuncher", "switch-hitter"]
+# Must match the artwork bundled in frontend/src/lib/fighterArt.ts.
+ART_KEYS = [
+    "out-boxer",
+    "swarmer",
+    "slugger",
+    "boxer-puncher",
+    "counterpuncher",
+    "switch-hitter",
+    "rookie",
+    "mystery",
+    "defensive",
+    "aggressor",
+    "tactician",
+    "endurance",
+    "speedster",
+    "comeback",
+    "champion",
+]
 
 
 class FighterClassSerializer(NamedListSerializer):

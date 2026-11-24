@@ -121,6 +121,7 @@ def test_coach_edits_a_class_and_uploads_custom_art(coach, api_as, gym, other_gy
     assert created.status_code == 201 and created.json()["art_key"] == "swarmer"
     fc_id = created.json()["id"]
     assert client.patch(f"/api/fighter-classes/{fc_id}/", {"art_key": "dragon"}, format="json").status_code == 400
+    assert client.patch(f"/api/fighter-classes/{fc_id}/", {"art_key": "champion"}, format="json").status_code == 200
     assert client.patch(f"/api/fighter-classes/{fc_id}/", {"description": "Pressiona"}, format="json").status_code == 200
     buffer = BytesIO()
     Image.new("RGBA", (900, 900), (10, 20, 30, 0)).save(buffer, "PNG")
