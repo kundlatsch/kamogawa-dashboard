@@ -1,14 +1,24 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-import planningBoard from "../assets/landing/planning-board.webp";
-import studentMyStats from "../assets/landing/student-my-stats.webp";
-import studentProfile from "../assets/landing/student-profile.webp";
-import studentStats from "../assets/landing/student-stats.webp";
+import planningBoardEn from "../assets/landing/en/planning-board.webp";
+import studentMyStatsEn from "../assets/landing/en/student-my-stats.webp";
+import studentProfileEn from "../assets/landing/en/student-profile.webp";
+import studentStatsEn from "../assets/landing/en/student-stats.webp";
+import planningBoardPt from "../assets/landing/pt-BR/planning-board.webp";
+import studentMyStatsPt from "../assets/landing/pt-BR/student-my-stats.webp";
+import studentProfilePt from "../assets/landing/pt-BR/student-profile.webp";
+import studentStatsPt from "../assets/landing/pt-BR/student-stats.webp";
 import AppFooter from "../components/AppFooter";
 import LanguageToggle from "../components/LanguageToggle";
 
 const REPO_URL = "https://github.com/kundlatsch/kamogawa-dashboard";
+
+/** Screenshots of the app in each interface language. */
+const SCREENSHOTS = {
+  en: { planningBoard: planningBoardEn, studentProfile: studentProfileEn, studentStats: studentStatsEn, studentMyStats: studentMyStatsEn },
+  "pt-BR": { planningBoard: planningBoardPt, studentProfile: studentProfilePt, studentStats: studentStatsPt, studentMyStats: studentMyStatsPt },
+};
 
 const COACH_FEATURES = [
   { key: "board", icon: "📋" },
@@ -30,7 +40,9 @@ const ghostLink =
 
 /** Public home page: what the app does, with a way into the login screen. */
 export default function LandingPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { planningBoard, studentProfile, studentStats, studentMyStats } =
+    SCREENSHOTS[i18n.language?.startsWith("pt") ? "pt-BR" : "en"];
   const [first, ...rest] = t("brand.name").split(" ");
 
   return (
