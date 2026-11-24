@@ -32,3 +32,36 @@ export function moveBefore(assignments: Assignment[], draggedId: number, targetI
 export function dropTargets(studentId: number, selected: Set<number>): number[] {
   return selected.has(studentId) && selected.size > 1 ? [...selected].sort((a, b) => a - b) : [studentId];
 }
+
+/** Exercises sorted by name, the way people read them (accents and numbers included). */
+export function sortByName<T extends { name: string }>(items: T[], locale?: string): T[] {
+  const collator = new Intl.Collator(locale, { sensitivity: "base", numeric: true });
+  return [...items].sort((a, b) => collator.compare(a.name, b.name));
+}
+
+export interface DrillGroup<T> {
+  /** `null` holds the exercises without a category. */
+  categoryId: number | null;
+  drills: T[];
+}
+
+/**
+ * Exercises grouped by category, in the categories' own order, each group sorted by name.
+ * Exercises without a category (or with one that no longer exists) come last.
+ */
+export function groupByCategory<T extends { name: string; category: number | null }>(
+  drills: T[],
+  categories: { id: number }[],
+  locale?: string,
+): DrillGroup<T>[] {
+  const known = new Set(categories.map((c) => c.id));
+  const groups: DrillGroup<T>[] = categories.map((c) => ({ categoryId: c.id, drills: [] }));
+  const byId = new Map(groups.map((g) => [g.categoryId, g]));
+  const loose: DrillGroup<T> = { categoryId: null, drills: [] };
+  for (const drill of drills) {
+    (drill.category != null && known.has(drill.category) ? byId.get(drill.category)! : loose).drills.push(drill);
+  }
+  return [...groups, loose]
+    .filter((g) => g.drills.length > 0)
+    .map((g) => ({ ...g, drills: sortByName(g.drills, locale) }));
+}

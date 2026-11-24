@@ -1,5 +1,5 @@
 import type { Assignment } from "../api/types";
-import { columnAssignments, dropTargets, moveBefore } from "./board";
+import { columnAssignments, dropTargets, groupByCategory, moveBefore, sortByName } from "./board";
 
 const make = (id: number, order: number, participants: number[], is_broadcast = false) =>
   ({ id, order, participants, is_broadcast }) as Assignment;
@@ -31,5 +31,27 @@ describe("board helpers", () => {
     expect(dropTargets(20, new Set([30, 20]))).toEqual([20, 30]);
     expect(dropTargets(10, new Set([20, 30]))).toEqual([10]);
     expect(dropTargets(20, new Set([20]))).toEqual([20]);
+  });
+});
+
+describe("exercise list", () => {
+  const drill = (name: string, category: number | null) => ({ name, category });
+
+  it("sorts by name ignoring case and accents", () => {
+    const names = sortByName([drill("corrida", 1), drill("Abdominal", 1), drill("Ágil", 1), drill("Burpee", 1)], "pt-BR");
+    expect(names.map((d) => d.name)).toEqual(["Abdominal", "Ágil", "Burpee", "corrida"]);
+  });
+
+  it("groups by category in category order, sorted inside, uncategorized last", () => {
+    const groups = groupByCategory(
+      [drill("Sombra", 2), drill("Polichinelo", 1), drill("Livre", null), drill("Corrida", 1), drill("Órfão", 99)],
+      [{ id: 1 }, { id: 2 }, { id: 3 }],
+      "pt-BR",
+    );
+    expect(groups.map((g) => [g.categoryId, g.drills.map((d) => d.name)])).toEqual([
+      [1, ["Corrida", "Polichinelo"]],
+      [2, ["Sombra"]],
+      [null, ["Livre", "Órfão"]],
+    ]);
   });
 });
